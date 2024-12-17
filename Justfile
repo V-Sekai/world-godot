@@ -171,7 +171,8 @@ build-platform-target platform target precision="double":
                     vulkan_sdk_path=$VULKAN_SDK_ROOT/MoltenVK/MoltenVK/static/MoltenVK.xcframework \
                     osxcross_sdk=darwin24 \
                     generate_bundle=yes \
-                    debug_symbol=yes
+                    debug_symbols=yes \
+                    separate_debug_symbols=yes
             ;;
         windows)
             scons platform=windows \
@@ -182,7 +183,8 @@ build-platform-target platform target precision="double":
                 test=yes \
                 use_llvm=yes \
                 use_mingw=yes \
-                debug_symbols=yes
+                debug_symbols=yes \
+                separate_debug_symbols=yes
             ;;
         android)
             scons platform=android \
@@ -191,7 +193,7 @@ build-platform-target platform target precision="double":
                     precision={{precision}} \
                     target={{target}} \
                     test=yes \
-                    debug_symbol=yes
+                    #debug_symbols=yes    # Editor build runs out of space in Github Runner
             ;;
         linuxbsd)
             scons platform=linuxbsd \
@@ -200,7 +202,8 @@ build-platform-target platform target precision="double":
                     precision={{precision}} \
                     target={{target}} \
                     test=yes \
-                    debug_symbol=yes
+                    debug_symbols=yes \
+                    separate_debug_symbols=yes
             ;;
         web)
             scons platform=web \
@@ -210,7 +213,7 @@ build-platform-target platform target precision="double":
                     target={{target}} \
                     test=yes \
                     dlink_enabled=yes \
-                    debug_symbol=yes
+                    debug_symbols=yes
             ;;
         *)
             echo "Unsupported platform: {{platform}}"
