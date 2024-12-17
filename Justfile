@@ -17,7 +17,6 @@ export WORLD_PWD := invocation_directory()
 export ANDROID_NDK_VERSION := "23.2.8568313"
 export cmdlinetools := "commandlinetools-linux-11076708_latest.zip"
 
-export SCONS_CACHE := WORLD_PWD + "/.scons_cache"
 export ANDROID_SDK_ROOT := WORLD_PWD + "/android_sdk"
 export JAVA_HOME := WORLD_PWD + "/jdk"
 export VULKAN_SDK_ROOT := WORLD_PWD + "/vulkan_sdk/"
