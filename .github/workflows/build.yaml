@@ -88,6 +88,7 @@ jobs:
         with:
           name: Godot-${{ matrix.platform }}-${{ matrix.target }}-${{ matrix.precision }}
           path: editor
+
   build:
     runs-on: ubuntu-latest
     permissions:
@@ -133,27 +134,6 @@ jobs:
       - name: Checkout code 
         uses: actions/checkout@v4 
   
-      - name: Cache SCons cache 
-        uses: actions/cache@v4 
-        if: always() 
-        with: 
-          path: | 
-            .scons_cache  
-            emsdk  
-            osxcross  
-            jdk  
-            android_sdk  
-            vulkan_sdk  
-            mingw 
-          key: ${{ env.CACHE_NAME }}-${{ env.GODOT_BASE_BRANCH }}-${{ github.ref }}-${{ github.sha }}-${{ matrix.platform }}-${{ matrix.target }}-${{ matrix.precision }}
-          restore-keys: | 
-            ${{ env.CACHE_NAME }}-${{ env.GODOT_BASE_BRANCH }}-${{ github.ref }}-${{ github.sha }}-${{ matrix.platform }}-${{ matrix.target }}-${{ matrix.precision }}
-            ${{ env.CACHE_NAME }}-${{ env.GODOT_BASE_BRANCH }}-${{ github.ref }}-${{ github.sha }}-${{ matrix.platform }}-${{ matrix.target }}
-            ${{ env.CACHE_NAME }}-${{ env.GODOT_BASE_BRANCH }}-${{ github.ref }}-${{ github.sha }}  
-            ${{ env.CACHE_NAME }}-${{ env.GODOT_BASE_BRANCH }}-${{ github.ref }}  
-            ${{ env.CACHE_NAME }}-${{ env.GODOT_BASE_BRANCH }}-refs/heads/${{ env.GODOT_BASE_BRANCH }}  
-            ${{ env.CACHE_NAME }}-${{ env.GODOT_BASE_BRANCH }} 
-  
       - name: Fetch dependencies and Build Platform Target 
         run: | 
           just install_packages 
@@ -198,17 +178,24 @@ jobs:
   merge:
     runs-on: ubuntu-latest
     needs: ["build", "build-native"]
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [linuxbsd, windows, macos, android, web]
     steps:
       - name: Merge Artifacts
         uses: actions/upload-artifact/merge@v4
         with:
-          name: v-sekai-world
+          name: v-sekai-world-${{ matrix.platform }}
+          pattern: "*${{ matrix.platform }}*"
           delete-merged: true
 
   release:
     runs-on: ubuntu-latest
     needs: merge
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
     steps:
       - name: Create Release
         id: create_release
@@ -221,23 +208,31 @@ jobs:
           draft: false
           prerelease: true
 
+  upload-releases:
+    runs-on: ubuntu-latest
+    needs: release
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [linuxbsd, windows, macos, android, web]
+    steps:
       - name: Download Artifacts
         uses: actions/download-artifact@v4
         with:
-          path: v-sekai-world
-          name: v-sekai-world
+          path: v-sekai-world-${{ matrix.platform }}
+          name: v-sekai-world-${{ matrix.platform }}
 
       - name: Zip Artifacts
         run: |
           tree
-          zip -r v-sekai-world.zip v-sekai-world
+          zip -r v-sekai-world-${{ matrix.platform }}.zip v-sekai-world-${{ matrix.platform }}
 
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./v-sekai-world.zip
-          asset_name: v-sekai-world.zip
+          upload_url: ${{ needs.release.outputs.upload_url }}
+          asset_path: ./v-sekai-world-${{ matrix.platform }}.zip
+          asset_name: v-sekai-world-${{ matrix.platform }}.zip
           asset_content_type: application/zip
