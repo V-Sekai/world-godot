@@ -75,7 +75,7 @@ jobs:
           if [ ${{ matrix.target }} == "templates" ]; then
             hyperfine --show-output --runs 1 'just $PLATFORM_ARGS && just build-platform-templates ${{ matrix.platform }} ${{ matrix.precision }}'
           else
-            hyperfine --show-output --runs 1 'just $PLATFORM_ARGS && just build-platform-target ${{ matrix.platform }} ${{ matrix.target }} ${{ matrix.precision }}'
+            hyperfine --show-output --runs 1 'just $PLATFORM_ARGS && just build-platform-target ${{ matrix.platform }} ${{ matrix.target }} auto ${{ matrix.precision }}'
           fi
 
       - name: Upload Artifacts
@@ -96,112 +96,125 @@ jobs:
           name: Godot-${{ matrix.platform }}-${{ matrix.target }}-${{ matrix.precision }}
           path: editor
   build:
-    runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
-      actions: write
-    container:
-      image: fedora:39
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      BENCHER_API_TOKEN: ${{ secrets.BENCHER_API_TOKEN }}
-      GODOT_BASE_BRANCH: main
-      CACHE_NAME: v-sekai-godot
+      runs-on: ubuntu-latest
+      permissions:
+        pull-requests: write
+        actions: write
+      container:
+        image: fedora:39
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        BENCHER_API_TOKEN: ${{ secrets.BENCHER_API_TOKEN }}
+        GODOT_BASE_BRANCH: main
+        CACHE_NAME: v-sekai-godot
+      strategy:
+        fail-fast: false
+        matrix:
+          precision: [double]
+          platform: [linuxbsd, windows, android, web]
+          architecture: [x86_64, arm64, wasm32]
+          target: [editor, template_release, template_debug]
+          exclude:
+            - platform: windows
+              architecture: arm64
+            - platform: android
+              architecture: x86_64
+            - platform: web
+              architecture: arm64
+            - platform: web
+              architecture: x86_64
+            - platform: linuxbsd
+              architecture: wasm32
+            - platform: windows
+              architecture: wasm32
+            - platform: android
+              architecture: wasm32
+      concurrency:
+        group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.platform }}-${{ matrix.target }}-${{ matrix.precision }}-${{ matrix.architecture }}
+        cancel-in-progress: true
+      steps:
+        - name: Set up dependencies
+          run: dnf install -y just git
 
-    strategy:
-      fail-fast: false
-      matrix:
-        precision: [double]
-        platform: [linuxbsd, windows, android, web]
-        target: [editor, template_release, template_debug]
+        - name: Set up Go
+          uses: actions/setup-go@v2
+          with:
+            go-version: "1.22.3"
 
-    concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.platform }}-${{ matrix.target }}-${{ matrix.precision }}
-      cancel-in-progress: true
+        - name: Set up placeholders
+          run: |
+            mkdir -p godot/bin/
+            mkdir -p tpz/
+            mkdir -p editor
+            echo "This is the README for the Godot bin directory." > godot/bin/readme.md
+            echo "This is the README for the TPZ directory." > tpz/readme.md
+            echo "This is the README for the Editor directory." > editor/readme.md
 
-    steps:
-      - name: Set up dependencies
-        run: dnf install -y just git
+        - name: Checkout code 
+          uses: actions/checkout@v4
 
-      - name: Set up Go
-        uses: actions/setup-go@v2
-        with:
-          go-version: "1.22.3"
-          
-      - name: Set up placeholders
-        run: |
-          mkdir -p godot/bin/
-          mkdir -p tpz/
-          mkdir -p editor
-          echo "This is the README for the Godot bin directory." > godot/bin/readme.md
-          echo "This is the README for the TPZ directory." > tpz/readme.md
-          echo "This is the README for the Editor directory." > editor/readme.md
+        - name: Cache SCons cache 
+          uses: actions/cache@v4
+          if: ${{ matrix.platform != 'linuxbsd' }}
+          with:
+            path: |
+              .scons_cache
+              emsdk
+              osxcross
+              jdk
+              android_sdk
+              vulkan_sdk
+              mingw
+            key: ${{ env.CACHE_NAME }}-${{ env.GODOT_BASE_BRANCH }}-${{ github.ref }}-${{ github.sha }}-${{ matrix.platform }}-${{ matrix.target }}-${{ matrix.precision }}-${{ matrix.architecture }}
+            restore-keys: |
+              ${{ env.CACHE_NAME }}-${{ env.GODOT_BASE_BRANCH }}-${{ github.ref }}-${{ github.sha }}-${{ matrix.platform }}-${{ matrix.target }}-${{ matrix.precision }}-${{ matrix.architecture }}
+              ${{ env.CACHE_NAME }}-${{ env.GODOT_BASE_BRANCH }}-${{ github.ref }}-${{ github.sha }}-${{ matrix.platform }}-${{ matrix.target }}
+              ${{ env.CACHE_NAME }}-${{ env.GODOT_BASE_BRANCH }}-${{ github.ref }}-${{ github.sha }}
+              ${{ env.CACHE_NAME }}-${{ env.GODOT_BASE_BRANCH }}-${{ github.ref }}
+              ${{ env.CACHE_NAME }}-${{ env.GODOT_BASE_BRANCH }}-refs/heads/${{ env.GODOT_BASE_BRANCH }}
+              ${{ env.CACHE_NAME }}-${{ env.GODOT_BASE_BRANCH }}
 
-      - name: Checkout code 
-        uses: actions/checkout@v4 
-  
-      - name: Cache SCons cache 
-        uses: actions/cache@v4 
-        # Skip cache on Linux, PR #12
-        if: ${{ matrix.platform != 'linuxbsd' }}
-        with: 
-          path: | 
-            .scons_cache  
-            emsdk  
-            osxcross  
-            jdk  
-            android_sdk  
-            vulkan_sdk  
-            mingw 
-          key: ${{ env.CACHE_NAME }}-${{ env.GODOT_BASE_BRANCH }}-${{ github.ref }}-${{ github.sha }}-${{ matrix.platform }}-${{ matrix.target }}-${{ matrix.precision }}
-          restore-keys: | 
-            ${{ env.CACHE_NAME }}-${{ env.GODOT_BASE_BRANCH }}-${{ github.ref }}-${{ github.sha }}-${{ matrix.platform }}-${{ matrix.target }}-${{ matrix.precision }}
-            ${{ env.CACHE_NAME }}-${{ env.GODOT_BASE_BRANCH }}-${{ github.ref }}-${{ github.sha }}-${{ matrix.platform }}-${{ matrix.target }}
-            ${{ env.CACHE_NAME }}-${{ env.GODOT_BASE_BRANCH }}-${{ github.ref }}-${{ github.sha }}  
-            ${{ env.CACHE_NAME }}-${{ env.GODOT_BASE_BRANCH }}-${{ github.ref }}  
-            ${{ env.CACHE_NAME }}-${{ env.GODOT_BASE_BRANCH }}-refs/heads/${{ env.GODOT_BASE_BRANCH }}  
-            ${{ env.CACHE_NAME }}-${{ env.GODOT_BASE_BRANCH }} 
-  
-      - name: Fetch dependencies and Build Platform Target 
-        run: | 
-          just install_packages 
-          export PLATFORM_ARGS=""  
-          case "${{ matrix.platform }}" in  
-            android)  
-              PLATFORM_ARGS="fetch-openjdk setup-android-sdk"  
-              ;;  
-            web)  
-              PLATFORM_ARGS="setup-emscripten"  
-              ;;  
-            windows)  
-              PLATFORM_ARGS="fetch-llvm-mingw"  
-              ;;  
-            macos)  
-              PLATFORM_ARGS="build-osxcross fetch-vulkan-sdk"  
-              ;;  
-            *)  
-              PLATFORM_ARGS="nil"  
-              ;;  
-          esac  
-          hyperfine --show-output --runs 1 'just $PLATFORM_ARGS && just build-platform-target ${{ matrix.platform }} ${{ matrix.target }} ${{ matrix.precision }}'
+        - name: Fetch dependencies and Build Platform Target
+          run: |
+            just install_packages
+            export PLATFORM_ARGS=""
+            case "${{ matrix.platform }}" in
+              android)
+                PLATFORM_ARGS="fetch-openjdk setup-android-sdk"
+                ;;
+              web)
+                PLATFORM_ARGS="setup-emscripten"
+                ;;
+              windows)
+                PLATFORM_ARGS="fetch-llvm-mingw"
+                ;;
+              macos)
+                PLATFORM_ARGS="build-osxcross fetch-vulkan-sdk"
+                ;;
+              *)
+                PLATFORM_ARGS="nil"
+                ;;
+            esac
+            hyperfine --show-output --runs 1 \
+              "just \$PLATFORM_ARGS && just build-platform-target ${{ matrix.platform }} ${{ matrix.target }} ${{ matrix.architecture }} ${{ matrix.precision }}"
 
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-${{ matrix.platform }}-${{ matrix.target }}-${{ matrix.precision }}
-          path: godot/bin/*
+        - name: Upload Artifacts
+          uses: actions/upload-artifact@v4
+          with:
+            name: build-${{ matrix.platform }}-${{ matrix.target }}-${{ matrix.architecture }}-${{ matrix.precision }}
+            path: godot/bin/*
 
-      - name: Upload TPZ File
-        uses: actions/upload-artifact@v4
-        with:
-          name: Godot-${{ matrix.platform }}-${{ matrix.target }}-${{ matrix.precision }}.tpz
-          path: tpz
+        - name: Upload TPZ File
+          uses: actions/upload-artifact@v4
+          with:
+            name: Godot-${{ matrix.platform }}-${{ matrix.target }}-${{ matrix.architecture }}-${{ matrix.precision }}.tpz
+            path: tpz
 
-      - name: Upload Godot Editor Files
-        uses: actions/upload-artifact@v4
-        with:
-          name: Godot-${{ matrix.platform }}-${{ matrix.target }}-${{ matrix.precision }}
-          path: editor
+        - name: Upload Godot Editor Files
+          uses: actions/upload-artifact@v4
+          with:
+            name: Godot-${{ matrix.platform }}-${{ matrix.target }}-${{ matrix.architecture }}-${{ matrix.precision }}
+            path: editor
 
   merge-templates:
     runs-on: ubuntu-latest

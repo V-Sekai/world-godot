@@ -26,10 +26,10 @@ export OSXCROSS_ROOT := WORLD_PWD + "/osxcross"
 export MINGW_PREFIX := WORLD_PWD + "/mingw"
 
 build-target-macos-editor-single:
-    @just build-platform-target macos editor single
+    @just build-platform-target macos editor single auto
 
 build-target-windows-editor-single: fetch-llvm-mingw-macos
-    @just build-platform-target windows editor single
+    @just build-platform-target windows editor single auto 
 
 run-all:
     just fetch-openjdk
@@ -38,7 +38,7 @@ run-all:
     just fetch-llvm-mingw
     just build-osxcross
     just fetch-vulkan-sdk
-    just build-platform-target macos template_release
+    just build-platform-target macos template_release auto 
     echo "run-all: Success!"
 
 fetch-llvm-mingw-macos:
@@ -147,7 +147,7 @@ generate_build_constants:
     echo "const BUILD_DATE_STR = \"$(shell date --utc --iso=seconds)\"" >> v/addons/vsk_version/build_constants.gd
     echo "const BUILD_UNIX_TIME = $(shell date +%s)" >> v/addons/vsk_version/build_constants.gd
 
-build-platform-target platform target precision="double" osx_bundle="yes":
+build-platform-target platform target arch="auto" precision="double" osx_bundle="yes":
     #!/usr/bin/env bash
     set -o xtrace
     cd $WORLD_PWD
@@ -161,13 +161,13 @@ build-platform-target platform target precision="double" osx_bundle="yes":
                 export PATH=${OSXCROSS_ROOT}/target/bin/:$PATH
             fi
             scons platform=macos \
+                    arch={{arch}} \
                     werror=no \
                     compiledb=yes \
                     precision={{precision}} \
                     target={{target}} \
                     test=yes \
                     vulkan=no \
-                    arch=arm64 \
                     vulkan_sdk_path=$VULKAN_SDK_ROOT/MoltenVK/MoltenVK/static/MoltenVK.xcframework \
                     osxcross_sdk=darwin24 \
                     generate_bundle={{osx_bundle}} \
@@ -176,6 +176,7 @@ build-platform-target platform target precision="double" osx_bundle="yes":
             ;;
         windows)
             scons platform=windows \
+                arch={{arch}} \
                 werror=no \
                 compiledb=yes \
                 precision={{precision}} \
@@ -188,6 +189,7 @@ build-platform-target platform target precision="double" osx_bundle="yes":
             ;;
         android)
             scons platform=android \
+                    arch={{arch}} \
                     werror=no \
                     compiledb=yes \
                     precision={{precision}} \
@@ -197,6 +199,7 @@ build-platform-target platform target precision="double" osx_bundle="yes":
             ;;
         linuxbsd)
             scons platform=linuxbsd \
+                    arch={{arch}} \
                     werror=no \
                     compiledb=yes \
                     precision={{precision}} \
@@ -207,6 +210,7 @@ build-platform-target platform target precision="double" osx_bundle="yes":
             ;;
         web)
             scons platform=web \
+                    arch={{arch}} \
                     werror=no \
                     compiledb=yes \
                     precision={{precision}} \
@@ -222,6 +226,7 @@ build-platform-target platform target precision="double" osx_bundle="yes":
                 export PATH=${OSXCROSS_ROOT}/target/bin/:$PATH
             fi
             scons platform=ios \
+                    arch={{arch}} \
                     werror=no \
                     compiledb=yes \
                     precision={{precision}} \
@@ -256,12 +261,12 @@ build-platform-target platform target precision="double" osx_bundle="yes":
 
 build-platform-templates platform precision="double":
     # Bundle all on last command with osx_bundle
-    just build-platform-target {{platform}} template_debug {{precision}} "no"
-    just build-platform-target {{platform}} template_release {{precision}} "yes"
+    just build-platform-target {{platform}} template_debug auto {{precision}} "no"
+    just build-platform-target {{platform}} template_release auto {{precision}} "yes"
 
 all-build-platform-target:
     #!/usr/bin/env bash
-    parallel --ungroup --jobs 1 'just build-platform-target {1} {2}' \
+    parallel --ungroup --jobs 1 'just build-platform-target {1} {2} auto' \
     ::: windows linuxbsd macos android web \
     ::: editor template_debug template_release
 
@@ -269,11 +274,11 @@ handle-special-cases platform target:
     #!/usr/bin/env bash
     case "{{platform}}" in \
         android) \ 
-            just handle-android {{target}} \
+            just handle-android {{platform}} target\
             ;;
     esac
 
-handle-android target:
+handle-android platform target:
     #!/usr/bin/env bash
     cd godot
     if [ "{{target}}" = "editor" ]; then
