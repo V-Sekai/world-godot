@@ -15,7 +15,6 @@ jobs:
       actions: write
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      BENCHER_API_TOKEN: ${{ secrets.BENCHER_API_TOKEN }}
       GODOT_BASE_BRANCH: main
       CACHE_NAME: v-sekai-godot
 
@@ -104,7 +103,6 @@ jobs:
       image: fedora:39
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      BENCHER_API_TOKEN: ${{ secrets.BENCHER_API_TOKEN }}
       GODOT_BASE_BRANCH: main
       CACHE_NAME: v-sekai-godot
 
@@ -115,24 +113,31 @@ jobs:
         architecture: [x86_64, arm64, wasm32]
         platform: [linuxbsd, windows, android, web]
         target: [editor, template_release, template_debug]
+        threads: [yes, no]
         exclude:
-            - platform: android
-              architecture: x86_64
-            - platform: android
-              architecture: wasm32
-            - platform: linuxbsd
-              architecture: wasm32
-            - platform: windows
-              architecture: wasm32
-            - platform: windows
-              architecture: arm64
-            - platform: web
-              architecture: arm64
-            - platform: web
-              architecture: x86_64
+          - platform: android
+            architecture: x86_64
+          - platform: android
+            architecture: wasm32
+          - platform: linuxbsd
+            architecture: wasm32
+          - platform: windows
+            architecture: wasm32
+          - platform: windows
+            architecture: arm64
+          - platform: web
+            architecture: arm64
+          - platform: web
+            architecture: x86_64
+          - platform: linuxbsd
+            threads: no
+          - platform: windows
+            threads: no
+          - platform: android
+            threads: no
 
     concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.platform }}-${{ matrix.target }}-${{ matrix.precision }}-${{ matrix.architecture }}
+      group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.platform }}-${{ matrix.target }}-${{ matrix.precision }}-${{ matrix.architecture }}-${{ matrix.threads == 'yes' && 'threads' || 'nothreads' }}
       cancel-in-progress: true
 
     steps:
@@ -175,53 +180,55 @@ jobs:
             android_sdk  
             vulkan_sdk  
             mingw 
-          key: ${{ env.CACHE_NAME }}-${{ env.GODOT_BASE_BRANCH }}-${{ github.ref }}-${{ github.sha }}-${{ matrix.platform }}-${{ matrix.target }}-${{ matrix.precision }}-${{ matrix.architecture }}
+          key: ${{ env.CACHE_NAME }}-${{ env.GODOT_BASE_BRANCH }}-${{ github.ref }}-${{ github.sha }}-${{ matrix.platform }}-${{ matrix.target }}-${{ matrix.precision }}-${{ matrix.architecture }}-${{ matrix.threads == 'yes' && 'threads' || 'nothreads' }}
           restore-keys: | 
-            ${{ env.CACHE_NAME }}-${{ env.GODOT_BASE_BRANCH }}-${{ github.ref }}-${{ github.sha }}-${{ matrix.platform }}-${{ matrix.target }}-${{ matrix.precision }}-${{ matrix.architecture }}
+            ${{ env.CACHE_NAME }}-${{ env.GODOT_BASE_BRANCH }}-${{ github.ref }}-${{ github.sha }}-${{ matrix.platform }}-${{ matrix.target }}-${{ matrix.precision }}-${{ matrix.architecture }}-${{ matrix.threads == 'yes' && 'threads' || 'nothreads' }}
             ${{ env.CACHE_NAME }}-${{ env.GODOT_BASE_BRANCH }}-${{ github.ref }}-${{ github.sha }}-${{ matrix.platform }}-${{ matrix.target }}
             ${{ env.CACHE_NAME }}-${{ env.GODOT_BASE_BRANCH }}-${{ github.ref }}-${{ github.sha }}  
             ${{ env.CACHE_NAME }}-${{ env.GODOT_BASE_BRANCH }}-${{ github.ref }}  
             ${{ env.CACHE_NAME }}-${{ env.GODOT_BASE_BRANCH }}-refs/heads/${{ env.GODOT_BASE_BRANCH }}  
             ${{ env.CACHE_NAME }}-${{ env.GODOT_BASE_BRANCH }} 
   
-      - name: Fetch dependencies and Build Platform Target 
-        run: | 
-          just install_packages 
+      - name: Fetch dependencies and Build Platform Target
+        run: |
+          just install_packages
           export PLATFORM_ARGS=""
-          case "${{ matrix.platform }}" in  
-            android)  
-              PLATFORM_ARGS="fetch-openjdk setup-android-sdk"  
-              ;;  
-            web)  
-              PLATFORM_ARGS="setup-emscripten"  
-              ;;  
-            windows)  
-              PLATFORM_ARGS="fetch-llvm-mingw"  
-              ;;  
-            macos)  
-              PLATFORM_ARGS="build-osxcross fetch-vulkan-sdk"  
-              ;;  
-            *)  
-              PLATFORM_ARGS="nil"  
-              ;;  
+          case "${{ matrix.platform }}" in
+            android)
+              PLATFORM_ARGS="fetch-openjdk setup-android-sdk"
+              ;;
+            web)
+              PLATFORM_ARGS="setup-emscripten"
+              ;;
+            windows)
+              PLATFORM_ARGS="fetch-llvm-mingw"
+              ;;
+            macos)
+              PLATFORM_ARGS="build-osxcross fetch-vulkan-sdk"
+              ;;
+            *)
+              PLATFORM_ARGS="nil"
+              ;;
           esac
           if "${{ matrix.architecture == 'arm64' }}"; then
-              PLATFORM_ARGS="setup-arm64 $PLATFORM_ARGS"
+            PLATFORM_ARGS="setup-arm64 $PLATFORM_ARGS"
           fi
-          hyperfine --show-output --runs 1 'just $PLATFORM_ARGS && just build-platform-target ${{ matrix.platform }} ${{ matrix.target }} ${{ matrix.architecture }} ${{ matrix.precision }}'
+          hyperfine --show-output --runs 1 \
+            "just \$PLATFORM_ARGS && just build-platform-target ${{ matrix.platform }} ${{ matrix.target }} ${{ matrix.architecture }} ${{ matrix.precision }} \"yes\" ${{ matrix.threads}}"
+    
 
       - name: Upload Android Editors
         if: ${{ matrix.platform == 'android' && matrix.target == 'editor' }}
         uses: actions/upload-artifact@v4
         with:
-          name: build-${{ matrix.platform }}-${{ matrix.target }}-${{ matrix.precision }}
+          name: build-${{ matrix.platform }}-${{ matrix.target }}-${{ matrix.precision }}-${{ matrix.threads == 'yes' && 'threads' || 'nothreads' }}
           path: godot/bin/android_editor_builds/android_editor*
 
       - name: Upload Artifacts
         if: ${{ !(matrix.platform == 'android' && matrix.target == 'editor') }} 
         uses: actions/upload-artifact@v4
         with:
-          name: build-${{ matrix.platform }}-${{ matrix.target }}-${{ matrix.architecture }}-${{ matrix.precision }}
+          name: build-${{ matrix.platform }}-${{ matrix.target }}-${{ matrix.architecture }}-${{ matrix.precision }}-${{ matrix.threads == 'yes' && 'threads' || 'nothreads' }}
           path: godot/bin/*
 
       - name: Upload TPZ File
@@ -233,7 +240,7 @@ jobs:
       - name: Upload Godot Editor Files
         uses: actions/upload-artifact@v4
         with:
-          name: Godot-${{ matrix.platform }}-${{ matrix.target }}-${{ matrix.architecture }}-${{ matrix.precision }}
+          name: Godot-${{ matrix.platform }}-${{ matrix.target }}-${{ matrix.architecture }}-${{ matrix.precision }}-${{ matrix.threads == 'yes' && 'threads' || 'nothreads' }}
           path: editor
 
   merge-templates:
@@ -282,11 +289,21 @@ jobs:
       fail-fast: false
       matrix:
         platform: [linuxbsd, windows, macos, android, web]
+        threads: [yes, no]
+        exclude:
+          - platform: macos
+            threads: no
+          - platform: linuxbsd
+            threads: no
+          - platform: windows
+            threads: no
+          - platform: android
+            threads: no
     steps:
       - name: Merge Artifacts
         uses: actions/upload-artifact/merge@v4
         with:
-          name: v-sekai-godot-${{ matrix.platform }}
+          name: v-sekai-godot-${{ matrix.platform }}-${{ matrix.threads == 'yes' && 'threads' || 'nothreads' }}
           pattern: "*${{ matrix.platform }}-editor*"
           delete-merged: true
 

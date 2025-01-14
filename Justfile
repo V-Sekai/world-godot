@@ -28,14 +28,17 @@ export EMSDK_ROOT := WORLD_PWD + "/emsdk"
 export OSXCROSS_ROOT := WORLD_PWD + "/osxcross"
 export MINGW_PREFIX := WORLD_PWD + "/mingw"
 
-build-target-macos-editor-single:
-    @just build-platform-target macos editor single
+build-target-macos-editor-double:
+    @just build-platform-target macos editor arm64 double
 
-build-target-windows-editor-single: fetch-llvm-mingw
-    @just build-platform-target windows editor x86_64 single
+build-target-macos-editor-single:
+    @just build-platform-target macos editor arm64 single
 
 build-target-windows-editor-double: fetch-llvm-mingw
     @just build-platform-target windows editor x86_64 double
+
+build-target-windows-editor-single: fetch-llvm-mingw
+    @just build-platform-target windows editor x86_64 single
 
 run-all:
     just fetch-openjdk
@@ -166,7 +169,7 @@ generate_build_constants:
     echo "const BUILD_DATE_STR = \"$(shell date --utc --iso=seconds)\"" >> v/addons/vsk_version/build_constants.gd
     echo "const BUILD_UNIX_TIME = $(shell date +%s)" >> v/addons/vsk_version/build_constants.gd
 
-build-platform-target platform target arch="auto" precision="double" osx_bundle="yes":
+build-platform-target platform target arch="auto" precision="double" osx_bundle="yes" threads="yes":
     #!/usr/bin/env bash
     set -o xtrace
     cd $WORLD_PWD
@@ -194,7 +197,8 @@ build-platform-target platform target arch="auto" precision="double" osx_bundle=
                     osxcross_sdk=darwin24 \
                     generate_bundle={{osx_bundle}} \
                     debug_symbols=yes \
-                    separate_debug_symbols=yes
+                    separate_debug_symbols=yes \
+                    threads={{threads}}
             ;;
         windows)
             scons platform=windows \
@@ -207,7 +211,8 @@ build-platform-target platform target arch="auto" precision="double" osx_bundle=
                 use_llvm=yes \
                 use_mingw=yes \
                 debug_symbols=yes \
-                separate_debug_symbols=yes
+                separate_debug_symbols=yes \
+                threads={{threads}}
             ;;
         android)
             scons platform=android \
@@ -217,7 +222,7 @@ build-platform-target platform target arch="auto" precision="double" osx_bundle=
                     precision={{precision}} \
                     target={{target}} \
                     test=yes \
-                    #debug_symbols=yes    # Editor build runs out of space in Github Runner
+                    threads={{threads}}
             ;;
         linuxbsd)
             scons platform=linuxbsd \
@@ -228,7 +233,8 @@ build-platform-target platform target arch="auto" precision="double" osx_bundle=
                     target={{target}} \
                     test=yes \
                     debug_symbols=yes \
-                    separate_debug_symbols=yes
+                    separate_debug_symbols=yes \
+                    threads={{threads}}
             ;;
         web)
             scons platform=web \
@@ -239,7 +245,8 @@ build-platform-target platform target arch="auto" precision="double" osx_bundle=
                     target={{target}} \
                     test=yes \
                     dlink_enabled=yes \
-                    debug_symbols=yes
+                    debug_symbols=yes \
+                    threads={{threads}}
             ;;
         ios)
             if [ "$(uname)" = "Darwin" ]; then
@@ -259,7 +266,8 @@ build-platform-target platform target arch="auto" precision="double" osx_bundle=
                     osxcross_sdk=darwin24 \
                     generate_bundle={{osx_bundle}} \
                     debug_symbols=yes \
-                    separate_debug_symbols=yes
+                    separate_debug_symbols=yes \
+                    threads={{threads}}
             ;;
         *)
             echo "Unsupported platform: {{platform}}"
@@ -280,10 +288,10 @@ build-platform-target platform target arch="auto" precision="double" osx_bundle=
         cp -rf $WORLD_PWD/godot/bin/* $WORLD_PWD/tpz
     fi
 
-build-platform-templates platform precision="double":
+build-platform-templates platform precision="double" threads="yes":
     # Bundle all on last command with osx_bundle
-    just build-platform-target {{platform}} template_debug auto {{precision}} "no"
-    just build-platform-target {{platform}} template_release auto {{precision}} "yes"
+    just build-platform-target {{platform}} template_debug auto {{precision}} "no" {{threads}}
+    just build-platform-target {{platform}} template_release auto {{precision}} "yes" {{threads}}
 
 all-build-platform-target:
     #!/usr/bin/env bash
