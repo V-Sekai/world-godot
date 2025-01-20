@@ -217,7 +217,6 @@ void ResourceFormatLoader::_bind_methods() {
 	GDVIRTUAL_BIND(_exists, "path");
 	GDVIRTUAL_BIND(_get_classes_used, "path");
 	GDVIRTUAL_BIND(_load, "path", "original_path", "use_sub_threads", "cache_mode");
-	//GDVIRTUAL_BIND(_load_whitelisted, "path", "external_path_whitelist", "type_Whitelist", "original_path", "use_sub_threads", "cache_mode");
 }
 
 ///////////////////////////////////
@@ -306,11 +305,11 @@ Ref<Resource> ResourceLoader::_load(const String &p_path, const String &p_origin
 		}
 		found = true;
 		if (p_using_whitelist) {
-			res = loader[i]->load_whitelisted(p_path, p_external_path_whitelist, p_type_whitelist, !p_original_path.is_empty() ? p_original_path : p_path, r_error, p_use_sub_threads, r_progress, p_cache_mode);
+			res = loader[i]->load_whitelisted(p_path, p_external_path_whitelist, p_type_whitelist, p_original_path.is_valid_filename() ? p_path : p_original_path, r_error, p_use_sub_threads, r_progress, p_cache_mode);
 		} else {
-			res = loader[i]->load(p_path, !p_original_path.is_empty() ? p_original_path : p_path, r_error, p_use_sub_threads, r_progress, p_cache_mode);
+			res = loader[i]->load(p_path, p_original_path.is_valid_filename() ? p_path : p_original_path, r_error, p_use_sub_threads, r_progress, p_cache_mode);
 		}
-		if (!res.is_null()) {
+		if (res.is_valid()) {
 			break;
 		}
 	}
@@ -1621,3 +1620,7 @@ HashMap<String, Vector<String>> ResourceLoader::translation_remaps;
 HashMap<String, String> ResourceLoader::path_remaps;
 
 ResourceLoaderImport ResourceLoader::import = nullptr;
+
+Ref<Resource> ResourceFormatLoader::load_whitelisted(const String &p_path, Dictionary p_external_path_whitelist, Dictionary p_type_whitelist, const String &p_original_path, Error *r_error, bool p_use_sub_threads, float *r_progress, CacheMode p_cache_mode) {
+	return Ref<Resource>();
+}
