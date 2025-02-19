@@ -196,7 +196,8 @@ jobs:
               ;;  
             web)  
               PLATFORM_ARGS="setup-emscripten"
-              if [ ${{ matrix.target }} == 'template_debug' ]; then
+              if [ ${{ matrix.target }} == 'editor' ] \
+              || [ ${{ matrix.target }} == 'template_debug' ]; then
                   EXTRA_OPTIONS="optimize=none"; # Fix Github runner out of RAM
               fi
               ;;  
