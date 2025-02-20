@@ -4253,12 +4253,16 @@ void DisplayServerWindows::_dispatch_input_event(const Ref<InputEvent> &p_event)
 			}
 		}
 	} else {
-		// Send to all windows.
-		for (const KeyValue<WindowID, WindowData> &E : windows) {
-			const Callable callable = E.value.input_event_callback;
+		// Send to all windows. Copy all pending callbacks, since callback can erase window.
+		Vector<Callable> cbs;
+		for (KeyValue<WindowID, WindowData> &E : windows) {
+			Callable callable = E.value.input_event_callback;
 			if (callable.is_valid()) {
-				callable.call(p_event);
+				cbs.push_back(callable);
 			}
+		}
+		for (const Callable &cb : cbs) {
+			cb.call(p_event);
 		}
 	}
 
@@ -6120,15 +6124,15 @@ DisplayServer::WindowID DisplayServerWindows::_create_window(WindowMode p_mode, 
 			WindowRect.top = wpos.y;
 			WindowRect.bottom = wpos.y + p_rect.size.y;
 		}
+	}
 
-		WindowRect.left += offset.x;
-		WindowRect.right += offset.x;
-		WindowRect.top += offset.y;
-		WindowRect.bottom += offset.y;
+	WindowRect.left += offset.x;
+	WindowRect.right += offset.x;
+	WindowRect.top += offset.y;
+	WindowRect.bottom += offset.y;
 
-		if (p_mode != WINDOW_MODE_FULLSCREEN && p_mode != WINDOW_MODE_EXCLUSIVE_FULLSCREEN) {
-			AdjustWindowRectEx(&WindowRect, dwStyle, FALSE, dwExStyle);
-		}
+	if (p_mode != WINDOW_MODE_FULLSCREEN && p_mode != WINDOW_MODE_EXCLUSIVE_FULLSCREEN) {
+		AdjustWindowRectEx(&WindowRect, dwStyle, FALSE, dwExStyle);
 	}
 
 	WindowID id = window_id_counter;
