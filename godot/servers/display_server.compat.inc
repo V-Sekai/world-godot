@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*  detect_prime_x11.h                                                    */
+/*  display_server.compat.inc                                             */
 /**************************************************************************/
 /*                         This file is part of:                          */
 /*                             GODOT ENGINE                               */
@@ -28,36 +28,19 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#ifndef DETECT_PRIME_X11_H
-#define DETECT_PRIME_X11_H
+#ifndef DISABLE_DEPRECATED
 
-#if defined(X11_ENABLED) && defined(GLES3_ENABLED)
+Error DisplayServer::_file_dialog_show_bind_compat_98194(const String &p_title, const String &p_current_directory, const String &p_filename, bool p_show_hidden, FileDialogMode p_mode, const Vector<String> &p_filters, const Callable &p_callback) {
+	return file_dialog_show(p_title, p_current_directory, p_filename, p_show_hidden, p_mode, p_filters, p_callback, MAIN_WINDOW_ID);
+}
 
-class DetectPrimeX11 {
-private:
-	struct Vendor {
-		const char *glxvendor = nullptr;
-		int priority = 0;
-	};
+Error DisplayServer::_file_dialog_with_options_show_bind_compat_98194(const String &p_title, const String &p_current_directory, const String &p_root, const String &p_filename, bool p_show_hidden, FileDialogMode p_mode, const Vector<String> &p_filters, const TypedArray<Dictionary> &p_options, const Callable &p_callback) {
+	return file_dialog_with_options_show(p_title, p_current_directory, p_root, p_filename, p_show_hidden, p_mode, p_filters, p_options, p_callback, MAIN_WINDOW_ID);
+}
 
-	static constexpr Vendor vendor_map[] = {
-		{ "Advanced Micro Devices, Inc.", 30 },
-		{ "AMD", 30 },
-		{ "NVIDIA Corporation", 30 },
-		{ "X.Org", 30 },
-		{ "Intel Open Source Technology Center", 20 },
-		{ "Intel", 20 },
-		{ "nouveau", 10 },
-		{ "Mesa Project", 0 },
-		{ nullptr, 0 }
-	};
+void DisplayServer::_bind_compatibility_methods() {
+	ClassDB::bind_compatibility_method(D_METHOD("file_dialog_show", "title", "current_directory", "filename", "show_hidden", "mode", "filters", "callback"), &DisplayServer::_file_dialog_show_bind_compat_98194);
+	ClassDB::bind_compatibility_method(D_METHOD("file_dialog_with_options_show", "title", "current_directory", "root", "filename", "show_hidden", "mode", "filters", "options", "callback"), &DisplayServer::_file_dialog_with_options_show_bind_compat_98194);
+}
 
-public:
-	static void create_context();
-
-	static int detect_prime();
-};
-
-#endif // X11_ENABLED && GLES3_ENABLED
-
-#endif // DETECT_PRIME_X11_H
+#endif

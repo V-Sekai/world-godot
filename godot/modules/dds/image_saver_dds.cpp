@@ -114,6 +114,12 @@ DDSFormat _image_format_to_dds_format(Image::Format p_image_format) {
 		case Image::FORMAT_RG8: {
 			return DDS_LUMINANCE_ALPHA;
 		}
+		case Image::FORMAT_RGBA4444: {
+			return DDS_BGRA4;
+		}
+		case Image::FORMAT_RGB565: {
+			return DDS_BGR565;
+		}
 		case Image::FORMAT_RGBE9995: {
 			return DDS_RGB9E5;
 		}
@@ -318,7 +324,7 @@ Vector<uint8_t> save_dds_buffer(const Ref<Image> &p_img) {
 	stream_buffer->put_32(pitch);
 	stream_buffer->put_32(depth);
 
-	uint32_t mipmaps = image->has_mipmaps() ? (image->get_mipmap_count() + 1) : 1;
+	uint32_t mipmaps = image->get_mipmap_count() + 1;
 	stream_buffer->put_32(mipmaps);
 
 	uint32_t reserved = 0;
@@ -330,21 +336,21 @@ Vector<uint8_t> save_dds_buffer(const Ref<Image> &p_img) {
 
 	uint32_t pf_flags = 0;
 
-	if (info.compressed) {
-		pf_flags = DDPF_FOURCC;
-	} else {
+	DDSFormatType format_type = _dds_format_get_type(dds_format);
+
+	if (format_type == DDFT_BITMASK) {
 		pf_flags = DDPF_RGB;
 
 		if (image->get_format() == Image::FORMAT_LA8 || image->get_format() == Image::FORMAT_RG8 || image->get_format() == Image::FORMAT_RGBA8 || image->get_format() == Image::FORMAT_RGBA4444) {
 			pf_flags |= DDPF_ALPHAPIXELS;
 		}
+	} else {
+		pf_flags = DDPF_FOURCC;
 	}
 
 	stream_buffer->put_32(pf_flags);
 
 	bool needs_pixeldata_swap = false;
-
-	DDSFormatType format_type = _dds_format_get_type(dds_format);
 
 	if (format_type == DDFT_BITMASK) {
 		// Uncompressed bitmasked.
@@ -429,11 +435,11 @@ Vector<uint8_t> save_dds_buffer(const Ref<Image> &p_img) {
 				uint8_t *wb = data.ptrw();
 
 				for (int64_t data_i = 0; data_i < data_size; data_i += 2) {
-					uint8_t r = wb[data_i + 0] & 0x0F;
-					uint8_t b = wb[data_i + 1] & 0x0F;
+					uint8_t ar = wb[data_i + 0];
+					uint8_t gb = wb[data_i + 1];
 
-					wb[data_i + 0] = (wb[data_i + 0] & 0xF0) | b;
-					wb[data_i + 1] = (wb[data_i + 1] & 0xF0) | r;
+					wb[data_i + 1] = ((ar & 0x0F) << 4) | ((gb & 0xF0) >> 4);
+					wb[data_i + 0] = ((ar & 0xF0) >> 4) | ((gb & 0x0F) << 4);
 				}
 			} else if (mip_image->get_format() == Image::FORMAT_RGB565) {
 				// RGB565 to BGR565
