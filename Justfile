@@ -76,6 +76,9 @@ build-target-windows-editor-double: fetch-llvm-mingw
 build-target-windows-editor-single: fetch-llvm-mingw
     @just build-platform-target windows editor x86_64 single
 
+build-target-android-editor-double: fetch-llvm-mingw
+    @just build-platform-target android editor arm64 double
+
 run-all:
     just fetch-openjdk
     just setup-android-sdk
