@@ -28,8 +28,7 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#ifndef RENDERER_COMPOSITOR_RD_H
-#define RENDERER_COMPOSITOR_RD_H
+#pragma once
 
 #include "core/io/image.h"
 #include "servers/rendering/renderer_compositor.h"
@@ -119,7 +118,7 @@ public:
 	RendererCanvasRender *get_canvas() { return canvas; }
 	RendererSceneRender *get_scene() { return scene; }
 
-	void set_boot_image(const Ref<Image> &p_image, const Color &p_color, bool p_scale, bool p_use_filter);
+	void set_boot_image(const Ref<Image> &p_image, const Color &p_color, bool p_scale, DisplayServer::WindowID p_screen, bool p_use_filter);
 
 	void initialize();
 	void begin_frame(double frame_step);
@@ -151,5 +150,3 @@ public:
 	RendererCompositorRD();
 	~RendererCompositorRD();
 };
-
-#endif // RENDERER_COMPOSITOR_RD_H

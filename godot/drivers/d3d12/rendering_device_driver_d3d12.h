@@ -28,8 +28,7 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#ifndef RENDERING_DEVICE_DRIVER_D3D12_H
-#define RENDERING_DEVICE_DRIVER_D3D12_H
+#pragma once
 
 #include "core/templates/hash_map.h"
 #include "core/templates/paged_allocator.h"
@@ -64,9 +63,9 @@
 
 #include <wrl/client.h>
 
-#if defined(_MSC_VER) && defined(MemoryBarrier)
+#if defined(_MSC_VER) && defined(MemoryAccessBarrier)
 // Annoying define from winnt.h. Reintroduced by some of the headers above.
-#undef MemoryBarrier
+#undef MemoryAccessBarrier
 #endif
 
 #if defined(__GNUC__) && !defined(__clang__)
@@ -373,7 +372,7 @@ public:
 			CommandBufferID p_cmd_buffer,
 			BitField<PipelineStageBits> p_src_stages,
 			BitField<PipelineStageBits> p_dst_stages,
-			VectorView<RDD::MemoryBarrier> p_memory_barriers,
+			VectorView<RDD::MemoryAccessBarrier> p_memory_barriers,
 			VectorView<RDD::BufferBarrier> p_buffer_barriers,
 			VectorView<RDD::TextureBarrier> p_texture_barriers) override final;
 
@@ -1036,5 +1035,3 @@ public:
 	RenderingDeviceDriverD3D12(RenderingContextDriverD3D12 *p_context_driver);
 	virtual ~RenderingDeviceDriverD3D12();
 };
-
-#endif // RENDERING_DEVICE_DRIVER_D3D12_H

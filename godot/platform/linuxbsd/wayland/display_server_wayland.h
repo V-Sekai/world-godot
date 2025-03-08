@@ -28,8 +28,7 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#ifndef DISPLAY_SERVER_WAYLAND_H
-#define DISPLAY_SERVER_WAYLAND_H
+#pragma once
 
 #ifdef WAYLAND_ENABLED
 
@@ -162,7 +161,7 @@ class DisplayServerWayland : public DisplayServer {
 
 	void _resize_window(const Size2i &p_size);
 
-	virtual void _show_window();
+	bool _show_window();
 
 	void try_suspend();
 
@@ -319,5 +318,3 @@ public:
 };
 
 #endif // WAYLAND_ENABLED
-
-#endif // DISPLAY_SERVER_WAYLAND_H

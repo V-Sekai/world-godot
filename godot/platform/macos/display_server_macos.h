@@ -28,8 +28,7 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#ifndef DISPLAY_SERVER_MACOS_H
-#define DISPLAY_SERVER_MACOS_H
+#pragma once
 
 #include "core/input/input.h"
 #include "servers/display_server.h"
@@ -45,7 +44,7 @@
 #include "servers/rendering/rendering_device.h"
 
 #if defined(VULKAN_ENABLED)
-#include "rendering_context_driver_vulkan_macos.h"
+#include "drivers/apple/rendering_context_driver_vulkan_moltenvk.h"
 #endif // VULKAN_ENABLED
 #if defined(METAL_ENABLED)
 #include "drivers/metal/rendering_context_driver_metal.h"
@@ -469,5 +468,3 @@ public:
 	DisplayServerMacOS(const String &p_rendering_driver, WindowMode p_mode, VSyncMode p_vsync_mode, uint32_t p_flags, const Vector2i *p_position, const Vector2i &p_resolution, int p_screen, Context p_context, int64_t p_parent_window, Error &r_error);
 	~DisplayServerMacOS();
 };
-
-#endif // DISPLAY_SERVER_MACOS_H

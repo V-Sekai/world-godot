@@ -59,8 +59,8 @@
 #include "debugger/servers_debugger.h"
 #include "display/native_menu.h"
 #include "display_server.h"
+#include "display_server_embedded.h"
 #include "movie_writer/movie_writer.h"
-#include "movie_writer/movie_writer_exrwav.h"
 #include "movie_writer/movie_writer_mjpeg.h"
 #include "movie_writer/movie_writer_pngwav.h"
 #include "rendering/renderer_rd/framebuffer_cache_rd.h"
@@ -70,6 +70,7 @@
 #include "rendering/renderer_rd/uniform_set_cache_rd.h"
 #include "rendering/rendering_device.h"
 #include "rendering/rendering_device_binds.h"
+#include "rendering/rendering_native_surface.h"
 #include "rendering/shader_include_db.h"
 #include "rendering/storage/render_data.h"
 #include "rendering/storage/render_scene_buffers.h"
@@ -126,7 +127,17 @@ static bool has_server_feature_callback(const String &p_feature) {
 
 static MovieWriterMJPEG *writer_mjpeg = nullptr;
 static MovieWriterPNGWAV *writer_pngwav = nullptr;
-static MovieWriterEXRWAV *writer_exrwav = nullptr;
+
+void register_core_server_types() {
+	OS::get_singleton()->benchmark_begin_measure("Servers", "Register Core Extensions");
+	GDREGISTER_ABSTRACT_CLASS(RenderingNativeSurface);
+	GDREGISTER_ABSTRACT_CLASS(DisplayServer);
+	GDREGISTER_ABSTRACT_CLASS(DisplayServerEmbedded);
+	OS::get_singleton()->benchmark_end_measure("Servers", "Register Core Extensions");
+}
+
+void unregister_core_server_types() {
+}
 
 void register_server_types() {
 	OS::get_singleton()->benchmark_begin_measure("Servers", "Register Extensions");
@@ -145,7 +156,6 @@ void register_server_types() {
 
 	OS::get_singleton()->set_has_server_feature_callback(has_server_feature_callback);
 
-	GDREGISTER_ABSTRACT_CLASS(DisplayServer);
 	GDREGISTER_ABSTRACT_CLASS(RenderingServer);
 	GDREGISTER_CLASS(AudioServer);
 
@@ -309,6 +319,7 @@ void register_server_types() {
 
 	PhysicsServer3DManager::get_singleton()->register_server("Dummy", callable_mp_static(_create_dummy_physics_server_3d));
 
+#ifndef XR_DISABLED
 	GDREGISTER_ABSTRACT_CLASS(XRInterface);
 	GDREGISTER_CLASS(XRVRS);
 	GDREGISTER_CLASS(XRBodyTracker);
@@ -320,6 +331,7 @@ void register_server_types() {
 	GDREGISTER_CLASS(XRPositionalTracker);
 	GDREGISTER_CLASS(XRServer);
 	GDREGISTER_ABSTRACT_CLASS(XRTracker);
+#endif // XR_DISABLED
 #endif // _3D_DISABLED
 
 	GDREGISTER_ABSTRACT_CLASS(NavigationServer3D);
@@ -332,9 +344,6 @@ void register_server_types() {
 	writer_pngwav = memnew(MovieWriterPNGWAV);
 	MovieWriter::add_writer(writer_pngwav);
 
-	writer_exrwav = memnew(MovieWriterEXRWAV);
-	MovieWriter::add_writer(writer_exrwav);
-
 	OS::get_singleton()->benchmark_end_measure("Servers", "Register Extensions");
 }
 
@@ -345,7 +354,6 @@ void unregister_server_types() {
 	memdelete(shader_types);
 	memdelete(writer_mjpeg);
 	memdelete(writer_pngwav);
-	memdelete(writer_exrwav);
 
 	OS::get_singleton()->benchmark_end_measure("Servers", "Unregister Extensions");
 }
@@ -364,7 +372,9 @@ void register_server_singletons() {
 	Engine::get_singleton()->add_singleton(Engine::Singleton("PhysicsServer2D", PhysicsServer2D::get_singleton(), "PhysicsServer2D"));
 #ifndef _3D_DISABLED
 	Engine::get_singleton()->add_singleton(Engine::Singleton("PhysicsServer3D", PhysicsServer3D::get_singleton(), "PhysicsServer3D"));
+#ifndef XR_DISABLED
 	Engine::get_singleton()->add_singleton(Engine::Singleton("XRServer", XRServer::get_singleton(), "XRServer"));
+#endif // XR_DISABLED
 #endif // _3D_DISABLED
 
 	OS::get_singleton()->benchmark_end_measure("Servers", "Register Singletons");

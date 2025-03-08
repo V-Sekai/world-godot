@@ -129,7 +129,6 @@ env.__class__.use_windows_spawn_fix = methods.use_windows_spawn_fix
 
 env.__class__.add_shared_library = methods.add_shared_library
 env.__class__.add_library = methods.add_library
-env.__class__.add_program = methods.add_program
 env.__class__.CommandNoCache = methods.CommandNoCache
 env.__class__.Run = methods.Run
 env.__class__.disable_warnings = methods.disable_warnings
@@ -186,13 +185,20 @@ opts.Add(BoolVariable("vulkan", "Enable the vulkan rendering driver", True))
 opts.Add(BoolVariable("opengl3", "Enable the OpenGL/GLES3 rendering driver", True))
 opts.Add(BoolVariable("d3d12", "Enable the Direct3D 12 rendering driver on supported platforms", False))
 opts.Add(BoolVariable("metal", "Enable the Metal rendering driver on supported platforms (Apple arm64 only)", False))
-opts.Add(BoolVariable("openxr", "Enable the OpenXR driver", True))
 opts.Add(BoolVariable("use_volk", "Use the volk library to load the Vulkan loader dynamically", True))
 opts.Add(BoolVariable("disable_exceptions", "Force disabling exception handling code", True))
 opts.Add("custom_modules", "A list of comma-separated directory paths containing custom modules to build.", "")
 opts.Add(BoolVariable("custom_modules_recursive", "Detect custom modules recursively for each specified path.", True))
 
 # Advanced options
+opts.Add(
+    EnumVariable(
+        "library_type",
+        "Build library type",
+        "executable",
+        ("executable", "static_library", "shared_library"),
+    )
+)
 opts.Add(
     BoolVariable(
         "dev_mode", "Alias for dev options: verbose=yes warnings=extra werror=yes tests=yes strict_checks=yes", False
@@ -220,6 +226,7 @@ opts.Add("vsproj_name", "Name of the Visual Studio solution", "godot")
 opts.Add("import_env_vars", "A comma-separated list of environment variables to copy from the outer environment.", "")
 opts.Add(BoolVariable("disable_3d", "Disable 3D nodes for a smaller executable", False))
 opts.Add(BoolVariable("disable_advanced_gui", "Disable advanced GUI nodes and behaviors", False))
+opts.Add(BoolVariable("disable_xr", "Disable XR nodes and server", False))
 opts.Add("build_profile", "Path to a file containing a feature build profile", "")
 opts.Add(BoolVariable("modules_enabled_by_default", "If no, disable all modules except ones explicitly enabled", True))
 opts.Add(BoolVariable("no_editor_splash", "Don't use the custom splash screen for the editor", True))
@@ -297,7 +304,21 @@ if env["import_env_vars"]:
 
 # Platform selection: validate input, and add options.
 
-if not env["platform"]:
+if env.scons_version < (4, 3) and not env["platform"]:
+    env["platform"] = env["p"]
+
+if env["library_type"] == "static_library":
+    env.Append(CPPDEFINES=["LIBGODOT_ENABLED"])
+elif env["library_type"] == "shared_library":
+    env.Append(CPPDEFINES=["LIBGODOT_ENABLED"])
+    env.Append(CCFLAGS=["-fPIC"])
+    env.Append(STATIC_AND_SHARED_OBJECTS_ARE_THE_SAME=True)
+else:
+    env.__class__.add_program = methods.add_program
+
+if env["platform"] != "":
+    selected_platform = env["platform"]
+else:
     # Missing `platform` argument, try to detect platform automatically
     if (
         sys.platform.startswith("linux")
@@ -314,6 +335,7 @@ if not env["platform"]:
 
     if env["platform"]:
         print(f"Automatically detected platform: {env['platform']}")
+
 
 # Deprecated aliases kept for compatibility.
 if env["platform"] in compatibility_platform_aliases:
@@ -747,9 +769,6 @@ else:
             # Remap absolute paths to relative paths for debug symbols.
             project_path = Dir("#").abspath
             env.Append(CCFLAGS=[f"-ffile-prefix-map={project_path}=."])
-        if env["platform"] == "windows" and env["use_mingw"] and ["use_llvm"]:
-                env.Append(LINKFLAGS=["-Wl,-pdb="])
-                env.Append(CCFLAGS=["-gcodeview"])
     else:
         if methods.is_apple_clang(env):
             # Apple Clang, its linker doesn't like -s.
@@ -998,6 +1017,7 @@ if env["disable_3d"]:
         Exit(255)
     else:
         env.Append(CPPDEFINES=["_3D_DISABLED"])
+        env["disable_xr"] = True
 if env["disable_advanced_gui"]:
     if env.editor_build:
         print_error(
@@ -1006,6 +1026,8 @@ if env["disable_advanced_gui"]:
         Exit(255)
     else:
         env.Append(CPPDEFINES=["ADVANCED_GUI_DISABLED"])
+if env["disable_xr"]:
+    env.Append(CPPDEFINES=["XR_DISABLED"])
 if env["minizip"]:
     env.Append(CPPDEFINES=["MINIZIP_ENABLED"])
 if env["brotli"]:

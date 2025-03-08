@@ -28,12 +28,12 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#ifndef WINDOW_H
-#define WINDOW_H
+#pragma once
 
 #include "scene/main/viewport.h"
 #include "scene/resources/theme.h"
 #include "servers/display_server.h"
+#include "servers/rendering/rendering_native_surface.h"
 
 class Font;
 class Shortcut;
@@ -171,6 +171,8 @@ private:
 	void _propagate_window_notification(Node *p_node, int p_notification);
 
 	void _update_window_callbacks();
+
+	Ref<RenderingNativeSurface> native_surface;
 
 	Window *transient_parent = nullptr;
 	Window *exclusive_child = nullptr;
@@ -320,6 +322,8 @@ public:
 
 	virtual void set_visible(bool p_visible);
 	bool is_visible() const;
+
+	void set_native_surface(Ref<RenderingNativeSurface> p_native_surface);
 
 	void update_mouse_cursor_state() override;
 
@@ -501,5 +505,3 @@ VARIANT_ENUM_CAST(Window::ContentScaleAspect);
 VARIANT_ENUM_CAST(Window::ContentScaleStretch);
 VARIANT_ENUM_CAST(Window::LayoutDirection);
 VARIANT_ENUM_CAST(Window::WindowInitialPosition);
-
-#endif // WINDOW_H

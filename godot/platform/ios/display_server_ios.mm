@@ -47,6 +47,8 @@
 
 #import <GameController/GameController.h>
 
+#include "drivers/apple/rendering_native_surface_apple.h"
+
 static const float kDisplayServerIOSAcceleration = 1.f;
 
 DisplayServerIOS *DisplayServerIOS::get_singleton() {
@@ -71,18 +73,7 @@ DisplayServerIOS::DisplayServerIOS(const String &p_rendering_driver, WindowMode 
 
 	CALayer *layer = nullptr;
 
-	union {
-#ifdef VULKAN_ENABLED
-		RenderingContextDriverVulkanIOS::WindowPlatformData vulkan;
-#endif
-#ifdef METAL_ENABLED
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunguarded-availability"
-		// Eliminate "RenderingContextDriverMetal is only available on iOS 14.0 or newer".
-		RenderingContextDriverMetal::WindowPlatformData metal;
-#pragma clang diagnostic pop
-#endif
-	} wpd;
+	Ref<RenderingNativeSurfaceApple> apple_surface;
 
 #if defined(VULKAN_ENABLED)
 	if (rendering_driver == "vulkan") {
@@ -90,16 +81,16 @@ DisplayServerIOS::DisplayServerIOS(const String &p_rendering_driver, WindowMode 
 		if (!layer) {
 			ERR_FAIL_MSG("Failed to create iOS Vulkan rendering layer.");
 		}
-		wpd.vulkan.layer_ptr = (CAMetalLayer *const *)&layer;
-		rendering_context = memnew(RenderingContextDriverVulkanIOS);
+		apple_surface = RenderingNativeSurfaceApple::create((CAMetalLayer *const *)&layer);
+		rendering_context = apple_surface->create_rendering_context(rendering_driver);
 	}
 #endif
 #ifdef METAL_ENABLED
 	if (rendering_driver == "metal") {
 		if (@available(iOS 14.0, *)) {
 			layer = [AppDelegate.viewController.godotView initializeRenderingForDriver:@"metal"];
-			wpd.metal.layer = (CAMetalLayer *)layer;
-			rendering_context = memnew(RenderingContextDriverMetal);
+			apple_surface = RenderingNativeSurfaceApple::create((CAMetalLayer *const *)&layer);
+			rendering_context = apple_surface->create_rendering_context(rendering_driver);
 		} else {
 			OS::get_singleton()->alert("Metal is only supported on iOS 14.0 and later.");
 			r_error = ERR_UNAVAILABLE;
@@ -129,7 +120,7 @@ DisplayServerIOS::DisplayServerIOS(const String &p_rendering_driver, WindowMode 
 	}
 
 	if (rendering_context) {
-		if (rendering_context->window_create(MAIN_WINDOW_ID, &wpd) != OK) {
+		if (rendering_context->window_create(MAIN_WINDOW_ID, apple_surface) != OK) {
 			ERR_PRINT(vformat("Failed to create %s window.", rendering_driver));
 			memdelete(rendering_context);
 			rendering_context = nullptr;
@@ -565,6 +556,15 @@ int64_t DisplayServerIOS::window_get_native_handle(HandleType p_handle_type, Win
 		case WINDOW_VIEW: {
 			return (int64_t)AppDelegate.viewController.godotView;
 		}
+#if defined(GLES3_ENABLED)
+		case OPENGL_FBO: {
+			if (rendering_driver == "opengl3") {
+				GodotOpenGLLayer *godotLayer = (GodotOpenGLLayer *)AppDelegate.viewController.godotView.layer;
+				return (int64_t)godotLayer->viewFramebuffer;
+			}
+			return 0;
+		}
+#endif
 		default: {
 			return 0;
 		}
@@ -774,7 +774,7 @@ bool DisplayServerIOS::has_hardware_keyboard() const {
 }
 
 void DisplayServerIOS::clipboard_set(const String &p_text) {
-	[UIPasteboard generalPasteboard].string = [NSString stringWithUTF8String:p_text.utf8()];
+	[UIPasteboard generalPasteboard].string = [NSString stringWithUTF8String:p_text.utf8().get_data()];
 }
 
 String DisplayServerIOS::clipboard_get() const {

@@ -28,8 +28,7 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#ifndef DISPLAY_SERVER_IOS_H
-#define DISPLAY_SERVER_IOS_H
+#pragma once
 
 #include "core/input/input.h"
 #include "servers/display_server.h"
@@ -39,7 +38,6 @@
 #include "servers/rendering/rendering_device.h"
 
 #if defined(VULKAN_ENABLED)
-#import "rendering_context_driver_vulkan_ios.h"
 
 #include "drivers/vulkan/godot_vulkan.h"
 #endif // VULKAN_ENABLED
@@ -235,5 +233,3 @@ public:
 	void resize_window(CGSize size);
 	virtual void swap_buffers() override {}
 };
-
-#endif // DISPLAY_SERVER_IOS_H

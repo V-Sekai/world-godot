@@ -28,8 +28,7 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#ifndef RENDERING_CONTEXT_DRIVER_VULKAN_ANDROID_H
-#define RENDERING_CONTEXT_DRIVER_VULKAN_ANDROID_H
+#pragma once
 
 #ifdef VULKAN_ENABLED
 
@@ -42,18 +41,12 @@ private:
 	virtual const char *_get_platform_surface_extension() const override final;
 
 protected:
-	SurfaceID surface_create(const void *p_platform_data) override final;
+	SurfaceID surface_create(Ref<RenderingNativeSurface> p_native_surface) override final;
 	bool _use_validation_layers() const override final;
 
 public:
-	struct WindowPlatformData {
-		ANativeWindow *window;
-	};
-
 	RenderingContextDriverVulkanAndroid() = default;
 	~RenderingContextDriverVulkanAndroid() override = default;
 };
 
 #endif // VULKAN_ENABLED
-
-#endif // RENDERING_CONTEXT_DRIVER_VULKAN_ANDROID_H

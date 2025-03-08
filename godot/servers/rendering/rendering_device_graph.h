@@ -28,8 +28,7 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#ifndef RENDERING_DEVICE_GRAPH_H
-#define RENDERING_DEVICE_GRAPH_H
+#pragma once
 
 #include "core/object/worker_thread_pool.h"
 #include "rendering_device_commons.h"
@@ -105,7 +104,7 @@ public:
 
 		Type type = TYPE_NONE;
 		int32_t adjacent_command_list_index = -1;
-		RDD::MemoryBarrier memory_barrier;
+		RDD::MemoryAccessBarrier memory_barrier;
 		int32_t normalization_barrier_index = -1;
 		int normalization_barrier_count = 0;
 		int32_t transition_barrier_index = -1;
@@ -661,7 +660,7 @@ private:
 	struct BarrierGroup {
 		BitField<RDD::PipelineStageBits> src_stages;
 		BitField<RDD::PipelineStageBits> dst_stages;
-		RDD::MemoryBarrier memory_barrier;
+		RDD::MemoryAccessBarrier memory_barrier;
 		LocalVector<RDD::TextureBarrier> normalization_barriers;
 		LocalVector<RDD::TextureBarrier> transition_barriers;
 #if USE_BUFFER_BARRIERS
@@ -825,5 +824,3 @@ public:
 };
 
 using RDG = RenderingDeviceGraph;
-
-#endif // RENDERING_DEVICE_GRAPH_H

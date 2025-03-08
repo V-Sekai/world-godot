@@ -28,8 +28,7 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#ifndef OS_IOS_H
-#define OS_IOS_H
+#pragma once
 
 #ifdef IOS_ENABLED
 
@@ -45,7 +44,7 @@
 #include "servers/rendering/rendering_device.h"
 
 #if defined(VULKAN_ENABLED)
-#import "rendering_context_driver_vulkan_ios.h"
+#include "drivers/apple/rendering_context_driver_vulkan_moltenvk.h"
 #endif
 #endif
 
@@ -137,5 +136,3 @@ public:
 };
 
 #endif // IOS_ENABLED
-
-#endif // OS_IOS_H

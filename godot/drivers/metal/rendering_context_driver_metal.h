@@ -28,8 +28,7 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#ifndef RENDERING_CONTEXT_DRIVER_METAL_H
-#define RENDERING_CONTEXT_DRIVER_METAL_H
+#pragma once
 
 #ifdef METAL_ENABLED
 
@@ -72,7 +71,7 @@ public:
 	bool device_supports_present(uint32_t p_device_index, SurfaceID p_surface) const final override { return true; }
 	RenderingDeviceDriver *driver_create() final override;
 	void driver_free(RenderingDeviceDriver *p_driver) final override;
-	SurfaceID surface_create(const void *p_platform_data) final override;
+	SurfaceID surface_create(Ref<RenderingNativeSurface> p_native_surface) final override;
 	void surface_set_size(SurfaceID p_surface, uint32_t p_width, uint32_t p_height) final override;
 	void surface_set_vsync_mode(SurfaceID p_surface, DisplayServer::VSyncMode p_vsync_mode) final override;
 	DisplayServer::VSyncMode surface_get_vsync_mode(SurfaceID p_surface) const final override;
@@ -85,16 +84,7 @@ public:
 
 #pragma mark - Metal-specific methods
 
-	// Platform-specific data for the Windows embedded in this driver.
-	struct WindowPlatformData {
-#ifdef __OBJC__
-		CAMetalLayer *__unsafe_unretained layer;
-#else
-		void *layer;
-#endif
-	};
-
-	class API_AVAILABLE(macos(11.0), ios(14.0), tvos(14.0)) Surface {
+	class API_AVAILABLE(macos(11.0), ios(14.0)) Surface {
 	protected:
 #ifdef __OBJC__
 		id<MTLDevice> device;
@@ -143,5 +133,3 @@ public:
 };
 
 #endif // METAL_ENABLED
-
-#endif // RENDERING_CONTEXT_DRIVER_METAL_H
