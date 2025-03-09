@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef PACKED_SCENE_H
+#define PACKED_SCENE_H
 
 #include "core/io/resource.h"
 #include "scene/main/node.h"
@@ -69,7 +70,7 @@ class SceneState : public RefCounted {
 	};
 
 	struct DeferredNodePathProperties {
-		ObjectID base;
+		Node *base = nullptr;
 		StringName property;
 		Variant value;
 	};
@@ -279,3 +280,5 @@ public:
 };
 
 VARIANT_ENUM_CAST(PackedScene::GenEditState)
+
+#endif // PACKED_SCENE_H

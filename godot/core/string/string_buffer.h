@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef STRING_BUFFER_H
+#define STRING_BUFFER_H
 
 #include "core/string/ustring.h"
 
@@ -157,3 +158,5 @@ int64_t StringBuffer<SHORT_BUFFER_SIZE>::as_int() {
 	current_buffer_ptr()[string_length] = '\0';
 	return String::to_int(current_buffer_ptr());
 }
+
+#endif // STRING_BUFFER_H

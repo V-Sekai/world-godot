@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef RENDERER_COMPOSITOR_H
+#define RENDERER_COMPOSITOR_H
 
 #include "servers/rendering/environment/renderer_fog.h"
 #include "servers/rendering/environment/renderer_gi.h"
@@ -109,3 +110,5 @@ public:
 	RendererCompositor();
 	virtual ~RendererCompositor();
 };
+
+#endif // RENDERER_COMPOSITOR_H

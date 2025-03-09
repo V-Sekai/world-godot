@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef GODOT_BODY_DIRECT_STATE_3D_H
+#define GODOT_BODY_DIRECT_STATE_3D_H
 
 #include "servers/physics_server_3d.h"
 
@@ -102,3 +103,5 @@ public:
 
 	virtual real_t get_step() const override;
 };
+
+#endif // GODOT_BODY_DIRECT_STATE_3D_H

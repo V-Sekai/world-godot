@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef EDITOR_SCENE_EXPORTER_GLTF_SETTINGS_H
+#define EDITOR_SCENE_EXPORTER_GLTF_SETTINGS_H
 
 #ifdef TOOLS_ENABLED
 
@@ -64,3 +65,5 @@ public:
 };
 
 #endif // TOOLS_ENABLED
+
+#endif // EDITOR_SCENE_EXPORTER_GLTF_SETTINGS_H

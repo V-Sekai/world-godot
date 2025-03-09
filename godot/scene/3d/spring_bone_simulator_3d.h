@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef SPRING_BONE_SIMULATOR_3D_H
+#define SPRING_BONE_SIMULATOR_3D_H
 
 #include "scene/3d/skeleton_modifier_3d.h"
 
@@ -285,3 +286,5 @@ public:
 VARIANT_ENUM_CAST(SpringBoneSimulator3D::BoneDirection);
 VARIANT_ENUM_CAST(SpringBoneSimulator3D::CenterFrom);
 VARIANT_ENUM_CAST(SpringBoneSimulator3D::RotationAxis);
+
+#endif // SPRING_BONE_SIMULATOR_3D_H

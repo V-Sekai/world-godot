@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef RENDERING_DEVICE_BINDS_H
+#define RENDERING_DEVICE_BINDS_H
 
 #include "servers/rendering/rendering_device.h"
 
@@ -728,3 +729,5 @@ protected:
 		ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "attachments", PROPERTY_HINT_ARRAY_TYPE, "RDPipelineColorBlendStateAttachment"), "set_attachments", "get_attachments");
 	}
 };
+
+#endif // RENDERING_DEVICE_BINDS_H

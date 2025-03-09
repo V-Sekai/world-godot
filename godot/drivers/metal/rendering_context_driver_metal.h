@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef RENDERING_CONTEXT_DRIVER_METAL_H
+#define RENDERING_CONTEXT_DRIVER_METAL_H
 
 #ifdef METAL_ENABLED
 
@@ -133,3 +134,5 @@ public:
 };
 
 #endif // METAL_ENABLED
+
+#endif // RENDERING_CONTEXT_DRIVER_METAL_H

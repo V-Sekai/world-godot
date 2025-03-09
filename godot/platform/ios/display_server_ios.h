@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef DISPLAY_SERVER_IOS_H
+#define DISPLAY_SERVER_IOS_H
 
 #include "core/input/input.h"
 #include "servers/display_server.h"
@@ -233,3 +234,5 @@ public:
 	void resize_window(CGSize size);
 	virtual void swap_buffers() override {}
 };
+
+#endif // DISPLAY_SERVER_IOS_H

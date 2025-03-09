@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef SCRIPT_EDITOR_DEBUGGER_H
+#define SCRIPT_EDITOR_DEBUGGER_H
 
 #include "core/object/script_language.h"
 #include "core/os/os.h"
@@ -323,3 +324,5 @@ public:
 	ScriptEditorDebugger();
 	~ScriptEditorDebugger();
 };
+
+#endif // SCRIPT_EDITOR_DEBUGGER_H

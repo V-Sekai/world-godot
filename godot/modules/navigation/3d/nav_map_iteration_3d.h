@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef NAV_MAP_ITERATION_3D_H
+#define NAV_MAP_ITERATION_3D_H
 
 #include "../nav_rid.h"
 #include "../nav_utils.h"
@@ -109,3 +110,5 @@ public:
 		map_iteration.rwlock.read_unlock();
 	}
 };
+
+#endif // NAV_MAP_ITERATION_3D_H

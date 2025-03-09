@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef RENDERER_COMPOSITOR_RD_H
+#define RENDERER_COMPOSITOR_RD_H
 
 #include "core/io/image.h"
 #include "servers/rendering/renderer_compositor.h"
@@ -150,3 +151,5 @@ public:
 	RendererCompositorRD();
 	~RendererCompositorRD();
 };
+
+#endif // RENDERER_COMPOSITOR_RD_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef MESH_INSTANCE_3D_EDITOR_PLUGIN_H
+#define MESH_INSTANCE_3D_EDITOR_PLUGIN_H
 
 #include "editor/plugins/editor_plugin.h"
 #include "scene/3d/mesh_instance_3d.h"
@@ -121,3 +122,5 @@ public:
 	MeshInstance3DEditorPlugin();
 	~MeshInstance3DEditorPlugin();
 };
+
+#endif // MESH_INSTANCE_3D_EDITOR_PLUGIN_H

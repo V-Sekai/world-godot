@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef ANIMATION_STATE_MACHINE_EDITOR_H
+#define ANIMATION_STATE_MACHINE_EDITOR_H
 
 #include "editor/plugins/animation_tree_editor_plugin.h"
 #include "scene/animation/animation_node_state_machine.h"
@@ -329,3 +330,5 @@ public:
 
 	EditorAnimationMultiTransitionEdit() {}
 };
+
+#endif // ANIMATION_STATE_MACHINE_EDITOR_H

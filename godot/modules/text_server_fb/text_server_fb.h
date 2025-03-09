@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TEXT_SERVER_FB_H
+#define TEXT_SERVER_FB_H
 
 /*************************************************************************/
 /* Fallback Text Server provides simplified TS functionality, without    */
@@ -218,7 +219,6 @@ class TextServerFallback : public TextServerExtension {
 		Rect2 rect;
 		Rect2 uv_rect;
 		Vector2 advance;
-		bool from_svg = false;
 	};
 
 	struct FontForSizeFallback {
@@ -872,3 +872,5 @@ public:
 	TextServerFallback();
 	~TextServerFallback();
 };
+
+#endif // TEXT_SERVER_FB_H

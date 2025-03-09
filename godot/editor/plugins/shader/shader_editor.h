@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef SHADER_EDITOR_H
+#define SHADER_EDITOR_H
 
 #include "scene/gui/control.h"
 #include "scene/resources/shader.h"
@@ -45,3 +46,5 @@ public:
 	virtual void save_external_data(const String &p_str = "") = 0;
 	virtual void validate_script() = 0;
 };
+
+#endif // SHADER_EDITOR_H

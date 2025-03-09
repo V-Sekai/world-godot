@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef EDITOR_PREVIEW_PLUGINS_H
+#define EDITOR_PREVIEW_PLUGINS_H
 
 #include "editor/editor_resource_preview.h"
 
@@ -182,3 +183,5 @@ public:
 
 	EditorGradientPreviewPlugin();
 };
+
+#endif // EDITOR_PREVIEW_PLUGINS_H

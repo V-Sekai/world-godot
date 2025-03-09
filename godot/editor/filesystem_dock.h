@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef FILESYSTEM_DOCK_H
+#define FILESYSTEM_DOCK_H
 
 #include "editor/dependency_editor.h"
 #include "editor/editor_file_system.h"
@@ -421,3 +422,5 @@ public:
 };
 
 VARIANT_ENUM_CAST(FileSystemDock::Overwrite);
+
+#endif // FILESYSTEM_DOCK_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef ANIMATION_TRACK_EDITOR_H
+#define ANIMATION_TRACK_EDITOR_H
 
 #include "editor/editor_data.h"
 #include "editor/editor_properties.h"
@@ -1002,3 +1003,5 @@ public:
 	AnimationMarkerKeyEditEditor(Ref<Animation> p_animation, const StringName &p_name, bool p_use_fps);
 	~AnimationMarkerKeyEditEditor();
 };
+
+#endif // ANIMATION_TRACK_EDITOR_H

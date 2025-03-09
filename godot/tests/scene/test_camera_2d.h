@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TEST_CAMERA_2D_H
+#define TEST_CAMERA_2D_H
 
 #include "scene/2d/camera_2d.h"
 #include "scene/main/viewport.h"
@@ -313,3 +314,5 @@ TEST_CASE("[SceneTree][Camera2D] Transforms") {
 }
 
 } // namespace TestCamera2D
+
+#endif // TEST_CAMERA_2D_H

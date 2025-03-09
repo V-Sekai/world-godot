@@ -502,14 +502,18 @@ int Viewport::_sub_window_find(Window *p_window) const {
 }
 
 void Viewport::_update_viewport_path() {
-	if (!is_inside_tree()) {
+	if (viewport_textures.is_empty()) {
 		return;
 	}
 
-	for (ViewportTexture *E : viewport_textures) {
-		Node *loc_scene = E->get_local_scene();
-		if (loc_scene) {
-			E->path = loc_scene->get_path_to(this);
+	Node *scene_root = get_scene_file_path().is_empty() ? get_owner() : this;
+	if (!scene_root && is_inside_tree()) {
+		scene_root = get_tree()->get_edited_scene_root();
+	}
+	if (scene_root && (scene_root == this || scene_root->is_ancestor_of(this))) {
+		NodePath path_in_scene = scene_root->get_path_to(this);
+		for (ViewportTexture *E : viewport_textures) {
+			E->path = path_in_scene;
 		}
 	}
 }
@@ -697,7 +701,7 @@ void Viewport::_process_picking() {
 		physics_picking_events.clear();
 		return;
 	}
-#ifndef XR_DISABLED
+#ifndef _3D_DISABLED
 	if (use_xr) {
 		if (XRServer::get_singleton() != nullptr) {
 			Ref<XRInterface> xr_interface = XRServer::get_singleton()->get_primary_interface();
@@ -708,7 +712,7 @@ void Viewport::_process_picking() {
 			}
 		}
 	}
-#endif // XR_DISABLED
+#endif
 
 	_drop_physics_mouseover(true);
 
@@ -998,10 +1002,10 @@ void Viewport::update_canvas_items() {
 	_update_canvas_items(this);
 }
 
-bool Viewport::_set_size(const Size2i &p_size, const Size2 &p_size_2d_override, bool p_allocated) {
+bool Viewport::_set_size(const Size2i &p_size, const Size2i &p_size_2d_override, bool p_allocated) {
 	Transform2D stretch_transform_new = Transform2D();
 	if (is_size_2d_override_stretch_enabled() && p_size_2d_override.width > 0 && p_size_2d_override.height > 0) {
-		Size2 scale = Size2(p_size) / p_size_2d_override;
+		Size2 scale = Size2(p_size) / Size2(p_size_2d_override);
 		stretch_transform_new.scale(scale);
 	}
 
@@ -1054,7 +1058,7 @@ bool Viewport::_set_size(const Size2i &p_size, const Size2 &p_size_2d_override, 
 }
 
 Size2i Viewport::_get_size() const {
-#ifndef XR_DISABLED
+#ifndef _3D_DISABLED
 	if (use_xr) {
 		if (XRServer::get_singleton() != nullptr) {
 			Ref<XRInterface> xr_interface = XRServer::get_singleton()->get_primary_interface();
@@ -1065,12 +1069,12 @@ Size2i Viewport::_get_size() const {
 		}
 		return Size2i();
 	}
-#endif // XR_DISABLED
+#endif // _3D_DISABLED
 
 	return size;
 }
 
-Size2 Viewport::_get_size_2d_override() const {
+Size2i Viewport::_get_size_2d_override() const {
 	return size_2d_override;
 }
 
@@ -1088,7 +1092,7 @@ Rect2 Viewport::get_visible_rect() const {
 		r = Rect2(Point2(), size);
 	}
 
-	if (size_2d_override != Size2()) {
+	if (size_2d_override != Size2i()) {
 		r.size = size_2d_override;
 	}
 
@@ -1542,8 +1546,6 @@ void Viewport::_gui_show_tooltip() {
 	panel->set_flag(Window::FLAG_POPUP, false);
 	panel->set_flag(Window::FLAG_MOUSE_PASSTHROUGH, true);
 	panel->set_wrap_controls(true);
-	panel->set_default_canvas_item_texture_filter(get_default_canvas_item_texture_filter());
-	panel->set_default_canvas_item_texture_repeat(get_default_canvas_item_texture_repeat());
 	panel->add_child(base_tooltip);
 	panel->gui_parent = this;
 
@@ -2159,10 +2161,6 @@ void Viewport::_gui_input_event(Ref<InputEvent> p_event) {
 				set_input_as_handled();
 				return;
 			}
-		}
-
-		if (!Engine::get_singleton()->is_editor_hint() && !Engine::get_singleton()->is_project_manager_hint() && p_event->is_action_pressed("ui_toggle_licenses_dialog")) {
-			SceneTree::get_singleton()->set_licenses_dialog_visible(!SceneTree::get_singleton()->is_licenses_dialog_visible());
 		}
 
 		if (gui.key_focus && !gui.key_focus->is_visible_in_tree()) {
@@ -5225,10 +5223,7 @@ void SubViewport::set_size_2d_override(const Size2i &p_size) {
 
 Size2i SubViewport::get_size_2d_override() const {
 	ERR_READ_THREAD_GUARD_V(Size2i());
-	// Rounding will cause offset issues with the
-	// exact positioning of subwindows, but changing the
-	// type of size_2d_override would break compatibility.
-	return Size2i((_get_size_2d_override() + Size2(0.5, 0.5)).floor());
+	return _get_size_2d_override();
 }
 
 void SubViewport::set_size_2d_override_stretch(bool p_enable) {

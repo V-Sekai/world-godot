@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef CONTAINER_TYPE_VALIDATE_H
+#define CONTAINER_TYPE_VALIDATE_H
 
 #include "core/object/script_language.h"
 #include "core/variant/variant.h"
@@ -147,3 +148,5 @@ struct ContainerTypeValidate {
 		return true;
 	}
 };
+
+#endif // CONTAINER_TYPE_VALIDATE_H

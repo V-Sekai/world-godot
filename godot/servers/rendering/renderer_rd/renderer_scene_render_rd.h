@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef RENDERER_SCENE_RENDER_RD_H
+#define RENDERER_SCENE_RENDER_RD_H
 
 #include "servers/rendering/renderer_compositor.h"
 #include "servers/rendering/renderer_rd/effects/bokeh_dof.h"
@@ -341,3 +342,5 @@ public:
 	RendererSceneRenderRD();
 	~RendererSceneRenderRD();
 };
+
+#endif // RENDERER_SCENE_RENDER_RD_H

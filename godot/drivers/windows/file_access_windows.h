@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef FILE_ACCESS_WINDOWS_H
+#define FILE_ACCESS_WINDOWS_H
 
 #ifdef WINDOWS_ENABLED
 
@@ -97,3 +98,5 @@ public:
 };
 
 #endif // WINDOWS_ENABLED
+
+#endif // FILE_ACCESS_WINDOWS_H

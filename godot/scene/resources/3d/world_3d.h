@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef WORLD_3D_H
+#define WORLD_3D_H
 
 #include "core/io/resource.h"
 #include "scene/resources/compositor.h"
@@ -88,3 +89,5 @@ public:
 	World3D();
 	~World3D();
 };
+
+#endif // WORLD_3D_H

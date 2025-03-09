@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef SPRITE_FRAMES_EDITOR_PLUGIN_H
+#define SPRITE_FRAMES_EDITOR_PLUGIN_H
 
 #include "editor/plugins/editor_plugin.h"
 #include "scene/gui/button.h"
@@ -303,3 +304,5 @@ public:
 	SpriteFramesEditorPlugin();
 	~SpriteFramesEditorPlugin();
 };
+
+#endif // SPRITE_FRAMES_EDITOR_PLUGIN_H

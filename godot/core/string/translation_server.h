@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TRANSLATION_SERVER_H
+#define TRANSLATION_SERVER_H
 
 #include "core/string/translation.h"
 #include "core/string/translation_domain.h"
@@ -159,3 +160,5 @@ public:
 
 	TranslationServer();
 };
+
+#endif // TRANSLATION_SERVER_H

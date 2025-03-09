@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef STATIC_BODY_2D_H
+#define STATIC_BODY_2D_H
 
 #include "scene/2d/physics/physics_body_2d.h"
 
@@ -70,3 +71,5 @@ public:
 private:
 	void _reload_physics_characteristics();
 };
+
+#endif // STATIC_BODY_2D_H

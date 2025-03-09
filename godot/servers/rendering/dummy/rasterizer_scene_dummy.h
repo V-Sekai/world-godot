@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef RASTERIZER_SCENE_DUMMY_H
+#define RASTERIZER_SCENE_DUMMY_H
 
 #include "core/templates/paged_allocator.h"
 #include "servers/rendering/renderer_scene_render.h"
@@ -196,3 +197,5 @@ public:
 	RasterizerSceneDummy() {}
 	~RasterizerSceneDummy() {}
 };
+
+#endif // RASTERIZER_SCENE_DUMMY_H

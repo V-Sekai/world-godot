@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef SCENE_SHADER_FORWARD_MOBILE_H
+#define SCENE_SHADER_FORWARD_MOBILE_H
 
 #include "../storage_rd/material_storage.h"
 #include "servers/rendering/renderer_rd/pipeline_hash_map_rd.h"
@@ -336,3 +337,5 @@ public:
 };
 
 } // namespace RendererSceneRenderImplementation
+
+#endif // SCENE_SHADER_FORWARD_MOBILE_H

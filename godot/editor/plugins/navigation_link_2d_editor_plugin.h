@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef NAVIGATION_LINK_2D_EDITOR_PLUGIN_H
+#define NAVIGATION_LINK_2D_EDITOR_PLUGIN_H
 
 #include "editor/plugins/editor_plugin.h"
 #include "scene/2d/navigation_link_2d.h"
@@ -74,3 +75,5 @@ public:
 
 	NavigationLink2DEditorPlugin();
 };
+
+#endif // NAVIGATION_LINK_2D_EDITOR_PLUGIN_H

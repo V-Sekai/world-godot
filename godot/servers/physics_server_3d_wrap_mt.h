@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef PHYSICS_SERVER_3D_WRAP_MT_H
+#define PHYSICS_SERVER_3D_WRAP_MT_H
 
 #include "core/config/project_settings.h"
 #include "core/object/worker_thread_pool.h"
@@ -413,3 +414,5 @@ public:
 #ifdef DEBUG_ENABLED
 #undef MAIN_THREAD_SYNC_WARN
 #endif
+
+#endif // PHYSICS_SERVER_3D_WRAP_MT_H

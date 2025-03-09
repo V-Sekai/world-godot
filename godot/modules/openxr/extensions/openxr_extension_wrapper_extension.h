@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef OPENXR_EXTENSION_WRAPPER_EXTENSION_H
+#define OPENXR_EXTENSION_WRAPPER_EXTENSION_H
 
 #include "../openxr_api_extension.h"
 #include "openxr_extension_wrapper.h"
@@ -144,3 +145,5 @@ public:
 	OpenXRExtensionWrapperExtension();
 	virtual ~OpenXRExtensionWrapperExtension() override;
 };
+
+#endif // OPENXR_EXTENSION_WRAPPER_EXTENSION_H

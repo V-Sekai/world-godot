@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef OPENXR_OPENGL_EXTENSION_H
+#define OPENXR_OPENGL_EXTENSION_H
 
 #ifdef GLES3_ENABLED
 
@@ -92,3 +93,5 @@ private:
 };
 
 #endif // GLES3_ENABLED
+
+#endif // OPENXR_OPENGL_EXTENSION_H

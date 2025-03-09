@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TEXTURE_STORAGE_H
+#define TEXTURE_STORAGE_H
 
 #include "servers/rendering_server.h"
 
@@ -193,3 +194,5 @@ public:
 	virtual void render_target_set_velocity_target_size(RID p_render_target, const Size2i &p_target_size) = 0;
 	virtual Size2i render_target_get_velocity_target_size(RID p_render_target) const = 0;
 };
+
+#endif // TEXTURE_STORAGE_H

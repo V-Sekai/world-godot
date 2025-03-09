@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef AUDIO_LISTENER_3D_H
+#define AUDIO_LISTENER_3D_H
 
 #include "scene/3d/node_3d.h"
 
@@ -65,3 +66,5 @@ public:
 	AudioListener3D();
 	~AudioListener3D();
 };
+
+#endif // AUDIO_LISTENER_3D_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef CSG_GIZMOS_H
+#define CSG_GIZMOS_H
 
 #ifdef TOOLS_ENABLED
 
@@ -105,3 +106,5 @@ public:
 };
 
 #endif // TOOLS_ENABLED
+
+#endif // CSG_GIZMOS_H

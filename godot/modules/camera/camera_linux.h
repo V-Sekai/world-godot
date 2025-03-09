@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef CAMERA_LINUX_H
+#define CAMERA_LINUX_H
 
 #include "core/os/mutex.h"
 #include "core/os/thread.h"
@@ -55,3 +56,5 @@ public:
 	CameraLinux();
 	~CameraLinux();
 };
+
+#endif // CAMERA_LINUX_H

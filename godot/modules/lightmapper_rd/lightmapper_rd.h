@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef LIGHTMAPPER_RD_H
+#define LIGHTMAPPER_RD_H
 
 #include "core/templates/local_vector.h"
 #include "scene/3d/lightmapper.h"
@@ -309,3 +310,5 @@ public:
 
 	LightmapperRD();
 };
+
+#endif // LIGHTMAPPER_RD_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef VERSION_CONTROL_EDITOR_PLUGIN_H
+#define VERSION_CONTROL_EDITOR_PLUGIN_H
 
 #include "editor/editor_vcs_interface.h"
 #include "editor/plugins/editor_plugin.h"
@@ -212,3 +213,5 @@ public:
 	VersionControlEditorPlugin();
 	~VersionControlEditorPlugin();
 };
+
+#endif // VERSION_CONTROL_EDITOR_PLUGIN_H

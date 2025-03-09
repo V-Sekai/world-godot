@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef EDITOR_EXPORT_H
+#define EDITOR_EXPORT_H
 
 #include "editor_export_platform.h"
 #include "editor_export_plugin.h"
@@ -85,3 +86,5 @@ public:
 	EditorExport();
 	~EditorExport();
 };
+
+#endif // EDITOR_EXPORT_H

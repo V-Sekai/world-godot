@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef BASE_BUTTON_H
+#define BASE_BUTTON_H
 
 #include "core/input/shortcut.h"
 #include "scene/gui/control.h"
@@ -164,3 +165,5 @@ public:
 	bool is_allow_unpress();
 	ButtonGroup();
 };
+
+#endif // BASE_BUTTON_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef FOG_VOLUME_GIZMO_PLUGIN_H
+#define FOG_VOLUME_GIZMO_PLUGIN_H
 
 #include "editor/plugins/node_3d_editor_gizmos.h"
 
@@ -54,3 +55,5 @@ public:
 	FogVolumeGizmoPlugin();
 	~FogVolumeGizmoPlugin();
 };
+
+#endif // FOG_VOLUME_GIZMO_PLUGIN_H

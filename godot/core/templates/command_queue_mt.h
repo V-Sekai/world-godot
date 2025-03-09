@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef COMMAND_QUEUE_MT_H
+#define COMMAND_QUEUE_MT_H
 
 #include "core/object/worker_thread_pool.h"
 #include "core/os/condition_variable.h"
@@ -255,3 +256,5 @@ public:
 	CommandQueueMT();
 	~CommandQueueMT();
 };
+
+#endif // COMMAND_QUEUE_MT_H

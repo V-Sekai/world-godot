@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TEST_OA_HASH_MAP_H
+#define TEST_OA_HASH_MAP_H
 
 #include "core/templates/oa_hash_map.h"
 #include "scene/resources/texture.h"
@@ -246,3 +247,5 @@ TEST_CASE("[OAHashMap] Non-trivial types") {
 }
 
 } // namespace TestOAHashMap
+
+#endif // TEST_OA_HASH_MAP_H

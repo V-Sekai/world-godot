@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef RENDER_SCENE_BUFFERS_RD_H
+#define RENDER_SCENE_BUFFERS_RD_H
 
 #ifdef METAL_ENABLED
 #include "../effects/metal_fx.h"
@@ -450,3 +451,5 @@ public:
 	// 2 full size, 2 half size
 	WeightBuffers weight_buffers[4]; // Only used in raster
 };
+
+#endif // RENDER_SCENE_BUFFERS_RD_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef JNI_UTILS_H
+#define JNI_UTILS_H
 
 #include "thread_jandroid.h"
 
@@ -96,3 +97,5 @@ static inline String jstring_to_string(jstring source, JNIEnv *env = nullptr) {
 	}
 	return result;
 }
+
+#endif // JNI_UTILS_H

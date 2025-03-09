@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TEXT_EDIT_H
+#define TEXT_EDIT_H
 
 #include "scene/gui/control.h"
 #include "scene/gui/popup_menu.h"
@@ -538,7 +539,7 @@ private:
 	void _scroll_lines_up();
 	void _scroll_lines_down();
 
-	void _adjust_viewport_to_caret_horizontally(int p_caret = 0, bool p_maximize_selection = true);
+	void _adjust_viewport_to_caret_horizontally(int p_caret = 0);
 
 	// Minimap.
 	bool draw_minimap = false;
@@ -693,8 +694,6 @@ protected:
 
 	void _unhide_all_lines();
 	virtual void _unhide_carets();
-
-	int _get_wrapped_indent_level(int p_line, int &r_first_wrap) const;
 
 	// Symbol lookup.
 	String lookup_symbol_word;
@@ -1139,3 +1138,5 @@ VARIANT_ENUM_CAST(TextEdit::SelectionMode);
 VARIANT_ENUM_CAST(TextEdit::GutterType);
 VARIANT_ENUM_CAST(TextEdit::MenuItems);
 VARIANT_ENUM_CAST(TextEdit::SearchFlags);
+
+#endif // TEXT_EDIT_H

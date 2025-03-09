@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef SURFACE_TOOL_H
+#define SURFACE_TOOL_H
 
 #include "core/templates/local_vector.h"
 #include "scene/resources/mesh.h"
@@ -245,3 +246,5 @@ public:
 
 VARIANT_ENUM_CAST(SurfaceTool::CustomFormat)
 VARIANT_ENUM_CAST(SurfaceTool::SkinWeightCount)
+
+#endif // SURFACE_TOOL_H

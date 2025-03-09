@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef GODOT_LSP_H
+#define GODOT_LSP_H
 
 #include "core/doc_data.h"
 #include "core/object/class_db.h"
@@ -1916,7 +1917,7 @@ static String marked_documentation(const String &p_bbcode) {
 			in_code_block = true;
 			line = "\n";
 		} else if (in_code_block) {
-			line = "\t" + line.substr(code_block_indent);
+			line = "\t" + line.substr(code_block_indent, line.length());
 		}
 
 		if (in_code_block && line.contains("[/codeblock]")) {
@@ -1953,3 +1954,5 @@ static String marked_documentation(const String &p_bbcode) {
 	return markdown;
 }
 } // namespace lsp
+
+#endif // GODOT_LSP_H

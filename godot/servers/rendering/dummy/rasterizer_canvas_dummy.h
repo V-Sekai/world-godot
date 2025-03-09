@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef RASTERIZER_CANVAS_DUMMY_H
+#define RASTERIZER_CANVAS_DUMMY_H
 
 #include "servers/rendering/renderer_canvas_render.h"
 
@@ -60,3 +61,5 @@ public:
 	RasterizerCanvasDummy() {}
 	~RasterizerCanvasDummy() {}
 };
+
+#endif // RASTERIZER_CANVAS_DUMMY_H

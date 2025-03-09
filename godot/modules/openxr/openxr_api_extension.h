@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef OPENXR_API_EXTENSION_H
+#define OPENXR_API_EXTENSION_H
 
 #include "openxr_api.h"
 
@@ -119,3 +120,5 @@ public:
 };
 
 VARIANT_ENUM_CAST(OpenXRAPIExtension::OpenXRAlphaBlendModeSupport);
+
+#endif // OPENXR_API_EXTENSION_H

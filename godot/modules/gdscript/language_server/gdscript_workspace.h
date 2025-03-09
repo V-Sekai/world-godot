@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef GDSCRIPT_WORKSPACE_H
+#define GDSCRIPT_WORKSPACE_H
 
 #include "../gdscript_parser.h"
 #include "gdscript_extend_parser.h"
@@ -99,3 +100,5 @@ public:
 	GDScriptWorkspace();
 	~GDScriptWorkspace();
 };
+
+#endif // GDSCRIPT_WORKSPACE_H

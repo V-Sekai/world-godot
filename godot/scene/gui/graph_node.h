@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef GRAPH_NODE_H
+#define GRAPH_NODE_H
 
 #include "scene/gui/graph_element.h"
 
@@ -172,3 +173,5 @@ public:
 
 	GraphNode();
 };
+
+#endif // GRAPH_NODE_H

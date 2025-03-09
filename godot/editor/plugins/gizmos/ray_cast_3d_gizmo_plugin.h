@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef RAY_CAST_3D_GIZMO_PLUGIN_H
+#define RAY_CAST_3D_GIZMO_PLUGIN_H
 
 #include "editor/plugins/node_3d_editor_gizmos.h"
 
@@ -43,3 +44,5 @@ public:
 
 	RayCast3DGizmoPlugin();
 };
+
+#endif // RAY_CAST_3D_GIZMO_PLUGIN_H

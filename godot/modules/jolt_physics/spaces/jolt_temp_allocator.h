@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef JOLT_TEMP_ALLOCATOR_H
+#define JOLT_TEMP_ALLOCATOR_H
 
 #include "Jolt/Jolt.h"
 
@@ -48,3 +49,5 @@ public:
 	virtual void *Allocate(JPH::uint p_size) override;
 	virtual void Free(void *p_ptr, JPH::uint p_size) override;
 };
+
+#endif // JOLT_TEMP_ALLOCATOR_H

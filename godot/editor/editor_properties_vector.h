@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef EDITOR_PROPERTIES_VECTOR_H
+#define EDITOR_PROPERTIES_VECTOR_H
 
 #include "editor/editor_inspector.h"
 
@@ -106,3 +107,5 @@ class EditorPropertyVector4i : public EditorPropertyVectorN {
 public:
 	EditorPropertyVector4i(bool p_force_wide = false);
 };
+
+#endif // EDITOR_PROPERTIES_VECTOR_H

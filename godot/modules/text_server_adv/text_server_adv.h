@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TEXT_SERVER_ADV_H
+#define TEXT_SERVER_ADV_H
 
 /*************************************************************************/
 /* ICU/HarfBuzz/Graphite backed Text Server implementation with BiDi,    */
@@ -271,7 +272,6 @@ class TextServerAdvanced : public TextServerExtension {
 		Rect2 rect;
 		Rect2 uv_rect;
 		Vector2 advance;
-		bool from_svg = false;
 	};
 
 	struct FontForSizeAdvanced {
@@ -1025,3 +1025,5 @@ public:
 	TextServerAdvanced();
 	~TextServerAdvanced();
 };
+
+#endif // TEXT_SERVER_ADV_H

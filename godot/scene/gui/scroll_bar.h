@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef SCROLL_BAR_H
+#define SCROLL_BAR_H
 
 #include "scene/gui/range.h"
 
@@ -143,3 +144,5 @@ public:
 	VScrollBar() :
 			ScrollBar(VERTICAL) { set_h_size_flags(0); }
 };
+
+#endif // SCROLL_BAR_H

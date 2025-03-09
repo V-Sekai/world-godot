@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef THEME_OWNER_H
+#define THEME_OWNER_H
 
 #include "core/object/object.h"
 #include "scene/resources/theme.h"
@@ -80,3 +81,5 @@ public:
 	ThemeOwner(Node *p_holder) { holder = p_holder; }
 	~ThemeOwner() {}
 };
+
+#endif // THEME_OWNER_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef AUDIO_STREAM_PREVIEW_H
+#define AUDIO_STREAM_PREVIEW_H
 
 #include "core/os/thread.h"
 #include "core/templates/safe_refcount.h"
@@ -103,3 +104,5 @@ public:
 
 	AudioStreamPreviewGenerator();
 };
+
+#endif // AUDIO_STREAM_PREVIEW_H

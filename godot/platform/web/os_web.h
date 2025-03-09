@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef OS_WEB_H
+#define OS_WEB_H
 
 #include "audio_driver_web.h"
 #include "webmidi_driver.h"
@@ -118,3 +119,5 @@ public:
 
 	OS_Web();
 };
+
+#endif // OS_WEB_H

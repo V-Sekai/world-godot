@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef RID_H
+#define RID_H
 
 #include "core/typedefs.h"
 
@@ -71,3 +72,5 @@ public:
 
 	_ALWAYS_INLINE_ RID() {}
 };
+
+#endif // RID_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef DEBUG_ADAPTER_TYPES_H
+#define DEBUG_ADAPTER_TYPES_H
 
 #include "core/io/json.h"
 #include "core/variant/dictionary.h"
@@ -276,3 +277,5 @@ struct Variable {
 };
 
 } // namespace DAP
+
+#endif // DEBUG_ADAPTER_TYPES_H

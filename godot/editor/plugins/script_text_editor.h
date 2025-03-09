@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef SCRIPT_TEXT_EDITOR_H
+#define SCRIPT_TEXT_EDITOR_H
 
 #include "script_editor_plugin.h"
 
@@ -273,3 +274,5 @@ public:
 	ScriptTextEditor();
 	~ScriptTextEditor();
 };
+
+#endif // SCRIPT_TEXT_EDITOR_H

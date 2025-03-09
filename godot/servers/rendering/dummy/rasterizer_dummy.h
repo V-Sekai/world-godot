@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef RASTERIZER_DUMMY_H
+#define RASTERIZER_DUMMY_H
 
 #include "core/templates/rid_owner.h"
 #include "core/templates/self_list.h"
@@ -114,3 +115,5 @@ public:
 	RasterizerDummy() {}
 	~RasterizerDummy() {}
 };
+
+#endif // RASTERIZER_DUMMY_H

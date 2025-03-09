@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef MULTIMESH_INSTANCE_2D_H
+#define MULTIMESH_INSTANCE_2D_H
 
 #include "scene/2d/node_2d.h"
 #include "scene/resources/multimesh.h"
@@ -69,3 +70,5 @@ public:
 	MultiMeshInstance2D();
 	~MultiMeshInstance2D();
 };
+
+#endif // MULTIMESH_INSTANCE_2D_H

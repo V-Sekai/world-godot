@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef PHYSICS_SERVER_3D_DUMMY_H
+#define PHYSICS_SERVER_3D_DUMMY_H
 
 #include "servers/physics_server_3d.h"
 
@@ -431,3 +432,5 @@ public:
 
 	virtual int get_process_info(ProcessInfo p_info) override { return 0; }
 };
+
+#endif // PHYSICS_SERVER_3D_DUMMY_H

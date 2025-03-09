@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef FUZZY_SEARCH_H
+#define FUZZY_SEARCH_H
 
 #include "core/variant/variant.h"
 
@@ -96,3 +97,5 @@ public:
 	bool search(const String &p_target, FuzzySearchResult &p_result) const;
 	void search_all(const PackedStringArray &p_targets, Vector<FuzzySearchResult> &p_results) const;
 };
+
+#endif // FUZZY_SEARCH_H

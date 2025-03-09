@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef SKELETON_IK_3D_EDITOR_PLUGIN_H
+#define SKELETON_IK_3D_EDITOR_PLUGIN_H
 
 #include "editor/plugins/editor_plugin.h"
 
@@ -54,3 +55,5 @@ public:
 	SkeletonIK3DEditorPlugin();
 	~SkeletonIK3DEditorPlugin();
 };
+
+#endif // SKELETON_IK_3D_EDITOR_PLUGIN_H

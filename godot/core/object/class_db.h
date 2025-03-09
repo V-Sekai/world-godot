@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef CLASS_DB_H
+#define CLASS_DB_H
 
 #include "core/object/method_bind.h"
 #include "core/object/object.h"
@@ -564,3 +565,5 @@ _FORCE_INLINE_ Vector<Error> errarray(P... p_args) {
 #define GDREGISTER_NATIVE_STRUCT(m_class, m_code) ClassDB::register_native_struct(#m_class, m_code, sizeof(m_class))
 
 #include "core/disabled_classes.gen.h"
+
+#endif // CLASS_DB_H

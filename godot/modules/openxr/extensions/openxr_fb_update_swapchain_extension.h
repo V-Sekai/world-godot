@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef OPENXR_FB_UPDATE_SWAPCHAIN_EXTENSION_H
+#define OPENXR_FB_UPDATE_SWAPCHAIN_EXTENSION_H
 
 // This extension implements the FB update swapchain extension.
 // This is an extension Meta added to further configure the swapchain.
@@ -68,3 +69,5 @@ private:
 	EXT_PROTO_XRRESULT_FUNC2(xrUpdateSwapchainFB, (XrSwapchain), swapchain, (const XrSwapchainStateBaseHeaderFB *), state);
 	EXT_PROTO_XRRESULT_FUNC2(xrGetSwapchainStateFB, (XrSwapchain), swapchain, (XrSwapchainStateBaseHeaderFB *), state);
 };
+
+#endif // OPENXR_FB_UPDATE_SWAPCHAIN_EXTENSION_H

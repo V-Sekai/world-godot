@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef SCENE_IMPORT_SETTINGS_H
+#define SCENE_IMPORT_SETTINGS_H
 
 #include "editor/import/3d/resource_importer_scene.h"
 #include "scene/3d/camera_3d.h"
@@ -250,3 +251,5 @@ public:
 	SceneImportSettingsDialog();
 	~SceneImportSettingsDialog();
 };
+
+#endif // SCENE_IMPORT_SETTINGS_H

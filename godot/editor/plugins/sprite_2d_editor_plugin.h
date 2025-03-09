@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef SPRITE_2D_EDITOR_PLUGIN_H
+#define SPRITE_2D_EDITOR_PLUGIN_H
 
 #include "editor/plugins/editor_plugin.h"
 #include "scene/2d/sprite_2d.h"
@@ -129,3 +130,5 @@ public:
 	Sprite2DEditorPlugin();
 	~Sprite2DEditorPlugin();
 };
+
+#endif // SPRITE_2D_EDITOR_PLUGIN_H

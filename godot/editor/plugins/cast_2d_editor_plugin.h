@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef CAST_2D_EDITOR_PLUGIN_H
+#define CAST_2D_EDITOR_PLUGIN_H
 
 #include "editor/plugins/editor_plugin.h"
 #include "scene/2d/node_2d.h"
@@ -72,3 +73,5 @@ public:
 
 	Cast2DEditorPlugin();
 };
+
+#endif // CAST_2D_EDITOR_PLUGIN_H

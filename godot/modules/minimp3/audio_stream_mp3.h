@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef AUDIO_STREAM_MP3_H
+#define AUDIO_STREAM_MP3_H
 
 #include "servers/audio/audio_stream.h"
 
@@ -150,3 +151,5 @@ public:
 	AudioStreamMP3();
 	virtual ~AudioStreamMP3();
 };
+
+#endif // AUDIO_STREAM_MP3_H

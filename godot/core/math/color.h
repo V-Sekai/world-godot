@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef COLOR_H
+#define COLOR_H
 
 #include "core/math/math_funcs.h"
 
@@ -300,3 +301,5 @@ bool Color::operator<(const Color &p_color) const {
 _FORCE_INLINE_ Color operator*(float p_scalar, const Color &p_color) {
 	return p_color * p_scalar;
 }
+
+#endif // COLOR_H

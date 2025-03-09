@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef EDITOR_NATIVE_SHADER_SOURCE_VISUALIZER_H
+#define EDITOR_NATIVE_SHADER_SOURCE_VISUALIZER_H
 
 #include "scene/gui/dialogs.h"
 #include "scene/gui/tab_container.h"
@@ -48,3 +49,5 @@ protected:
 public:
 	EditorNativeShaderSourceVisualizer();
 };
+
+#endif // EDITOR_NATIVE_SHADER_SOURCE_VISUALIZER_H

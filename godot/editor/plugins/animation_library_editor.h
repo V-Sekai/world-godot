@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef ANIMATION_LIBRARY_EDITOR_H
+#define ANIMATION_LIBRARY_EDITOR_H
 
 #include "core/io/config_file.h"
 #include "core/templates/vector.h"
@@ -127,3 +128,5 @@ public:
 	void update_tree();
 	AnimationLibraryEditor();
 };
+
+#endif // ANIMATION_LIBRARY_EDITOR_H

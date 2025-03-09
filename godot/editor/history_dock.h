@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef HISTORY_DOCK_H
+#define HISTORY_DOCK_H
 
 #include "scene/gui/box_container.h"
 
@@ -66,3 +67,5 @@ public:
 
 	HistoryDock();
 };
+
+#endif // HISTORY_DOCK_H

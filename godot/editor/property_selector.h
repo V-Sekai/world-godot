@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef PROPERTY_SELECTOR_H
+#define PROPERTY_SELECTOR_H
 
 #include "scene/gui/dialogs.h"
 
@@ -84,3 +85,5 @@ public:
 
 	PropertySelector();
 };
+
+#endif // PROPERTY_SELECTOR_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef PROJECT_MANAGER_H
+#define PROJECT_MANAGER_H
 
 #include "scene/gui/dialogs.h"
 #include "scene/gui/scroll_container.h"
@@ -264,3 +265,5 @@ public:
 	ProjectManager(bool p_custom_res);
 	~ProjectManager();
 };
+
+#endif // PROJECT_MANAGER_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef DELAUNAY_3D_H
+#define DELAUNAY_3D_H
 
 #include "core/io/file_access.h"
 #include "core/math/aabb.h"
@@ -388,3 +389,5 @@ public:
 		return ret_simplices;
 	}
 };
+
+#endif // DELAUNAY_3D_H

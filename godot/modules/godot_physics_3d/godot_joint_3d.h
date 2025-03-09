@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef GODOT_JOINT_3D_H
+#define GODOT_JOINT_3D_H
 
 #include "godot_body_3d.h"
 #include "godot_constraint_3d.h"
@@ -96,3 +97,5 @@ public:
 		}
 	}
 };
+
+#endif // GODOT_JOINT_3D_H

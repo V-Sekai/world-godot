@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef DOC_TOOLS_H
+#define DOC_TOOLS_H
 
 #include "core/doc_data.h"
 #include "core/templates/rb_set.h"
@@ -57,3 +58,5 @@ public:
 	Error load_compressed(const uint8_t *p_data, int p_compressed_size, int p_uncompressed_size);
 	Error load_xml(const uint8_t *p_data, int p_size);
 };
+
+#endif // DOC_TOOLS_H

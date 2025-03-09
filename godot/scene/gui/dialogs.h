@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef DIALOGS_H
+#define DIALOGS_H
 
 #include "box_container.h"
 #include "scene/gui/button.h"
@@ -138,3 +139,5 @@ public:
 
 	ConfirmationDialog();
 };
+
+#endif // DIALOGS_H

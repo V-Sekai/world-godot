@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef MESH_STORAGE_DUMMY_H
+#define MESH_STORAGE_DUMMY_H
 
 #include "core/templates/rid_owner.h"
 #include "servers/rendering/storage/mesh_storage.h"
@@ -202,3 +203,5 @@ public:
 };
 
 } // namespace RendererDummy
+
+#endif // MESH_STORAGE_DUMMY_H

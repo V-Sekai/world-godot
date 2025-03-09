@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef CAMERA_3D_EDITOR_PLUGIN_H
+#define CAMERA_3D_EDITOR_PLUGIN_H
 
 #include "editor/plugins/editor_plugin.h"
 #include "editor/plugins/texture_editor_plugin.h"
@@ -86,3 +87,5 @@ public:
 	Camera3DEditorPlugin();
 	~Camera3DEditorPlugin();
 };
+
+#endif // CAMERA_3D_EDITOR_PLUGIN_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef NAVIGATION_POLYGON_H
+#define NAVIGATION_POLYGON_H
 
 #include "scene/2d/node_2d.h"
 #include "scene/resources/navigation_mesh.h"
@@ -175,3 +176,5 @@ public:
 VARIANT_ENUM_CAST(NavigationPolygon::SamplePartitionType);
 VARIANT_ENUM_CAST(NavigationPolygon::ParsedGeometryType);
 VARIANT_ENUM_CAST(NavigationPolygon::SourceGeometryMode);
+
+#endif // NAVIGATION_POLYGON_H

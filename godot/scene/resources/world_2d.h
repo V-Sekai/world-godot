@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef WORLD_2D_H
+#define WORLD_2D_H
 
 #include "core/io/resource.h"
 #include "servers/physics_server_2d.h"
@@ -65,3 +66,5 @@ public:
 	World2D();
 	~World2D();
 };
+
+#endif // WORLD_2D_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef EDITOR_PROPERTIES_H
+#define EDITOR_PROPERTIES_H
 
 #include "editor/editor_inspector.h"
 
@@ -722,3 +723,5 @@ public:
 
 	static EditorProperty *get_editor_for_property(Object *p_object, const Variant::Type p_type, const String &p_path, const PropertyHint p_hint, const String &p_hint_text, const BitField<PropertyUsageFlags> p_usage, const bool p_wide = false);
 };
+
+#endif // EDITOR_PROPERTIES_H

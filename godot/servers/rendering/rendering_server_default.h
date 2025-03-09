@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef RENDERING_SERVER_DEFAULT_H
+#define RENDERING_SERVER_DEFAULT_H
 
 #include "core/object/worker_thread_pool.h"
 #include "core/os/thread.h"
@@ -1186,3 +1187,5 @@ public:
 	RenderingServerDefault(bool p_create_thread = false);
 	~RenderingServerDefault();
 };
+
+#endif // RENDERING_SERVER_DEFAULT_H

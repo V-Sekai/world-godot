@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef AUDIO_STREAM_RANDOMIZER_EDITOR_PLUGIN_H
+#define AUDIO_STREAM_RANDOMIZER_EDITOR_PLUGIN_H
 
 #include "editor/plugins/editor_plugin.h"
 
@@ -48,3 +49,5 @@ public:
 	AudioStreamRandomizerEditorPlugin();
 	~AudioStreamRandomizerEditorPlugin();
 };
+
+#endif // AUDIO_STREAM_RANDOMIZER_EDITOR_PLUGIN_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef OPENXR_COMPOSITION_LAYER_CYLINDER_H
+#define OPENXR_COMPOSITION_LAYER_CYLINDER_H
 
 #include <openxr/openxr.h>
 
@@ -82,3 +83,5 @@ public:
 	OpenXRCompositionLayerCylinder();
 	~OpenXRCompositionLayerCylinder();
 };
+
+#endif // OPENXR_COMPOSITION_LAYER_CYLINDER_H

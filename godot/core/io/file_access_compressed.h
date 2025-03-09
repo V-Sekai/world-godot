@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef FILE_ACCESS_COMPRESSED_H
+#define FILE_ACCESS_COMPRESSED_H
 
 #include "core/io/compression.h"
 #include "core/io/file_access.h"
@@ -106,3 +107,5 @@ public:
 	FileAccessCompressed() {}
 	virtual ~FileAccessCompressed();
 };
+
+#endif // FILE_ACCESS_COMPRESSED_H

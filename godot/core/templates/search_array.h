@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef SEARCH_ARRAY_H
+#define SEARCH_ARRAY_H
 
 #include <core/templates/sort_array.h>
 
@@ -62,3 +63,5 @@ public:
 		return lo;
 	}
 };
+
+#endif // SEARCH_ARRAY_H

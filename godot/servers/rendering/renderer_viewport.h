@@ -28,13 +28,18 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef RENDERER_VIEWPORT_H
+#define RENDERER_VIEWPORT_H
 
 #include "core/templates/rid_owner.h"
 #include "servers/rendering/renderer_scene_render.h"
 #include "servers/rendering/rendering_method.h"
 #include "servers/rendering_server.h"
 #include "storage/render_scene_buffers.h"
+
+#ifndef _3D_DISABLED
+#include "servers/xr/xr_interface.h"
+#endif // _3D_DISABLED
 
 class RendererViewport {
 public:
@@ -317,3 +322,5 @@ public:
 	RendererViewport();
 	virtual ~RendererViewport() {}
 };
+
+#endif // RENDERER_VIEWPORT_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TILE_PROXIES_MANAGER_DIALOG_H
+#define TILE_PROXIES_MANAGER_DIALOG_H
 
 #include "editor/editor_properties.h"
 #include "scene/gui/dialogs.h"
@@ -84,3 +85,5 @@ public:
 
 	TileProxiesManagerDialog();
 };
+
+#endif // TILE_PROXIES_MANAGER_DIALOG_H

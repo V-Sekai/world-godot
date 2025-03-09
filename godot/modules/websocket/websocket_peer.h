@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef WEBSOCKET_PEER_H
+#define WEBSOCKET_PEER_H
 
 #include "core/crypto/crypto.h"
 #include "core/error/error_list.h"
@@ -126,3 +127,5 @@ public:
 
 VARIANT_ENUM_CAST(WebSocketPeer::WriteMode);
 VARIANT_ENUM_CAST(WebSocketPeer::State);
+
+#endif // WEBSOCKET_PEER_H

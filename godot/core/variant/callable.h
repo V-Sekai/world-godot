@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef CALLABLE_H
+#define CALLABLE_H
 
 #include "core/object/object_id.h"
 #include "core/string/string_name.h"
@@ -205,3 +206,5 @@ struct CallableComparator {
 
 	bool operator()(const Variant &p_l, const Variant &p_r) const;
 };
+
+#endif // CALLABLE_H

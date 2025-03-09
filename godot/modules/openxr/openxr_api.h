@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef OPENXR_API_H
+#define OPENXR_API_H
 
 #include "action_map/openxr_action.h"
 #include "extensions/openxr_composition_layer_provider.h"
@@ -598,3 +599,5 @@ public:
 	OpenXRAPI();
 	~OpenXRAPI();
 };
+
+#endif // OPENXR_API_H

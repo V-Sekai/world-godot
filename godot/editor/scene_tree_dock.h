@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef SCENE_TREE_DOCK_H
+#define SCENE_TREE_DOCK_H
 
 #include "editor/gui/scene_tree_editor.h"
 #include "editor/script_create_dialog.h"
@@ -354,3 +355,5 @@ public:
 	SceneTreeDock(Node *p_scene_root, EditorSelection *p_editor_selection, EditorData &p_editor_data);
 	~SceneTreeDock();
 };
+
+#endif // SCENE_TREE_DOCK_H

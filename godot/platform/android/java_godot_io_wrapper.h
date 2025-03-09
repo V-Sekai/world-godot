@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef JAVA_GODOT_IO_WRAPPER_H
+#define JAVA_GODOT_IO_WRAPPER_H
 
 #include "jni_utils.h"
 
@@ -91,3 +92,5 @@ public:
 	int get_screen_orientation();
 	String get_system_dir(int p_dir, bool p_shared_storage);
 };
+
+#endif // JAVA_GODOT_IO_WRAPPER_H

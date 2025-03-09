@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef SPRITE_BASE_3D_GIZMO_PLUGIN_H
+#define SPRITE_BASE_3D_GIZMO_PLUGIN_H
 
 #include "editor/plugins/node_3d_editor_gizmos.h"
 
@@ -44,3 +45,5 @@ public:
 
 	SpriteBase3DGizmoPlugin();
 };
+
+#endif // SPRITE_BASE_3D_GIZMO_PLUGIN_H

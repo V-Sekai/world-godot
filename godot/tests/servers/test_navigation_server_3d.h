@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TEST_NAVIGATION_SERVER_3D_H
+#define TEST_NAVIGATION_SERVER_3D_H
 
 #include "scene/3d/mesh_instance_3d.h"
 #include "scene/resources/3d/primitive_meshes.h"
@@ -968,3 +969,5 @@ TEST_SUITE("[Navigation]") {
 	}
 }
 } //namespace TestNavigationServer3D
+
+#endif // TEST_NAVIGATION_SERVER_3D_H

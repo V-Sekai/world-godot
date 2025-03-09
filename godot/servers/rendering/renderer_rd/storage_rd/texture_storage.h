@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TEXTURE_STORAGE_RD_H
+#define TEXTURE_STORAGE_RD_H
 
 #include "core/templates/paged_array.h"
 #include "core/templates/rid_owner.h"
@@ -819,3 +820,5 @@ public:
 };
 
 } // namespace RendererRD
+
+#endif // TEXTURE_STORAGE_RD_H

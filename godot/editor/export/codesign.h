@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef CODESIGN_H
+#define CODESIGN_H
 
 // macOS code signature creation utility.
 //
@@ -350,3 +351,5 @@ class CodeSign {
 public:
 	static Error codesign(bool p_use_hardened_runtime, bool p_force, const String &p_path, const String &p_ent_path, String &r_error_msg);
 };
+
+#endif // CODESIGN_H

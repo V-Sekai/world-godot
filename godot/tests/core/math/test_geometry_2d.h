@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TEST_GEOMETRY_2D_H
+#define TEST_GEOMETRY_2D_H
 
 #include "core/math/geometry_2d.h"
 
@@ -887,3 +888,5 @@ TEST_CASE("[Geometry2D] Bresenham line") {
 	}
 }
 } // namespace TestGeometry2D
+
+#endif // TEST_GEOMETRY_2D_H

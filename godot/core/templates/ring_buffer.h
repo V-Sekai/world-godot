@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef RING_BUFFER_H
+#define RING_BUFFER_H
 
 #include "core/templates/vector.h"
 
@@ -215,3 +216,5 @@ public:
 	}
 	~RingBuffer() {}
 };
+
+#endif // RING_BUFFER_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef BVH_TREE_H
+#define BVH_TREE_H
 
 // BVH Tree
 // This is an implementation of a dynamic BVH with templated leaf size.
@@ -453,3 +454,5 @@ private:
 };
 
 #undef VERBOSE_PRINT
+
+#endif // BVH_TREE_H

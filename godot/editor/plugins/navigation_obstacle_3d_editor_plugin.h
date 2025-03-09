@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef NAVIGATION_OBSTACLE_3D_EDITOR_PLUGIN_H
+#define NAVIGATION_OBSTACLE_3D_EDITOR_PLUGIN_H
 
 #include "editor/plugins/editor_plugin.h"
 #include "editor/plugins/node_3d_editor_gizmos.h"
@@ -132,3 +133,5 @@ public:
 	NavigationObstacle3DEditorPlugin();
 	~NavigationObstacle3DEditorPlugin();
 };
+
+#endif // NAVIGATION_OBSTACLE_3D_EDITOR_PLUGIN_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TEST_COLOR_H
+#define TEST_COLOR_H
 
 #include "core/math/color.h"
 
@@ -226,3 +227,5 @@ TEST_CASE("[Color] Manipulation methods") {
 			"Red interpolated with yellow should be orange (with interpolated alpha).");
 }
 } // namespace TestColor
+
+#endif // TEST_COLOR_H

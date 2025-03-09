@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TEST_CURVE_3D_H
+#define TEST_CURVE_3D_H
 
 #include "core/math/math_funcs.h"
 #include "scene/resources/curve.h"
@@ -282,3 +283,5 @@ TEST_CASE("[Curve3D] Even length tessellation") {
 }
 
 } // namespace TestCurve3D
+
+#endif // TEST_CURVE_3D_H

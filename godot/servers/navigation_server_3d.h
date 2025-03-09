@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef NAVIGATION_SERVER_3D_H
+#define NAVIGATION_SERVER_3D_H
 
 #include "core/object/class_db.h"
 #include "core/templates/rid.h"
@@ -589,3 +590,5 @@ public:
 };
 
 VARIANT_ENUM_CAST(NavigationServer3D::ProcessInfo);
+
+#endif // NAVIGATION_SERVER_3D_H

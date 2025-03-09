@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef XR_INTERFACE_EXTENSION_H
+#define XR_INTERFACE_EXTENSION_H
 
 #include "servers/xr/xr_interface.h"
 
@@ -135,3 +136,5 @@ public:
 	RID get_render_target_texture(RID p_render_target);
 	// RID get_render_target_depth(RID p_render_target);
 };
+
+#endif // XR_INTERFACE_EXTENSION_H

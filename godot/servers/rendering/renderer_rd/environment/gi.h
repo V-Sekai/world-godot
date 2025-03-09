@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef GI_RD_H
+#define GI_RD_H
 
 #include "core/templates/local_vector.h"
 #include "core/templates/rid_owner.h"
@@ -828,3 +829,5 @@ public:
 };
 
 } // namespace RendererRD
+
+#endif // GI_RD_H

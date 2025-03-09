@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef OPENXR_VISIBILITY_MASK_EXTENSION_H
+#define OPENXR_VISIBILITY_MASK_EXTENSION_H
 
 #include "../util.h"
 
@@ -90,3 +91,5 @@ private:
 	// OpenXR API call wrappers
 	EXT_PROTO_XRRESULT_FUNC5(xrGetVisibilityMaskKHR, (XrSession), session, (XrViewConfigurationType), viewConfigurationType, (uint32_t), viewIndex, (XrVisibilityMaskTypeKHR), visibilityMaskType, (XrVisibilityMaskKHR *), visibilityMask);
 };
+
+#endif // OPENXR_VISIBILITY_MASK_EXTENSION_H

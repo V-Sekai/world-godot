@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TEST_MACROS_H
+#define TEST_MACROS_H
 
 #include "display_server_mock.h"
 
@@ -477,3 +478,5 @@ public:
 			CHECK(string_list[i] == m_slices[i]);                                                \
 		}                                                                                        \
 	} while (false)
+
+#endif // TEST_MACROS_H

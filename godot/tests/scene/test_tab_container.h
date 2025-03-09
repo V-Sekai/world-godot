@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TEST_TAB_CONTAINER_H
+#define TEST_TAB_CONTAINER_H
 
 #include "scene/gui/tab_container.h"
 
@@ -666,3 +667,5 @@ TEST_CASE("[SceneTree][TabContainer] layout and offset") {
 // FIXME: Add tests for mouse click, keyboard navigation, and drag and drop.
 
 } // namespace TestTabContainer
+
+#endif // TEST_TAB_CONTAINER_H

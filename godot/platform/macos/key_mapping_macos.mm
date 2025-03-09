@@ -390,7 +390,7 @@ Key KeyMappingMacOS::remap_key(unsigned int p_key, unsigned int p_state, bool p_
 			LMGetKbdType(),
 			kUCKeyTranslateNoDeadKeysBit,
 			&keys_down,
-			std::size(chars),
+			sizeof(chars) / sizeof(chars[0]),
 			&real_length,
 			chars);
 

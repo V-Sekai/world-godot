@@ -28,8 +28,6 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
-
 #import <UIKit/UIKit.h>
 
 typedef NSObject<UIApplicationDelegate> ApplicationDelegateService;

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef FREEDESKTOP_SCREENSAVER_H
+#define FREEDESKTOP_SCREENSAVER_H
 
 #ifdef DBUS_ENABLED
 
@@ -46,3 +47,5 @@ public:
 };
 
 #endif // DBUS_ENABLED
+
+#endif // FREEDESKTOP_SCREENSAVER_H

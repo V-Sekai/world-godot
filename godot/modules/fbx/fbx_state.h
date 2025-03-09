@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef FBX_STATE_H
+#define FBX_STATE_H
 
 #include "modules/gltf/gltf_defines.h"
 #include "modules/gltf/gltf_state.h"
@@ -64,3 +65,5 @@ public:
 	bool get_allow_geometry_helper_nodes();
 	void set_allow_geometry_helper_nodes(bool p_allow_geometry_helper_nodes);
 };
+
+#endif // FBX_STATE_H

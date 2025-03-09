@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef HTTP_CLIENT_WEB_H
+#define HTTP_CLIENT_WEB_H
 
 #include "core/io/http_client.h"
 
@@ -103,3 +104,5 @@ public:
 	HTTPClientWeb();
 	~HTTPClientWeb();
 };
+
+#endif // HTTP_CLIENT_WEB_H

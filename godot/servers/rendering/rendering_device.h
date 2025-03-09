@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef RENDERING_DEVICE_H
+#define RENDERING_DEVICE_H
 
 #include "core/object/worker_thread_pool.h"
 #include "core/os/condition_variable.h"
@@ -1712,3 +1713,5 @@ VARIANT_ENUM_CAST(RenderingDevice::FinalAction)
 #endif
 
 typedef RenderingDevice RD;
+
+#endif // RENDERING_DEVICE_H

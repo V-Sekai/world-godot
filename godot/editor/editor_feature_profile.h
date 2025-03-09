@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef EDITOR_FEATURE_PROFILE_H
+#define EDITOR_FEATURE_PROFILE_H
 
 #include "core/object/ref_counted.h"
 #include "editor/editor_help.h"
@@ -184,3 +185,5 @@ public:
 	static EditorFeatureProfileManager *get_singleton() { return singleton; }
 	EditorFeatureProfileManager();
 };
+
+#endif // EDITOR_FEATURE_PROFILE_H

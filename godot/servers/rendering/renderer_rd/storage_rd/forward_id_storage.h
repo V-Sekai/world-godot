@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef FORWARD_ID_STORAGE_H
+#define FORWARD_ID_STORAGE_H
 
 #include <stdint.h>
 
@@ -63,3 +64,5 @@ public:
 };
 
 } // namespace RendererRD
+
+#endif // FORWARD_ID_STORAGE_H

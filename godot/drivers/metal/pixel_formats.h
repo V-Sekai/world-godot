@@ -28,8 +28,6 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
-
 /**************************************************************************/
 /*                                                                        */
 /* Portions of this code were derived from MoltenVK.                      */
@@ -49,6 +47,9 @@
 /* implied. See the License for the specific language governing           */
 /* permissions and limitations under the License.                         */
 /**************************************************************************/
+
+#ifndef PIXEL_FORMATS_H
+#define PIXEL_FORMATS_H
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
@@ -408,3 +409,5 @@ protected:
 };
 
 #pragma clang diagnostic pop
+
+#endif // PIXEL_FORMATS_H

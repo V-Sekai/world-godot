@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TEST_LIST_H
+#define TEST_LIST_H
 
 #include "core/templates/list.h"
 
@@ -554,3 +555,5 @@ TEST_CASE("[Stress][List] Swap random 10 elements, 1000 iterations.") {
 	swap_random(list, n, 10, 1000);
 }
 } // namespace TestList
+
+#endif // TEST_LIST_H

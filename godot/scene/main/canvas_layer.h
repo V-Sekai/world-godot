@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef CANVAS_LAYER_H
+#define CANVAS_LAYER_H
 
 #include "scene/main/node.h"
 
@@ -110,3 +111,5 @@ public:
 	CanvasLayer();
 	~CanvasLayer();
 };
+
+#endif // CANVAS_LAYER_H

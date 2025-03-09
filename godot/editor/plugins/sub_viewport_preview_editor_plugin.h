@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef SUB_VIEWPORT_PREVIEW_EDITOR_PLUGIN_H
+#define SUB_VIEWPORT_PREVIEW_EDITOR_PLUGIN_H
 
 #include "editor/plugins/editor_plugin.h"
 #include "editor/plugins/texture_editor_plugin.h"
@@ -49,3 +50,5 @@ public:
 
 	SubViewportPreviewEditorPlugin();
 };
+
+#endif // SUB_VIEWPORT_PREVIEW_EDITOR_PLUGIN_H

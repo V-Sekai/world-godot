@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef GODOT_WEBXR_H
+#define GODOT_WEBXR_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -99,3 +100,5 @@ extern int godot_webxr_get_supported_frame_rates(float **r_frame_rates);
 #ifdef __cplusplus
 }
 #endif
+
+#endif // GODOT_WEBXR_H

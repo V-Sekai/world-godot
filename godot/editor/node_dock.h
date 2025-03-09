@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef NODE_DOCK_H
+#define NODE_DOCK_H
 
 #include "groups_editor.h"
 
@@ -72,3 +73,5 @@ public:
 	NodeDock();
 	~NodeDock();
 };
+
+#endif // NODE_DOCK_H

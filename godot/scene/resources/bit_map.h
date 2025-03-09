@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef BIT_MAP_H
+#define BIT_MAP_H
 
 #include "core/io/image.h"
 #include "core/io/resource.h"
@@ -79,3 +80,5 @@ public:
 
 	BitMap();
 };
+
+#endif // BIT_MAP_H

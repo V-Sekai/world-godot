@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef VISUAL_SHADER_EDITOR_PLUGIN_H
+#define VISUAL_SHADER_EDITOR_PLUGIN_H
 
 #include "editor/editor_properties.h"
 #include "editor/plugins/editor_plugin.h"
@@ -719,3 +720,5 @@ public:
 	virtual bool handles(const Ref<Resource> &p_resource) const override;
 	virtual Ref<Resource> convert(const Ref<Resource> &p_resource) const override;
 };
+
+#endif // VISUAL_SHADER_EDITOR_PLUGIN_H

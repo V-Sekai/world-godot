@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef VECTOR3I_H
+#define VECTOR3I_H
 
 #include "core/error/error_macros.h"
 #include "core/math/math_funcs.h"
@@ -334,3 +335,5 @@ bool Vector3i::operator>=(const Vector3i &p_v) const {
 void Vector3i::zero() {
 	x = y = z = 0;
 }
+
+#endif // VECTOR3I_H

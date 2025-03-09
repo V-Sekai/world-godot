@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef OS_LINUXBSD_H
+#define OS_LINUXBSD_H
 
 #include "crash_handler_linuxbsd.h"
 #include "joypad_linux.h"
@@ -137,9 +138,8 @@ public:
 
 	virtual String get_system_ca_certificates() override;
 
-	virtual bool _test_create_rendering_device_and_gl(const String &p_display_driver) const override;
-	virtual bool _test_create_rendering_device(const String &p_display_driver) const override;
-
 	OS_LinuxBSD();
 	~OS_LinuxBSD();
 };
+
+#endif // OS_LINUXBSD_H

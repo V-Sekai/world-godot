@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef WEB_EXPORT_PLUGIN_H
+#define WEB_EXPORT_PLUGIN_H
 
 #include "editor_http_server.h"
 
@@ -151,3 +152,5 @@ public:
 	EditorExportPlatformWeb();
 	~EditorExportPlatformWeb();
 };
+
+#endif // WEB_EXPORT_PLUGIN_H

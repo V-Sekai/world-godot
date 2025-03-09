@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef LABEL_SETTINGS_H
+#define LABEL_SETTINGS_H
 
 #include "core/io/resource.h"
 #include "font.h"
@@ -88,3 +89,5 @@ public:
 	void set_shadow_offset(const Vector2 &p_offset);
 	Vector2 get_shadow_offset() const;
 };
+
+#endif // LABEL_SETTINGS_H

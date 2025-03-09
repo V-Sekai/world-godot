@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef MOVIE_WRITER_MJPEG_H
+#define MOVIE_WRITER_MJPEG_H
 
 #include "servers/movie_writer/movie_writer.h"
 
@@ -68,3 +69,5 @@ protected:
 public:
 	MovieWriterMJPEG();
 };
+
+#endif // MOVIE_WRITER_MJPEG_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef NAVIGATION_OBSTACLE_2D_H
+#define NAVIGATION_OBSTACLE_2D_H
 
 #include "scene/2d/node_2d.h"
 
@@ -130,3 +131,5 @@ private:
 	void _update_position(const Vector2 p_position);
 	void _update_transform();
 };
+
+#endif // NAVIGATION_OBSTACLE_2D_H

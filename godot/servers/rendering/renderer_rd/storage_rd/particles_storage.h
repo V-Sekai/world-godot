@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef PARTICLES_STORAGE_RD_H
+#define PARTICLES_STORAGE_RD_H
 
 #include "core/templates/local_vector.h"
 #include "core/templates/rid_owner.h"
@@ -596,3 +597,5 @@ public:
 };
 
 } // namespace RendererRD
+
+#endif // PARTICLES_STORAGE_RD_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef GLTF_BUFFER_VIEW_H
+#define GLTF_BUFFER_VIEW_H
 
 #include "../gltf_defines.h"
 
@@ -79,3 +80,5 @@ public:
 
 	Vector<uint8_t> load_buffer_view_data(const Ref<GLTFState> p_state) const;
 };
+
+#endif // GLTF_BUFFER_VIEW_H

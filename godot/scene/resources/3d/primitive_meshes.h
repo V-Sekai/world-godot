@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef PRIMITIVE_MESHES_H
+#define PRIMITIVE_MESHES_H
 
 #include "scene/resources/font.h"
 #include "scene/resources/mesh.h"
@@ -690,3 +691,5 @@ public:
 };
 
 VARIANT_ENUM_CAST(RibbonTrailMesh::Shape)
+
+#endif // PRIMITIVE_MESHES_H

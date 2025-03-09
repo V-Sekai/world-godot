@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef PARALLAX_BACKGROUND_EDITOR_PLUGIN_H
+#define PARALLAX_BACKGROUND_EDITOR_PLUGIN_H
 
 #include "editor/plugins/editor_plugin.h"
 
@@ -62,3 +63,5 @@ public:
 
 	ParallaxBackgroundEditorPlugin();
 };
+
+#endif // PARALLAX_BACKGROUND_EDITOR_PLUGIN_H

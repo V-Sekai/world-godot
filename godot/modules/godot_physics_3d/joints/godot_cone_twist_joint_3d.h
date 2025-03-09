@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef GODOT_CONE_TWIST_JOINT_3D_H
+#define GODOT_CONE_TWIST_JOINT_3D_H
 
 /*
 Adapted to Godot from the Bullet library.
@@ -137,3 +138,5 @@ public:
 	void set_param(PhysicsServer3D::ConeTwistJointParam p_param, real_t p_value);
 	real_t get_param(PhysicsServer3D::ConeTwistJointParam p_param) const;
 };
+
+#endif // GODOT_CONE_TWIST_JOINT_3D_H

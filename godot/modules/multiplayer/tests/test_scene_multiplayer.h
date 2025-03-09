@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TEST_SCENE_MULTIPLAYER_H
+#define TEST_SCENE_MULTIPLAYER_H
 
 #include "tests/test_macros.h"
 #include "tests/test_utils.h"
@@ -279,3 +280,5 @@ TEST_CASE("[Multiplayer][SceneMultiplayer][SceneTree] Complete Authentication") 
 }
 
 } // namespace TestSceneMultiplayer
+
+#endif // TEST_SCENE_MULTIPLAYER_H

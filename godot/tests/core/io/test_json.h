@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TEST_JSON_H
+#define TEST_JSON_H
 
 #include "core/io/json.h"
 
@@ -317,3 +318,5 @@ TEST_CASE("[JSON] Serialization") {
 	}
 }
 } // namespace TestJSON
+
+#endif // TEST_JSON_H

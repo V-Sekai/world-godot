@@ -46,7 +46,7 @@ const char *EditorBuildProfile::build_option_identifiers[BUILD_OPTION_MAX] = {
 	"disable_2d_physics",
 	"disable_3d_physics",
 	"disable_navigation",
-	"disable_xr",
+	"openxr",
 	"rendering_device", // FIXME: there's no scons option to disable rendering device
 	"opengl3",
 	"vulkan",
@@ -82,7 +82,7 @@ const bool EditorBuildProfile::build_option_disable_values[BUILD_OPTION_MAX] = {
 	true, // PHYSICS_2D
 	true, // PHYSICS_3D
 	true, // NAVIGATION
-	true, // XR
+	false, // XR
 	false, // RENDERING_DEVICE
 	false, // OPENGL
 	false, // VULKAN

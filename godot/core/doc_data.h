@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef DOC_DATA_H
+#define DOC_DATA_H
 
 #include "core/io/xml_parser.h"
 #include "core/variant/variant.h"
@@ -979,3 +980,5 @@ public:
 	static void argument_doc_from_arginfo(DocData::ArgumentDoc &p_argument, const PropertyInfo &p_arginfo);
 	static void method_doc_from_methodinfo(DocData::MethodDoc &p_method, const MethodInfo &p_methodinfo, const String &p_desc);
 };
+
+#endif // DOC_DATA_H

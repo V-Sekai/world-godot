@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*  licenses_dialog.h                                                     */
+/*  xr_hand_modifier_3d.h                                                 */
 /**************************************************************************/
 /*                         This file is part of:                          */
 /*                             GODOT ENGINE                               */
@@ -28,18 +28,60 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef XR_HAND_MODIFIER_3D_H
+#define XR_HAND_MODIFIER_3D_H
 
-#include "scene/main/canvas_layer.h"
+#include "scene/3d/skeleton_modifier_3d.h"
+#include "servers/xr/xr_hand_tracker.h"
 
-class LicensesDialog : public CanvasLayer {
-	GDCLASS(LicensesDialog, CanvasLayer);
+/**
+	The XRHandModifier3D node drives a hand skeleton using hand tracking
+	data from an XRHandTracking instance.
+ */
 
-	void _close_button_pressed();
-
-protected:
-	virtual void unhandled_key_input(const Ref<InputEvent> &p_event) override;
+class XRHandModifier3D : public SkeletonModifier3D {
+	GDCLASS(XRHandModifier3D, SkeletonModifier3D);
 
 public:
-	LicensesDialog();
+	enum BoneUpdate {
+		BONE_UPDATE_FULL,
+		BONE_UPDATE_ROTATION_ONLY,
+		BONE_UPDATE_MAX
+	};
+
+	void set_hand_tracker(const StringName &p_tracker_name);
+	StringName get_hand_tracker() const;
+
+	void set_bone_update(BoneUpdate p_bone_update);
+	BoneUpdate get_bone_update() const;
+
+	PackedStringArray get_configuration_warnings() const override;
+
+	void _notification(int p_what);
+
+protected:
+	static void _bind_methods();
+
+	virtual void _skeleton_changed(Skeleton3D *p_old, Skeleton3D *p_new) override;
+	virtual void _process_modification() override;
+
+private:
+	struct JointData {
+		int bone = -1;
+		int parent_joint = -1;
+	};
+
+	StringName tracker_name = "/user/hand_tracker/left";
+	BoneUpdate bone_update = BONE_UPDATE_FULL;
+	JointData joints[XRHandTracker::HAND_JOINT_MAX];
+
+	bool has_stored_previous_transforms = false;
+	Vector<Transform3D> previous_relative_transforms;
+
+	void _get_joint_data();
+	void _tracker_changed(StringName p_tracker_name, XRServer::TrackerType p_tracker_type);
 };
+
+VARIANT_ENUM_CAST(XRHandModifier3D::BoneUpdate)
+
+#endif // XR_HAND_MODIFIER_3D_H

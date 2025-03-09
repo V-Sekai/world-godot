@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TEST_MATH_FUNCS_H
+#define TEST_MATH_FUNCS_H
 
 #include "tests/test_macros.h"
 
@@ -639,3 +640,5 @@ TEST_CASE_TEMPLATE("[Math] bezier_interpolate", T, float, double) {
 }
 
 } // namespace TestMath
+
+#endif // TEST_MATH_FUNCS_H

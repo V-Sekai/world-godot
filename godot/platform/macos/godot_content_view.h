@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef GODOT_CONTENT_VIEW_H
+#define GODOT_CONTENT_VIEW_H
 
 #include "servers/display_server.h"
 
@@ -79,3 +80,5 @@
 @end
 
 #pragma clang diagnostic pop
+
+#endif // GODOT_CONTENT_VIEW_H

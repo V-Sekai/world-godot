@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TEST_TEXTURE_PROGRESS_BAR_H
+#define TEST_TEXTURE_PROGRESS_BAR_H
 
 #include "scene/gui/texture_progress_bar.h"
 
@@ -87,3 +88,5 @@ TEST_CASE("[SceneTree][TextureProgressBar]") {
 }
 
 } // namespace TestTextureProgressBar
+
+#endif // TEST_TEXTURE_PROGRESS_BAR_H

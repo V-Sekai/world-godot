@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TEST_VECTOR3_H
+#define TEST_VECTOR3_H
 
 #include "core/math/vector3.h"
 #include "tests/test_macros.h"
@@ -534,3 +535,5 @@ TEST_CASE("[Vector3] Finite number checks") {
 }
 
 } // namespace TestVector3
+
+#endif // TEST_VECTOR3_H

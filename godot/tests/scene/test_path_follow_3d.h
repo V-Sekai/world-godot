@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TEST_PATH_FOLLOW_3D_H
+#define TEST_PATH_FOLLOW_3D_H
 
 #include "scene/3d/path_3d.h"
 #include "scene/main/window.h"
@@ -284,3 +285,5 @@ TEST_CASE("[SceneTree][PathFollow3D] Calculate forward vector") {
 	memdelete(path);
 }
 } // namespace TestPathFollow3D
+
+#endif // TEST_PATH_FOLLOW_3D_H

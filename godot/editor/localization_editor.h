@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef LOCALIZATION_EDITOR_H
+#define LOCALIZATION_EDITOR_H
 
 #include "editor/editor_locale_dialog.h"
 #include "scene/gui/check_box.h"
@@ -97,3 +98,5 @@ public:
 
 	LocalizationEditor();
 };
+
+#endif // LOCALIZATION_EDITOR_H

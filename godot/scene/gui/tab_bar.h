@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TAB_BAR_H
+#define TAB_BAR_H
 
 #include "scene/gui/control.h"
 #include "scene/property_list_helper.h"
@@ -287,3 +288,5 @@ public:
 
 VARIANT_ENUM_CAST(TabBar::AlignmentMode);
 VARIANT_ENUM_CAST(TabBar::CloseButtonDisplayPolicy);
+
+#endif // TAB_BAR_H

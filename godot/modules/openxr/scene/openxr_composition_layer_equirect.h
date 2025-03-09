@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef OPENXR_COMPOSITION_LAYER_EQUIRECT_H
+#define OPENXR_COMPOSITION_LAYER_EQUIRECT_H
 
 #include <openxr/openxr.h>
 
@@ -87,3 +88,5 @@ public:
 	OpenXRCompositionLayerEquirect();
 	~OpenXRCompositionLayerEquirect();
 };
+
+#endif // OPENXR_COMPOSITION_LAYER_EQUIRECT_H

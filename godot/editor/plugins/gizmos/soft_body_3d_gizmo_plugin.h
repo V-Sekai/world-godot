@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef SOFT_BODY_3D_GIZMO_PLUGIN_H
+#define SOFT_BODY_3D_GIZMO_PLUGIN_H
 
 #include "editor/plugins/node_3d_editor_gizmos.h"
 
@@ -49,3 +50,5 @@ public:
 
 	SoftBody3DGizmoPlugin();
 };
+
+#endif // SOFT_BODY_3D_GIZMO_PLUGIN_H

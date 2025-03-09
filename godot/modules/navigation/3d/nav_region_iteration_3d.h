@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef NAV_REGION_ITERATION_3D_H
+#define NAV_REGION_ITERATION_3D_H
 
 #include "../nav_utils.h"
 #include "nav_base_iteration_3d.h"
@@ -46,3 +47,5 @@ struct NavRegionIteration : NavBaseIteration {
 	real_t get_surface_area() const { return surface_area; }
 	AABB get_bounds() const { return bounds; }
 };
+
+#endif // NAV_REGION_ITERATION_3D_H

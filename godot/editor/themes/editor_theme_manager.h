@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef EDITOR_THEME_MANAGER_H
+#define EDITOR_THEME_MANAGER_H
 
 #include "editor/themes/editor_theme.h"
 #include "scene/resources/style_box_flat.h"
@@ -170,3 +171,5 @@ public:
 	static void initialize();
 	static void finalize();
 };
+
+#endif // EDITOR_THEME_MANAGER_H

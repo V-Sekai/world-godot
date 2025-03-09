@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef SAFE_REFCOUNT_H
+#define SAFE_REFCOUNT_H
 
 #include "core/typedefs.h"
 
@@ -221,3 +222,5 @@ public:
 		count.set(p_value);
 	}
 };
+
+#endif // SAFE_REFCOUNT_H

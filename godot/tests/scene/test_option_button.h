@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TEST_OPTION_BUTTON_H
+#define TEST_OPTION_BUTTON_H
 
 #include "scene/gui/option_button.h"
 
@@ -131,3 +132,5 @@ TEST_CASE("[SceneTree][OptionButton] Complex structure") {
 }
 
 } // namespace TestOptionButton
+
+#endif // TEST_OPTION_BUTTON_H

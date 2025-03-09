@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef LOOK_AT_MODIFIER_3D_H
+#define LOOK_AT_MODIFIER_3D_H
 
 #include "scene/3d/skeleton_modifier_3d.h"
 #include "scene/animation/tween.h"
@@ -189,3 +190,5 @@ public:
 };
 
 VARIANT_ENUM_CAST(LookAtModifier3D::OriginFrom);
+
+#endif // LOOK_AT_MODIFIER_3D_H

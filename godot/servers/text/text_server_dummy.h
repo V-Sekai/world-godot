@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TEXT_SERVER_DUMMY_H
+#define TEXT_SERVER_DUMMY_H
 
 #include "servers/text/text_server_extension.h"
 
@@ -123,3 +124,5 @@ public:
 	virtual double shaped_text_get_underline_position(const RID &p_shaped) const override { return 0; }
 	virtual double shaped_text_get_underline_thickness(const RID &p_shaped) const override { return 0; }
 };
+
+#endif // TEXT_SERVER_DUMMY_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef LINUXBSD_EXPORT_PLUGIN_H
+#define LINUXBSD_EXPORT_PLUGIN_H
 
 #include "core/io/file_access.h"
 #include "editor/editor_settings.h"
@@ -91,3 +92,5 @@ public:
 
 	EditorExportPlatformLinuxBSD();
 };
+
+#endif // LINUXBSD_EXPORT_PLUGIN_H

@@ -28,31 +28,30 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef CHAR_UTILS_H
+#define CHAR_UTILS_H
 
 #include "core/typedefs.h"
 
 #include "char_range.inc"
 
-#include <iterator>
-
-#define BSEARCH_CHAR_RANGE(m_array)                \
-	int low = 0;                                   \
-	int high = std::size(m_array) - 1;             \
-	int middle = (low + high) / 2;                 \
-                                                   \
-	while (low <= high) {                          \
-		if (p_char < m_array[middle].start) {      \
-			high = middle - 1;                     \
-		} else if (p_char > m_array[middle].end) { \
-			low = middle + 1;                      \
-		} else {                                   \
-			return true;                           \
-		}                                          \
-                                                   \
-		middle = (low + high) / 2;                 \
-	}                                              \
-                                                   \
+#define BSEARCH_CHAR_RANGE(m_array)                      \
+	int low = 0;                                         \
+	int high = sizeof(m_array) / sizeof(m_array[0]) - 1; \
+	int middle = (low + high) / 2;                       \
+                                                         \
+	while (low <= high) {                                \
+		if (p_char < m_array[middle].start) {            \
+			high = middle - 1;                           \
+		} else if (p_char > m_array[middle].end) {       \
+			low = middle + 1;                            \
+		} else {                                         \
+			return true;                                 \
+		}                                                \
+                                                         \
+		middle = (low + high) / 2;                       \
+	}                                                    \
+                                                         \
 	return false
 
 constexpr bool is_unicode_identifier_start(char32_t p_char) {
@@ -132,3 +131,5 @@ constexpr bool is_punct(char32_t p_char) {
 constexpr bool is_underscore(char32_t p_char) {
 	return (p_char == '_');
 }
+
+#endif // CHAR_UTILS_H

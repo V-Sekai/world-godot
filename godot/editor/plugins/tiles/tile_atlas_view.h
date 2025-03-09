@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TILE_ATLAS_VIEW_H
+#define TILE_ATLAS_VIEW_H
 
 #include "editor/gui/editor_zoom_widget.h"
 #include "scene/gui/box_container.h"
@@ -169,3 +170,5 @@ public:
 	TileAtlasView();
 	~TileAtlasView();
 };
+
+#endif // TILE_ATLAS_VIEW_H

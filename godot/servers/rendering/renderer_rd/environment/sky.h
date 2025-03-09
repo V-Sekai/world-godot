@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef SKY_RD_H
+#define SKY_RD_H
 
 #include "core/templates/rid_owner.h"
 #include "servers/rendering/renderer_compositor.h"
@@ -318,3 +319,5 @@ public:
 };
 
 } // namespace RendererRD
+
+#endif // SKY_RD_H

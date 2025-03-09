@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef BINDER_COMMON_H
+#define BINDER_COMMON_H
 
 #include "core/input/input_enums.h"
 #include "core/object/object.h"
@@ -1036,3 +1037,5 @@ void call_with_variant_args_static_dv(void (*p_method)(P...), const Variant **p_
 #if defined(__GNUC__) && !defined(__clang__)
 #pragma GCC diagnostic pop
 #endif
+
+#endif // BINDER_COMMON_H

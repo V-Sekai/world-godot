@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TRANSLATION_H
+#define TRANSLATION_H
 
 #include "core/io/resource.h"
 #include "core/object/gdvirtual.gen.inc"
@@ -68,3 +69,5 @@ public:
 
 	Translation() {}
 };
+
+#endif // TRANSLATION_H

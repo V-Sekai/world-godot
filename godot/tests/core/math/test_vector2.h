@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TEST_VECTOR2_H
+#define TEST_VECTOR2_H
 
 #include "core/math/vector2.h"
 #include "core/math/vector2i.h"
@@ -497,3 +498,5 @@ TEST_CASE("[Vector2] Finite number checks") {
 }
 
 } // namespace TestVector2
+
+#endif // TEST_VECTOR2_H

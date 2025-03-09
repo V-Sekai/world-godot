@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef MESH_STORAGE_H
+#define MESH_STORAGE_H
 
 #include "servers/rendering_server.h"
 #include "utilities.h"
@@ -226,3 +227,5 @@ public:
 	void update_interpolation_tick(bool p_process = true);
 	void update_interpolation_frame(bool p_process = true);
 };
+
+#endif // MESH_STORAGE_H

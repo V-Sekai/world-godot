@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef ZIP_PACKER_H
+#define ZIP_PACKER_H
 
 #include "core/io/file_access.h"
 #include "core/object/ref_counted.h"
@@ -63,3 +64,5 @@ public:
 };
 
 VARIANT_ENUM_CAST(ZIPPacker::ZipAppend)
+
+#endif // ZIP_PACKER_H

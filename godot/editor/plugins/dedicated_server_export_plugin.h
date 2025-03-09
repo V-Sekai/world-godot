@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef DEDICATED_SERVER_EXPORT_PLUGIN_H
+#define DEDICATED_SERVER_EXPORT_PLUGIN_H
 
 #include "editor/export/editor_export_plugin.h"
 
@@ -53,3 +54,5 @@ protected:
 	void _end_customize_scenes() override;
 	void _end_customize_resources() override;
 };
+
+#endif // DEDICATED_SERVER_EXPORT_PLUGIN_H

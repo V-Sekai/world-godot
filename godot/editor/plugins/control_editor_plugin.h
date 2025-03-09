@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef CONTROL_EDITOR_PLUGIN_H
+#define CONTROL_EDITOR_PLUGIN_H
 
 #include "editor/editor_inspector.h"
 #include "editor/plugins/editor_plugin.h"
@@ -258,3 +259,5 @@ public:
 
 	ControlEditorPlugin();
 };
+
+#endif // CONTROL_EDITOR_PLUGIN_H

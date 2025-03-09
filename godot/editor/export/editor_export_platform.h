@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef EDITOR_EXPORT_PLATFORM_H
+#define EDITOR_EXPORT_PLATFORM_H
 
 class EditorFileSystemDirectory;
 struct EditorProgress;
@@ -342,3 +343,5 @@ public:
 
 VARIANT_ENUM_CAST(EditorExportPlatform::ExportMessageType)
 VARIANT_BITFIELD_CAST(EditorExportPlatform::DebugFlags);
+
+#endif // EDITOR_EXPORT_PLATFORM_H

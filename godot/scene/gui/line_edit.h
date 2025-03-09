@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef LINE_EDIT_H
+#define LINE_EDIT_H
 
 #include "scene/gui/control.h"
 #include "scene/gui/popup_menu.h"
@@ -418,3 +419,5 @@ public:
 
 VARIANT_ENUM_CAST(LineEdit::MenuItems);
 VARIANT_ENUM_CAST(LineEdit::VirtualKeyboardType);
+
+#endif // LINE_EDIT_H

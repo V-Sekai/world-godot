@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef SKIN_TOOL_H
+#define SKIN_TOOL_H
 
 #include "gltf_defines.h"
 
@@ -94,3 +95,5 @@ public:
 			HashMap<GLTFNodeIndex, Node *> &r_scene_nodes);
 	static Error _create_skins(Vector<Ref<GLTFSkin>> &skins, Vector<Ref<GLTFNode>> &nodes, bool use_named_skin_binds, HashSet<String> &unique_names);
 };
+
+#endif // SKIN_TOOL_H

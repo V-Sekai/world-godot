@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef AUDIO_STREAM_PLAYLIST_H
+#define AUDIO_STREAM_PLAYLIST_H
 
 #include "servers/audio/audio_stream.h"
 
@@ -120,3 +121,5 @@ public:
 
 	~AudioStreamPlaybackPlaylist();
 };
+
+#endif // AUDIO_STREAM_PLAYLIST_H

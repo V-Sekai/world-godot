@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef FRAMEBUFFER_CACHE_RD_H
+#define FRAMEBUFFER_CACHE_RD_H
 
 #include "core/templates/local_vector.h"
 #include "core/templates/paged_allocator.h"
@@ -311,3 +312,5 @@ public:
 	FramebufferCacheRD();
 	~FramebufferCacheRD();
 };
+
+#endif // FRAMEBUFFER_CACHE_RD_H

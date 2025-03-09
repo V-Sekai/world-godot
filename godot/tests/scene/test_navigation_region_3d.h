@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TEST_NAVIGATION_REGION_3D_H
+#define TEST_NAVIGATION_REGION_3D_H
 
 #include "scene/3d/mesh_instance_3d.h"
 #include "scene/3d/navigation_region_3d.h"
@@ -79,3 +80,5 @@ TEST_SUITE("[Navigation]") {
 }
 
 } //namespace TestNavigationRegion3D
+
+#endif // TEST_NAVIGATION_REGION_3D_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef JOLT_OBJECT_3D_H
+#define JOLT_OBJECT_3D_H
 
 #include "../shapes/jolt_shape_instance_3d.h"
 
@@ -151,3 +152,5 @@ public:
 
 	String to_string() const;
 };
+
+#endif // JOLT_OBJECT_3D_H

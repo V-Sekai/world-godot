@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef CURVE_TEXTURE_H
+#define CURVE_TEXTURE_H
 
 #include "scene/resources/texture.h"
 
@@ -117,3 +118,5 @@ public:
 	CurveXYZTexture();
 	~CurveXYZTexture();
 };
+
+#endif // CURVE_TEXTURE_H

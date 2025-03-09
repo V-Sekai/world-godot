@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef RESOURCE_IMPORTER_LAYERED_TEXTURE_H
+#define RESOURCE_IMPORTER_LAYERED_TEXTURE_H
 
 #include "core/io/image.h"
 #include "core/io/resource_importer.h"
@@ -123,3 +124,5 @@ public:
 	ResourceImporterLayeredTexture(bool p_singleton = false);
 	~ResourceImporterLayeredTexture();
 };
+
+#endif // RESOURCE_IMPORTER_LAYERED_TEXTURE_H

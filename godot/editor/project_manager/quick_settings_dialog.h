@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef QUICK_SETTINGS_DIALOG_H
+#define QUICK_SETTINGS_DIALOG_H
 
 #include "scene/gui/dialogs.h"
 
@@ -93,3 +94,5 @@ public:
 
 	QuickSettingsDialog();
 };
+
+#endif // QUICK_SETTINGS_DIALOG_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TEST_VIEWPORT_H
+#define TEST_VIEWPORT_H
 
 #include "scene/2d/physics/area_2d.h"
 #include "scene/2d/physics/collision_shape_2d.h"
@@ -1944,3 +1945,5 @@ TEST_CASE("[SceneTree][Viewport] Embedded Windows") {
 }
 
 } // namespace TestViewport
+
+#endif // TEST_VIEWPORT_H

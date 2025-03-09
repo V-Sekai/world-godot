@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef ENGINE_H
+#define ENGINE_H
 
 #include "core/os/main_loop.h"
 #include "core/string/ustring.h"
@@ -213,3 +214,5 @@ public:
 	Engine();
 	virtual ~Engine();
 };
+
+#endif // ENGINE_H

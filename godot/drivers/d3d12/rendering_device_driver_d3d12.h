@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef RENDERING_DEVICE_DRIVER_D3D12_H
+#define RENDERING_DEVICE_DRIVER_D3D12_H
 
 #include "core/templates/hash_map.h"
 #include "core/templates/paged_allocator.h"
@@ -1035,3 +1036,5 @@ public:
 	RenderingDeviceDriverD3D12(RenderingContextDriverD3D12 *p_context_driver);
 	virtual ~RenderingDeviceDriverD3D12();
 };
+
+#endif // RENDERING_DEVICE_DRIVER_D3D12_H

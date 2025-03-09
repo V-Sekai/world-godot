@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TYPED_ARRAY_H
+#define TYPED_ARRAY_H
 
 #include "core/object/object.h"
 #include "core/variant/array.h"
@@ -250,3 +251,5 @@ MAKE_TYPED_ARRAY_INFO(IPAddress, Variant::STRING)
 
 #undef MAKE_TYPED_ARRAY
 #undef MAKE_TYPED_ARRAY_INFO
+
+#endif // TYPED_ARRAY_H

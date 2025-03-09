@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef FILE_DIALOG_H
+#define FILE_DIALOG_H
 
 #include "box_container.h"
 #include "core/io/dir_access.h"
@@ -297,3 +298,5 @@ public:
 
 VARIANT_ENUM_CAST(FileDialog::FileMode);
 VARIANT_ENUM_CAST(FileDialog::Access);
+
+#endif // FILE_DIALOG_H

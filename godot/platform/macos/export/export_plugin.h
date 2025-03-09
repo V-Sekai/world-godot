@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef MACOS_EXPORT_PLUGIN_H
+#define MACOS_EXPORT_PLUGIN_H
 
 #include "core/config/project_settings.h"
 #include "core/io/dir_access.h"
@@ -172,3 +173,5 @@ public:
 
 	EditorExportPlatformMacOS();
 };
+
+#endif // MACOS_EXPORT_PLUGIN_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef ANIMATION_TREE_H
+#define ANIMATION_TREE_H
 
 #include "animation_mixer.h"
 #include "scene/resources/animation.h"
@@ -361,3 +362,5 @@ public:
 #ifndef DISABLE_DEPRECATED
 VARIANT_ENUM_CAST(AnimationTree::AnimationProcessCallback);
 #endif // DISABLE_DEPRECATED
+
+#endif // ANIMATION_TREE_H

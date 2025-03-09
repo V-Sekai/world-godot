@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef JOYPAD_LINUX_H
+#define JOYPAD_LINUX_H
 
 #ifdef JOYDEV_ENABLED
 
@@ -134,3 +135,5 @@ private:
 };
 
 #endif // JOYDEV_ENABLED
+
+#endif // JOYPAD_LINUX_H

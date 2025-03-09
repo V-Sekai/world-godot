@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef EDITOR_EXPORT_PLATFORM_PC_H
+#define EDITOR_EXPORT_PLATFORM_PC_H
 
 #include "editor_export_platform.h"
 
@@ -77,3 +78,5 @@ public:
 		return Error::OK;
 	}
 };
+
+#endif // EDITOR_EXPORT_PLATFORM_PC_H

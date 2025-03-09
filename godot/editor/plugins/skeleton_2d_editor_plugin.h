@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef SKELETON_2D_EDITOR_PLUGIN_H
+#define SKELETON_2D_EDITOR_PLUGIN_H
 
 #include "editor/plugins/editor_plugin.h"
 #include "scene/2d/skeleton_2d.h"
@@ -77,3 +78,5 @@ public:
 	Skeleton2DEditorPlugin();
 	~Skeleton2DEditorPlugin();
 };
+
+#endif // SKELETON_2D_EDITOR_PLUGIN_H

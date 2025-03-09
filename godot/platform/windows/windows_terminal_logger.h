@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef WINDOWS_TERMINAL_LOGGER_H
+#define WINDOWS_TERMINAL_LOGGER_H
 
 #ifdef WINDOWS_ENABLED
 
@@ -42,3 +43,5 @@ public:
 };
 
 #endif // WINDOWS_ENABLED
+
+#endif // WINDOWS_TERMINAL_LOGGER_H

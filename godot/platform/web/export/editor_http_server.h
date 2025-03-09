@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef WEB_EDITOR_HTTP_SERVER_H
+#define WEB_EDITOR_HTTP_SERVER_H
 
 #include "core/io/image_loader.h"
 #include "core/io/stream_peer_tls.h"
@@ -69,3 +70,5 @@ public:
 	Error listen(int p_port, IPAddress p_address, bool p_use_tls, String p_tls_key, String p_tls_cert);
 	bool is_listening() const;
 };
+
+#endif // WEB_EDITOR_HTTP_SERVER_H

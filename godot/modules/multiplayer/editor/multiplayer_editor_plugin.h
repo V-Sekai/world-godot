@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef MULTIPLAYER_EDITOR_PLUGIN_H
+#define MULTIPLAYER_EDITOR_PLUGIN_H
 
 #include "editor/plugins/editor_debugger_plugin.h"
 #include "editor/plugins/editor_plugin.h"
@@ -79,3 +80,5 @@ public:
 
 	MultiplayerEditorPlugin();
 };
+
+#endif // MULTIPLAYER_EDITOR_PLUGIN_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef VECTOR4I_H
+#define VECTOR4I_H
 
 #include "core/error/error_macros.h"
 #include "core/math/math_funcs.h"
@@ -362,3 +363,5 @@ bool Vector4i::operator>=(const Vector4i &p_v) const {
 void Vector4i::zero() {
 	x = y = z = w = 0;
 }
+
+#endif // VECTOR4I_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef METHOD_BIND_H
+#define METHOD_BIND_H
 
 #include "core/variant/binder_common.h"
 
@@ -789,3 +790,5 @@ MethodBind *create_static_method_bind(R (*p_method)(P...)) {
 	MethodBind *a = memnew((MethodBindTRS<R, P...>)(p_method));
 	return a;
 }
+
+#endif // METHOD_BIND_H

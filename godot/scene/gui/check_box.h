@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef CHECK_BOX_H
+#define CHECK_BOX_H
 
 #include "scene/gui/button.h"
 
@@ -63,3 +64,5 @@ public:
 	CheckBox(const String &p_text = String());
 	~CheckBox();
 };
+
+#endif // CHECK_BOX_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef OPENXR_DPAD_BINDING_EXTENSION_H
+#define OPENXR_DPAD_BINDING_EXTENSION_H
 
 #include "../action_map/openxr_action_set.h"
 #include "../action_map/openxr_binding_modifier.h"
@@ -104,3 +105,5 @@ public:
 	virtual String get_description() const override { return "DPad modifier"; }
 	virtual PackedByteArray get_ip_modification() override;
 };
+
+#endif // OPENXR_DPAD_BINDING_EXTENSION_H

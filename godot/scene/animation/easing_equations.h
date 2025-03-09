@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef EASING_EQUATIONS_H
+#define EASING_EQUATIONS_H
 
 /*
  * Derived from Robert Penner's easing equations: http://robertpenner.com/easing/
@@ -440,3 +441,5 @@ static real_t out_in(real_t t, real_t b, real_t c, real_t d) {
 	return in(t * 2 - d, b + h, h, d);
 }
 }; // namespace spring
+
+#endif // EASING_EQUATIONS_H

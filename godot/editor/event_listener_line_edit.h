@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef EVENT_LISTENER_LINE_EDIT_H
+#define EVENT_LISTENER_LINE_EDIT_H
 
 #include "scene/gui/line_edit.h"
 
@@ -74,3 +75,5 @@ public:
 public:
 	EventListenerLineEdit();
 };
+
+#endif // EVENT_LISTENER_LINE_EDIT_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TEXT_SERVER_EXTENSION_H
+#define TEXT_SERVER_EXTENSION_H
 
 #include "core/object/gdvirtual.gen.inc"
 #include "core/os/thread_safe.h"
@@ -597,3 +598,5 @@ public:
 	TextServerExtension();
 	~TextServerExtension();
 };
+
+#endif // TEXT_SERVER_EXTENSION_H

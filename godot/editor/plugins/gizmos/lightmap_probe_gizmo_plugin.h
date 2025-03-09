@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef LIGHTMAP_PROBE_GIZMO_PLUGIN_H
+#define LIGHTMAP_PROBE_GIZMO_PLUGIN_H
 
 #include "editor/plugins/node_3d_editor_gizmos.h"
 
@@ -43,3 +44,5 @@ public:
 
 	LightmapProbeGizmoPlugin();
 };
+
+#endif // LIGHTMAP_PROBE_GIZMO_PLUGIN_H

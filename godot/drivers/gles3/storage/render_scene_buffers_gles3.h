@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef RENDER_SCENE_BUFFERS_GLES3_H
+#define RENDER_SCENE_BUFFERS_GLES3_H
 
 #ifdef GLES3_ENABLED
 
@@ -163,3 +164,5 @@ public:
 };
 
 #endif // GLES3_ENABLED
+
+#endif // RENDER_SCENE_BUFFERS_GLES3_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TEST_NAVIGATION_AGENT_2D_H
+#define TEST_NAVIGATION_AGENT_2D_H
 
 #include "scene/2d/navigation_agent_2d.h"
 #include "scene/2d/node_2d.h"
@@ -67,3 +68,5 @@ TEST_SUITE("[Navigation]") {
 }
 
 } //namespace TestNavigationAgent2D
+
+#endif // TEST_NAVIGATION_AGENT_2D_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef FONT_H
+#define FONT_H
 
 #include "core/io/resource.h"
 #include "core/templates/lru.h"
@@ -558,3 +559,5 @@ public:
 	SystemFont();
 	~SystemFont();
 };
+
+#endif // FONT_H

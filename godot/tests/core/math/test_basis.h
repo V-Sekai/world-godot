@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TEST_BASIS_H
+#define TEST_BASIS_H
 
 #include "core/math/basis.h"
 #include "core/math/random_number_generator.h"
@@ -426,3 +427,5 @@ TEST_CASE("[Basis] Is rotation checks") {
 }
 
 } // namespace TestBasis
+
+#endif // TEST_BASIS_H

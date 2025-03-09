@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef CENTER_CONTAINER_H
+#define CENTER_CONTAINER_H
 
 #include "scene/gui/container.h"
 
@@ -52,3 +53,5 @@ public:
 
 	CenterContainer();
 };
+
+#endif // CENTER_CONTAINER_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef SCENE_DEBUGGER_H
+#define SCENE_DEBUGGER_H
 
 #include "core/input/shortcut.h"
 #include "core/object/ref_counted.h"
@@ -327,3 +328,5 @@ public:
 	~RuntimeNodeSelect();
 };
 #endif
+
+#endif // SCENE_DEBUGGER_H

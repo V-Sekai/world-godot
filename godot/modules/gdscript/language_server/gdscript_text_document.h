@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef GDSCRIPT_TEXT_DOCUMENT_H
+#define GDSCRIPT_TEXT_DOCUMENT_H
 
 #include "godot_lsp.h"
 
@@ -82,3 +83,5 @@ public:
 
 	GDScriptTextDocument();
 };
+
+#endif // GDSCRIPT_TEXT_DOCUMENT_H

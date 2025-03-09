@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef SHADER_GLES3_H
+#define SHADER_GLES3_H
 
 #include "core/math/projection.h"
 #include "core/os/mutex.h"
@@ -257,3 +258,5 @@ public:
 };
 
 #endif // GLES3_ENABLED
+
+#endif // SHADER_GLES3_H

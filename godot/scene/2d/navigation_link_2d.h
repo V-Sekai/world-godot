@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef NAVIGATION_LINK_2D_H
+#define NAVIGATION_LINK_2D_H
 
 #include "scene/2d/node_2d.h"
 
@@ -110,3 +111,5 @@ private:
 	void _link_exit_navigation_map();
 	void _link_update_transform();
 };
+
+#endif // NAVIGATION_LINK_2D_H

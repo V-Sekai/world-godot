@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef ANIMATION_TRACK_EDITOR_PLUGINS_H
+#define ANIMATION_TRACK_EDITOR_PLUGINS_H
 
 #include "editor/animation_track_editor.h"
 
@@ -166,3 +167,5 @@ public:
 	virtual AnimationTrackEdit *create_audio_track_edit() override;
 	virtual AnimationTrackEdit *create_animation_track_edit(Object *p_object) override;
 };
+
+#endif // ANIMATION_TRACK_EDITOR_PLUGINS_H

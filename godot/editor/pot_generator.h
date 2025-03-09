@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef POT_GENERATOR_H
+#define POT_GENERATOR_H
 
 #include "core/io/file_access.h"
 #include "core/templates/hash_map.h"
@@ -63,3 +64,5 @@ public:
 	POTGenerator();
 	~POTGenerator();
 };
+
+#endif // POT_GENERATOR_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef INPUT_EVENT_EDITOR_PLUGIN_H
+#define INPUT_EVENT_EDITOR_PLUGIN_H
 
 #include "editor/action_map_editor.h"
 #include "editor/editor_inspector.h"
@@ -73,3 +74,5 @@ public:
 
 	InputEventEditorPlugin();
 };
+
+#endif // INPUT_EVENT_EDITOR_PLUGIN_H

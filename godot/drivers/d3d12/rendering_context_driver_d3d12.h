@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef RENDERING_CONTEXT_DRIVER_D3D12_H
+#define RENDERING_CONTEXT_DRIVER_D3D12_H
 
 #include "core/error/error_list.h"
 #include "core/os/mutex.h"
@@ -85,7 +86,7 @@
 
 using Microsoft::WRL::ComPtr;
 
-#define ARRAY_SIZE(a) std::size(a)
+#define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
 
 class RenderingContextDriverD3D12 : public RenderingContextDriver {
 	ComPtr<ID3D12DeviceFactory> device_factory;
@@ -140,3 +141,5 @@ public:
 	RenderingContextDriverD3D12();
 	virtual ~RenderingContextDriverD3D12() override;
 };
+
+#endif // RENDERING_CONTEXT_DRIVER_D3D12_H

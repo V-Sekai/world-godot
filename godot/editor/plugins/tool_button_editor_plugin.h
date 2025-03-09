@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TOOL_BUTTON_EDITOR_PLUGIN_H
+#define TOOL_BUTTON_EDITOR_PLUGIN_H
 
 #include "editor/editor_inspector.h"
 #include "editor/plugins/editor_plugin.h"
@@ -52,3 +53,5 @@ public:
 
 	ToolButtonEditorPlugin();
 };
+
+#endif // TOOL_BUTTON_EDITOR_PLUGIN_H

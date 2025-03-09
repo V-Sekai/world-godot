@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef NAVIGATION_AGENT_2D_H
+#define NAVIGATION_AGENT_2D_H
 
 #include "scene/main/node.h"
 #include "servers/navigation/navigation_path_query_parameters_2d.h"
@@ -259,3 +260,5 @@ private:
 	void _update_debug_path();
 #endif // DEBUG_ENABLED
 };
+
+#endif // NAVIGATION_AGENT_2D_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef NAV_AGENT_H
+#define NAV_AGENT_H
 
 #include "nav_rid.h"
 
@@ -157,3 +158,5 @@ public:
 private:
 	void _update_rvo_agent_properties();
 };
+
+#endif // NAV_AGENT_H

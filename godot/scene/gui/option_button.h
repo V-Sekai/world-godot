@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef OPTION_BUTTON_H
+#define OPTION_BUTTON_H
 
 #include "scene/gui/button.h"
 #include "scene/gui/popup_menu.h"
@@ -149,3 +150,5 @@ public:
 	OptionButton(const String &p_text = String());
 	~OptionButton();
 };
+
+#endif // OPTION_BUTTON_H

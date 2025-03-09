@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef RESOURCE_H
+#define RESOURCE_H
 
 #include "core/io/resource_uid.h"
 #include "core/object/class_db.h"
@@ -178,3 +179,5 @@ public:
 	static void get_cached_resources(List<Ref<Resource>> *p_resources);
 	static int get_cached_resource_count();
 };
+
+#endif // RESOURCE_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef PARTICLES_EDITOR_PLUGIN_H
+#define PARTICLES_EDITOR_PLUGIN_H
 
 #include "editor/plugins/editor_plugin.h"
 
@@ -211,3 +212,5 @@ protected:
 public:
 	CPUParticles3DEditorPlugin();
 };
+
+#endif // PARTICLES_EDITOR_PLUGIN_H

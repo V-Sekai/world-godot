@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef DIR_ACCESS_H
+#define DIR_ACCESS_H
 
 #include "core/object/ref_counted.h"
 #include "core/string/ustring.h"
@@ -173,3 +174,5 @@ public:
 	DirAccess() {}
 	virtual ~DirAccess();
 };
+
+#endif // DIR_ACCESS_H

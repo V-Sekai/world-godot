@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef EDITOR_PROPERTY_NAME_PROCESSOR_H
+#define EDITOR_PROPERTY_NAME_PROCESSOR_H
 
 #include "scene/main/node.h"
 
@@ -75,3 +76,5 @@ public:
 	EditorPropertyNameProcessor();
 	~EditorPropertyNameProcessor();
 };
+
+#endif // EDITOR_PROPERTY_NAME_PROCESSOR_H

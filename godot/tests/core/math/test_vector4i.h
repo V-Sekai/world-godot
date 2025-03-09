@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TEST_VECTOR4I_H
+#define TEST_VECTOR4I_H
 
 #include "core/math/vector4i.h"
 #include "tests/test_macros.h"
@@ -169,3 +170,5 @@ TEST_CASE("[Vector4i] Abs and sign methods") {
 			"Vector4i sign should work as expected.");
 }
 } // namespace TestVector4i
+
+#endif // TEST_VECTOR4I_H

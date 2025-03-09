@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TILE_DATA_EDITORS_H
+#define TILE_DATA_EDITORS_H
 
 #include "tile_atlas_view.h"
 
@@ -414,3 +415,5 @@ public:
 
 	TileDataNavigationEditor();
 };
+
+#endif // TILE_DATA_EDITORS_H

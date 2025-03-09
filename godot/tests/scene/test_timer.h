@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TEST_TIMER_H
+#define TEST_TIMER_H
 
 #include "scene/main/timer.h"
 
@@ -212,3 +213,5 @@ TEST_CASE("[SceneTree][Timer] Check Timer timeout signal") {
 }
 
 } // namespace TestTimer
+
+#endif // TEST_TIMER_H

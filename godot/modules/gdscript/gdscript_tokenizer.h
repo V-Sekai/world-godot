@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef GDSCRIPT_TOKENIZER_H
+#define GDSCRIPT_TOKENIZER_H
 
 #include "core/templates/hash_map.h"
 #include "core/templates/list.h"
@@ -311,3 +312,5 @@ public:
 
 	GDScriptTokenizerText();
 };
+
+#endif // GDSCRIPT_TOKENIZER_H

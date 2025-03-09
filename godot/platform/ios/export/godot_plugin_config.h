@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef IOS_GODOT_PLUGIN_CONFIG_H
+#define IOS_GODOT_PLUGIN_CONFIG_H
 
 #include "core/error/error_list.h"
 #include "core/io/config_file.h"
@@ -130,3 +131,5 @@ struct PluginConfigIOS {
 
 	static PluginConfigIOS load_plugin_config(Ref<ConfigFile> config_file, const String &path);
 };
+
+#endif // IOS_GODOT_PLUGIN_CONFIG_H

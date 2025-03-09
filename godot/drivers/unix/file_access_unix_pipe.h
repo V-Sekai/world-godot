@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef FILE_ACCESS_UNIX_PIPE_H
+#define FILE_ACCESS_UNIX_PIPE_H
 
 #include "core/io/file_access.h"
 #include "core/os/memory.h"
@@ -90,3 +91,5 @@ public:
 };
 
 #endif // UNIX_ENABLED
+
+#endif // FILE_ACCESS_UNIX_PIPE_H

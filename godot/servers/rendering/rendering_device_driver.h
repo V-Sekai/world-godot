@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef RENDERING_DEVICE_DRIVER_H
+#define RENDERING_DEVICE_DRIVER_H
 
 // ***********************************************************************************
 // RenderingDeviceDriver - Design principles
@@ -840,3 +841,5 @@ public:
 };
 
 using RDD = RenderingDeviceDriver;
+
+#endif // RENDERING_DEVICE_DRIVER_H

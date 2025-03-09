@@ -1,5 +1,6 @@
 /* WARNING, THIS FILE WAS GENERATED, DO NOT EDIT */
-#pragma once
+#ifndef VERTEX_FRAGMENT_SHADER_GLSL_RAW_H
+#define VERTEX_FRAGMENT_SHADER_GLSL_RAW_H
 
 static const char vertex_fragment_shader_glsl[] = {
 R"<!>(#[versions]
@@ -36,3 +37,4 @@ void main() {
 }
 )<!>"
 };
+#endif

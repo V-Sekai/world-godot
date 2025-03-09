@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef VISUAL_SHADER_H
+#define VISUAL_SHADER_H
 
 #include "core/string/string_builder.h"
 #include "core/templates/safe_refcount.h"
@@ -1006,3 +1007,5 @@ public:
 };
 
 extern String make_unique_id(VisualShader::Type p_type, int p_id, const String &p_name);
+
+#endif // VISUAL_SHADER_H

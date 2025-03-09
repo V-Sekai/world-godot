@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef SLIDER_H
+#define SLIDER_H
 
 #include "scene/gui/range.h"
 
@@ -110,3 +111,5 @@ public:
 	VSlider() :
 			Slider(VERTICAL) { set_h_size_flags(0); }
 };
+
+#endif // SLIDER_H

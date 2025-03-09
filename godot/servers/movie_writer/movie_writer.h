@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef MOVIE_WRITER_H
+#define MOVIE_WRITER_H
 
 #include "core/io/image.h"
 #include "core/templates/local_vector.h"
@@ -88,3 +89,5 @@ public:
 
 	void end();
 };
+
+#endif // MOVIE_WRITER_H

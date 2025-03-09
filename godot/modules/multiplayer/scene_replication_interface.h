@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef SCENE_REPLICATION_INTERFACE_H
+#define SCENE_REPLICATION_INTERFACE_H
 
 #include "multiplayer_spawner.h"
 #include "multiplayer_synchronizer.h"
@@ -150,3 +151,5 @@ public:
 		multiplayer_cache = p_cache;
 	}
 };
+
+#endif // SCENE_REPLICATION_INTERFACE_H

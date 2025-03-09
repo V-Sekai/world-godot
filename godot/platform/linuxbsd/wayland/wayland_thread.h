@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef WAYLAND_THREAD_H
+#define WAYLAND_THREAD_H
 
 #ifdef WAYLAND_ENABLED
 
@@ -1033,3 +1034,5 @@ public:
 };
 
 #endif // WAYLAND_ENABLED
+
+#endif // WAYLAND_THREAD_H

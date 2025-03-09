@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef JOLT_CUSTOM_DOUBLE_SIDED_SHAPE_H
+#define JOLT_CUSTOM_DOUBLE_SIDED_SHAPE_H
 
 #include "jolt_custom_decorated_shape.h"
 #include "jolt_custom_shape_type.h"
@@ -69,3 +70,5 @@ public:
 
 	virtual void CastRay(const JPH::RayCast &p_ray, const JPH::RayCastSettings &p_ray_cast_settings, const JPH::SubShapeIDCreator &p_sub_shape_id_creator, JPH::CastRayCollector &p_collector, const JPH::ShapeFilter &p_shape_filter = JPH::ShapeFilter()) const override;
 };
+
+#endif // JOLT_CUSTOM_DOUBLE_SIDED_SHAPE_H

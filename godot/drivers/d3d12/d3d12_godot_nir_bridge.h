@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef D3D12_GODOT_NIR_BRIDGE_H
+#define D3D12_GODOT_NIR_BRIDGE_H
 
 #include <stdint.h>
 
@@ -55,3 +56,5 @@ typedef struct GodotNirCallbacks {
 #ifdef __cplusplus
 }
 #endif
+
+#endif // D3D12_GODOT_NIR_BRIDGE_H

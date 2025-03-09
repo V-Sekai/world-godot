@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef EDITOR_SECTIONED_INSPECTOR_H
+#define EDITOR_SECTIONED_INSPECTOR_H
 
 #include "scene/gui/split_container.h"
 
@@ -78,3 +79,5 @@ public:
 	SectionedInspector();
 	~SectionedInspector();
 };
+
+#endif // EDITOR_SECTIONED_INSPECTOR_H

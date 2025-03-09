@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef CAMERA_FEED_LINUX_H
+#define CAMERA_FEED_LINUX_H
 
 #include "buffer_decoder.h"
 
@@ -73,3 +74,5 @@ public:
 	CameraFeedLinux(const String &p_device_name);
 	virtual ~CameraFeedLinux();
 };
+
+#endif // CAMERA_FEED_LINUX_H

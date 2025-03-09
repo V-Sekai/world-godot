@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef GDSCRIPT_CACHE_H
+#define GDSCRIPT_CACHE_H
 
 #include "gdscript.h"
 
@@ -121,3 +122,5 @@ public:
 	GDScriptCache();
 	~GDScriptCache();
 };
+
+#endif // GDSCRIPT_CACHE_H

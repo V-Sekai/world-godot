@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TEST_HTTP_CLIENT_H
+#define TEST_HTTP_CLIENT_H
 
 #include "core/io/http_client.h"
 
@@ -105,3 +106,5 @@ TEST_CASE("[HTTPClient] connect_to_host") {
 #endif // MODULE_MBEDTLS_ENABLED || WEB_ENABLED
 
 } // namespace TestHTTPClient
+
+#endif // TEST_HTTP_CLIENT_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef FILE_ACCESS_PACK_H
+#define FILE_ACCESS_PACK_H
 
 #include "core/io/dir_access.h"
 #include "core/io/file_access.h"
@@ -271,3 +272,5 @@ Ref<DirAccess> PackedData::try_open_directory(const String &p_path) {
 	}
 	return da;
 }
+
+#endif // FILE_ACCESS_PACK_H

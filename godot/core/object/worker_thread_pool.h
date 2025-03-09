@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef WORKER_THREAD_POOL_H
+#define WORKER_THREAD_POOL_H
 
 #include "core/os/condition_variable.h"
 #include "core/os/memory.h"
@@ -118,7 +119,6 @@ private:
 		Task *current_task = nullptr;
 		Task *awaited_task = nullptr; // Null if not awaiting the condition variable, or special value (YIELDING).
 		ConditionVariable cond_var;
-		WorkerThreadPool *pool = nullptr;
 
 		ThreadData() :
 				signaled(false),
@@ -165,8 +165,6 @@ private:
 	uint32_t notify_index = 0; // For rotating across threads, no help distributing load.
 
 	uint64_t last_task = 1;
-
-	static HashMap<StringName, WorkerThreadPool *> named_pools;
 
 	static void _thread_function(void *p_user);
 
@@ -268,12 +266,9 @@ public:
 #endif
 	}
 
-	// Note: Do not use this unless you know what you are doing, and it is absolutely necessary. Main thread pool (`get_singleton()`) should be preferred instead.
-	static WorkerThreadPool *get_named_pool(const StringName &p_name);
-
 	static WorkerThreadPool *get_singleton() { return singleton; }
-	int get_thread_index() const;
-	TaskID get_caller_task_id() const;
+	static int get_thread_index();
+	static TaskID get_caller_task_id();
 
 #ifdef THREADS_ENABLED
 	_ALWAYS_INLINE_ static uint32_t thread_enter_unlock_allowance_zone(const MutexLock<BinaryMutex> &p_lock) { return _thread_enter_unlock_allowance_zone(p_lock._get_lock()); }
@@ -290,6 +285,8 @@ public:
 	void init(int p_thread_count = -1, float p_low_priority_task_ratio = 0.3);
 	void exit_languages_threads();
 	void finish();
-	WorkerThreadPool(bool p_singleton = true);
+	WorkerThreadPool();
 	~WorkerThreadPool();
 };
+
+#endif // WORKER_THREAD_POOL_H

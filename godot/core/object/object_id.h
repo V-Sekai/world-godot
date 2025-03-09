@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef OBJECT_ID_H
+#define OBJECT_ID_H
 
 #include "core/typedefs.h"
 
@@ -58,3 +59,5 @@ public:
 	_ALWAYS_INLINE_ explicit ObjectID(const uint64_t p_id) { id = p_id; }
 	_ALWAYS_INLINE_ explicit ObjectID(const int64_t p_id) { id = p_id; }
 };
+
+#endif // OBJECT_ID_H

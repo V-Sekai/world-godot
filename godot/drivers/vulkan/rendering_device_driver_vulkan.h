@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef RENDERING_DEVICE_DRIVER_VULKAN_H
+#define RENDERING_DEVICE_DRIVER_VULKAN_H
 
 #include "core/templates/hash_map.h"
 #include "core/templates/paged_allocator.h"
@@ -719,3 +720,5 @@ public:
 };
 
 using VKC = RenderingContextDriverVulkan;
+
+#endif // RENDERING_DEVICE_DRIVER_VULKAN_H

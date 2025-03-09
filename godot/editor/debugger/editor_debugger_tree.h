@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef EDITOR_DEBUGGER_TREE_H
+#define EDITOR_DEBUGGER_TREE_H
 
 #include "scene/gui/tree.h"
 
@@ -93,3 +94,5 @@ public:
 	void select_node(ObjectID p_id);
 	EditorDebuggerTree();
 };
+
+#endif // EDITOR_DEBUGGER_TREE_H

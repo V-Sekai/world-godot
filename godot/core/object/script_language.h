@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef SCRIPT_LANGUAGE_H
+#define SCRIPT_LANGUAGE_H
 
 #include "core/doc_data.h"
 #include "core/io/resource.h"
@@ -504,3 +505,5 @@ public:
 	PlaceHolderScriptInstance(ScriptLanguage *p_language, Ref<Script> p_script, Object *p_owner);
 	~PlaceHolderScriptInstance();
 };
+
+#endif // SCRIPT_LANGUAGE_H

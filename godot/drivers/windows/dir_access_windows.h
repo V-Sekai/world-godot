@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef DIR_ACCESS_WINDOWS_H
+#define DIR_ACCESS_WINDOWS_H
 
 #ifdef WINDOWS_ENABLED
 
@@ -90,3 +91,5 @@ public:
 };
 
 #endif // WINDOWS_ENABLED
+
+#endif // DIR_ACCESS_WINDOWS_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef GODOT_VULKAN_H
+#define GODOT_VULKAN_H
 
 #ifdef USE_VOLK
 #include <volk.h>
@@ -37,3 +38,5 @@
 #define VK_NO_STDINT_H
 #include <vulkan/vulkan.h>
 #endif
+
+#endif // GODOT_VULKAN_H

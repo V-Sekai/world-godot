@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef GDSCRIPT_TEST_RUNNER_SUITE_H
+#define GDSCRIPT_TEST_RUNNER_SUITE_H
 
 #include "gdscript_test_runner.h"
 
@@ -104,3 +105,5 @@ TEST_CASE("[Modules][GDScript] Validate built-in API") {
 }
 
 } // namespace GDScriptTests
+
+#endif // GDSCRIPT_TEST_RUNNER_SUITE_H

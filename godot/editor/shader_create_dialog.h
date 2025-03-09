@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef SHADER_CREATE_DIALOG_H
+#define SHADER_CREATE_DIALOG_H
 
 #include "editor/editor_settings.h"
 #include "scene/gui/check_box.h"
@@ -107,3 +108,5 @@ public:
 	void config(const String &p_base_path, bool p_built_in_enabled = true, bool p_load_enabled = true, int p_preferred_type = -1, int p_preferred_mode = -1);
 	ShaderCreateDialog();
 };
+
+#endif // SHADER_CREATE_DIALOG_H

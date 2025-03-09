@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef WINDOWS_EXPORT_PLUGIN_H
+#define WINDOWS_EXPORT_PLUGIN_H
 
 #include "core/io/file_access.h"
 #include "core/os/os.h"
@@ -99,3 +100,5 @@ public:
 
 	EditorExportPlatformWindows();
 };
+
+#endif // WINDOWS_EXPORT_PLUGIN_H

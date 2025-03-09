@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef CONFIG_GLES3_H
+#define CONFIG_GLES3_H
 
 #ifdef GLES3_ENABLED
 
@@ -122,3 +123,5 @@ public:
 } // namespace GLES3
 
 #endif // GLES3_ENABLED
+
+#endif // CONFIG_GLES3_H

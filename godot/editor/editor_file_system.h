@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef EDITOR_FILE_SYSTEM_H
+#define EDITOR_FILE_SYSTEM_H
 
 #include "core/io/dir_access.h"
 #include "core/io/resource_importer.h"
@@ -423,3 +424,5 @@ public:
 	EditorFileSystem();
 	~EditorFileSystem();
 };
+
+#endif // EDITOR_FILE_SYSTEM_H

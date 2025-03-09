@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TEXTURE_H
+#define TEXTURE_H
 
 #include "core/io/resource.h"
 #include "core/math/rect2.h"
@@ -137,3 +138,5 @@ public:
 	virtual Vector<Ref<Image>> get_data() const;
 	virtual Ref<Resource> create_placeholder() const;
 };
+
+#endif // TEXTURE_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef LOCAL_VECTOR_H
+#define LOCAL_VECTOR_H
 
 #include "core/error/error_macros.h"
 #include "core/os/memory.h"
@@ -384,3 +385,5 @@ public:
 
 template <typename T, typename U = uint32_t, bool force_trivial = false>
 using TightLocalVector = LocalVector<T, U, force_trivial, true>;
+
+#endif // LOCAL_VECTOR_H

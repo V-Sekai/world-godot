@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef MATERIAL_H
+#define MATERIAL_H
 
 #include "core/io/resource.h"
 #include "core/templates/self_list.h"
@@ -841,3 +842,5 @@ public:
 };
 
 //////////////////////
+
+#endif // MATERIAL_H

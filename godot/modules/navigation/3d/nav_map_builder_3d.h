@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef NAV_MAP_BUILDER_3D_H
+#define NAV_MAP_BUILDER_3D_H
 
 #include "../nav_utils.h"
 
@@ -47,3 +48,5 @@ public:
 
 	static void build_navmap_iteration(NavMapIterationBuild &r_build);
 };
+
+#endif // NAV_MAP_BUILDER_3D_H

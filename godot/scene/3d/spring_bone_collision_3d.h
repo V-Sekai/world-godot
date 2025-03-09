@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef SPRING_BONE_COLLISION_3D_H
+#define SPRING_BONE_COLLISION_3D_H
 
 #include "scene/3d/skeleton_3d.h"
 
@@ -67,3 +68,5 @@ public:
 
 	Vector3 collide(const Transform3D &p_center, float p_bone_radius, float p_bone_length, const Vector3 &p_current) const;
 };
+
+#endif // SPRING_BONE_COLLISION_3D_H

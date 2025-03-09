@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef STYLE_BOX_TEXTURE_H
+#define STYLE_BOX_TEXTURE_H
 
 #include "scene/resources/style_box.h"
 #include "scene/resources/texture.h"
@@ -94,3 +95,5 @@ public:
 };
 
 VARIANT_ENUM_CAST(StyleBoxTexture::AxisStretchMode)
+
+#endif // STYLE_BOX_TEXTURE_H

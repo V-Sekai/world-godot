@@ -28,8 +28,6 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
-
 // Names from https://en.wikipedia.org/wiki/X11_color_names
 
 // So this in a way that does not require memory allocation

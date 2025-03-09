@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef METHOD_PTRCALL_H
+#define METHOD_PTRCALL_H
 
 #include "core/object/object_id.h"
 #include "core/typedefs.h"
@@ -457,3 +458,5 @@ struct PtrToArg<const Vector<Face3> &> {
 		return ret;
 	}
 };
+
+#endif // METHOD_PTRCALL_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef NAVIGATION_PATH_QUERY_PARAMETERS_2D_H
+#define NAVIGATION_PATH_QUERY_PARAMETERS_2D_H
 
 #include "core/object/ref_counted.h"
 #include "servers/navigation/navigation_utilities.h"
@@ -101,3 +102,5 @@ public:
 VARIANT_ENUM_CAST(NavigationPathQueryParameters2D::PathfindingAlgorithm);
 VARIANT_ENUM_CAST(NavigationPathQueryParameters2D::PathPostProcessing);
 VARIANT_BITFIELD_CAST(NavigationPathQueryParameters2D::PathMetadataFlags);
+
+#endif // NAVIGATION_PATH_QUERY_PARAMETERS_2D_H

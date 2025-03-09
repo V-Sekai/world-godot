@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef VIEWPORT_H
+#define VIEWPORT_H
 
 #include "scene/main/node.h"
 #include "scene/resources/texture.h"
@@ -251,7 +252,7 @@ private:
 	Transform2D stretch_transform;
 
 	Size2i size = Size2i(512, 512);
-	Size2 size_2d_override;
+	Size2i size_2d_override;
 	bool size_allocated = false;
 
 	RID contact_2d_debug;
@@ -491,10 +492,10 @@ private:
 	void _window_start_resize(SubWindowResize p_edge, Window *p_window);
 
 protected:
-	bool _set_size(const Size2i &p_size, const Size2 &p_size_2d_override, bool p_allocated);
+	bool _set_size(const Size2i &p_size, const Size2i &p_size_2d_override, bool p_allocated);
 
 	Size2i _get_size() const;
-	Size2 _get_size_2d_override() const;
+	Size2i _get_size_2d_override() const;
 	bool _is_size_allocated() const;
 
 	void _notification(int p_what);
@@ -894,3 +895,5 @@ VARIANT_ENUM_CAST(Viewport::RenderInfo);
 VARIANT_ENUM_CAST(Viewport::RenderInfoType);
 VARIANT_ENUM_CAST(Viewport::DefaultCanvasItemTextureFilter);
 VARIANT_ENUM_CAST(Viewport::DefaultCanvasItemTextureRepeat);
+
+#endif // VIEWPORT_H

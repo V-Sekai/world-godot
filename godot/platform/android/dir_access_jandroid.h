@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef DIR_ACCESS_JANDROID_H
+#define DIR_ACCESS_JANDROID_H
 
 #include "java_godot_lib_jni.h"
 
@@ -103,3 +104,5 @@ private:
 	void dir_close(int p_id);
 	String get_absolute_path(String p_path);
 };
+
+#endif // DIR_ACCESS_JANDROID_H

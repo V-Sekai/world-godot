@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef ANIMATION_MIXER_H
+#define ANIMATION_MIXER_H
 
 #include "core/templates/a_hash_map.h"
 #include "scene/animation/tween.h"
@@ -508,3 +509,5 @@ public:
 VARIANT_ENUM_CAST(AnimationMixer::AnimationCallbackModeProcess);
 VARIANT_ENUM_CAST(AnimationMixer::AnimationCallbackModeMethod);
 VARIANT_ENUM_CAST(AnimationMixer::AnimationCallbackModeDiscrete);
+
+#endif // ANIMATION_MIXER_H

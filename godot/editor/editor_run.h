@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef EDITOR_RUN_H
+#define EDITOR_RUN_H
 
 #include "core/os/os.h"
 
@@ -75,3 +76,5 @@ public:
 
 	EditorRun();
 };
+
+#endif // EDITOR_RUN_H

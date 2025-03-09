@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef AUDIO_STREAM_OGG_VORBIS_H
+#define AUDIO_STREAM_OGG_VORBIS_H
 
 #include "core/variant/variant.h"
 #include "servers/audio/audio_stream.h"
@@ -176,3 +177,5 @@ public:
 	AudioStreamOggVorbis();
 	virtual ~AudioStreamOggVorbis();
 };
+
+#endif // AUDIO_STREAM_OGG_VORBIS_H

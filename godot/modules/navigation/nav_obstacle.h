@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef NAV_OBSTACLE_H
+#define NAV_OBSTACLE_H
 
 #include "nav_rid.h"
 
@@ -106,3 +107,5 @@ public:
 private:
 	void internal_update_agent();
 };
+
+#endif // NAV_OBSTACLE_H

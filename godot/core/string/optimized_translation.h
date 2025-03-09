@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef OPTIMIZED_TRANSLATION_H
+#define OPTIMIZED_TRANSLATION_H
 
 #include "core/string/translation.h"
 
@@ -85,3 +86,5 @@ public:
 
 	OptimizedTranslation() {}
 };
+
+#endif // OPTIMIZED_TRANSLATION_H

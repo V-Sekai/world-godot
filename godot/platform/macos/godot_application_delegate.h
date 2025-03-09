@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef GODOT_APPLICATION_DELEGATE_H
+#define GODOT_APPLICATION_DELEGATE_H
 
 #include "core/os/os.h"
 
@@ -41,3 +42,5 @@
 - (void)forceUnbundledWindowActivationHackStep3;
 - (void)handleAppleEvent:(NSAppleEventDescriptor *)event withReplyEvent:(NSAppleEventDescriptor *)replyEvent;
 @end
+
+#endif // GODOT_APPLICATION_DELEGATE_H

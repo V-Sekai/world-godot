@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef SCENE_TREE_EDITOR_H
+#define SCENE_TREE_EDITOR_H
 
 #include "scene/gui/check_box.h"
 #include "scene/gui/check_button.h"
@@ -292,3 +293,5 @@ public:
 	SceneTreeDialog();
 	~SceneTreeDialog();
 };
+
+#endif // SCENE_TREE_EDITOR_H

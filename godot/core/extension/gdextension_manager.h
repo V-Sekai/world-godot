@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef GDEXTENSION_MANAGER_H
+#define GDEXTENSION_MANAGER_H
 
 #include "core/extension/gdextension.h"
 #include "core/variant/native_ptr.h"
@@ -95,3 +96,5 @@ public:
 };
 
 VARIANT_ENUM_CAST(GDExtensionManager::LoadStatus)
+
+#endif // GDEXTENSION_MANAGER_H

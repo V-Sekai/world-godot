@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef MACOS_TERMINAL_LOGGER_H
+#define MACOS_TERMINAL_LOGGER_H
 
 #ifdef MACOS_ENABLED
 
@@ -40,3 +41,5 @@ public:
 };
 
 #endif // MACOS_ENABLED
+
+#endif // MACOS_TERMINAL_LOGGER_H

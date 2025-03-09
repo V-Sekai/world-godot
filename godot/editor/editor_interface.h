@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef EDITOR_INTERFACE_H
+#define EDITOR_INTERFACE_H
 
 #include "core/io/resource.h"
 #include "core/object/class_db.h"
@@ -199,3 +200,5 @@ public:
 
 	EditorInterface();
 };
+
+#endif // EDITOR_INTERFACE_H

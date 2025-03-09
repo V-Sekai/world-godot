@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef PLIST_H
+#define PLIST_H
 
 // Property list file format (application/x-plist) parser, property list ASN-1 serialization.
 
@@ -121,3 +122,5 @@ public:
 	PListNode() {}
 	~PListNode() {}
 };
+
+#endif // PLIST_H

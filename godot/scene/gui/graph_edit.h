@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef GRAPH_EDIT_H
+#define GRAPH_EDIT_H
 
 #include "scene/gui/box_container.h"
 #include "scene/gui/graph_frame.h"
@@ -516,3 +517,5 @@ public:
 
 VARIANT_ENUM_CAST(GraphEdit::PanningScheme);
 VARIANT_ENUM_CAST(GraphEdit::GridPattern);
+
+#endif // GRAPH_EDIT_H

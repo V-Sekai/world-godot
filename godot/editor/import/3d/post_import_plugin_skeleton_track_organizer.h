@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef POST_IMPORT_PLUGIN_SKELETON_TRACK_ORGANIZER_H
+#define POST_IMPORT_PLUGIN_SKELETON_TRACK_ORGANIZER_H
 
 #include "resource_importer_scene.h"
 
@@ -41,3 +42,5 @@ public:
 
 	PostImportPluginSkeletonTrackOrganizer();
 };
+
+#endif // POST_IMPORT_PLUGIN_SKELETON_TRACK_ORGANIZER_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef VECTOR_H
+#define VECTOR_H
 
 /**
  * @class Vector
@@ -331,3 +332,5 @@ void Vector<T>::fill(T p_elem) {
 		p[i] = p_elem;
 	}
 }
+
+#endif // VECTOR_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TEST_JSONRPC_H
+#define TEST_JSONRPC_H
 
 #include "tests/test_macros.h"
 #include "tests/test_utils.h"
@@ -134,3 +135,5 @@ TEST_CASE("[JSONRPC] process_action bad method") {
 }
 
 } // namespace TestJSONRPC
+
+#endif // TEST_JSONRPC_H

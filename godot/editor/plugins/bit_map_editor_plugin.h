@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef BIT_MAP_EDITOR_PLUGIN_H
+#define BIT_MAP_EDITOR_PLUGIN_H
 
 #include "editor/editor_inspector.h"
 #include "editor/plugins/editor_plugin.h"
@@ -62,3 +63,5 @@ class BitMapEditorPlugin : public EditorPlugin {
 public:
 	BitMapEditorPlugin();
 };
+
+#endif // BIT_MAP_EDITOR_PLUGIN_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef COLLADA_H
+#define COLLADA_H
 
 #include "core/io/xml_parser.h"
 
@@ -569,3 +570,5 @@ private: // private stuff
 
 	void _optimize();
 };
+
+#endif // COLLADA_H

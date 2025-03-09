@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*  xr_hand_modifier_3d.h                                                 */
+/*  xr_face_modifier_3d.h                                                 */
 /**************************************************************************/
 /*                         This file is part of:                          */
 /*                             GODOT ENGINE                               */
@@ -28,57 +28,46 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef XR_FACE_MODIFIER_3D_H
+#define XR_FACE_MODIFIER_3D_H
 
-#include "scene/3d/skeleton_modifier_3d.h"
-#include "servers/xr/xr_hand_tracker.h"
+#include "mesh_instance_3d.h"
+#include "scene/3d/node_3d.h"
 
 /**
-	The XRHandModifier3D node drives a hand skeleton using hand tracking
-	data from an XRHandTracking instance.
+	The XRFaceModifier3D node drives the blend shapes of a MeshInstance3D
+	with facial expressions from an XRFaceTracking instance.
+
+	The blend shapes provided by the mesh are interrogated, and used to
+	deduce an optimal mapping from the Unified Expressions blend shapes
+	provided by the	XRFaceTracking instance to drive the face.
  */
 
-class XRHandModifier3D : public SkeletonModifier3D {
-	GDCLASS(XRHandModifier3D, SkeletonModifier3D);
+class XRFaceModifier3D : public Node3D {
+	GDCLASS(XRFaceModifier3D, Node3D);
 
-public:
-	enum BoneUpdate {
-		BONE_UPDATE_FULL,
-		BONE_UPDATE_ROTATION_ONLY,
-		BONE_UPDATE_MAX
-	};
+private:
+	StringName tracker_name = "/user/face_tracker";
+	NodePath target;
 
-	void set_hand_tracker(const StringName &p_tracker_name);
-	StringName get_hand_tracker() const;
+	// Map from XRFaceTracker blend shape index to mesh blend shape index.
+	RBMap<int, int> blend_mapping;
 
-	void set_bone_update(BoneUpdate p_bone_update);
-	BoneUpdate get_bone_update() const;
-
-	PackedStringArray get_configuration_warnings() const override;
-
-	void _notification(int p_what);
+	MeshInstance3D *get_mesh_instance() const;
+	void _get_blend_data();
+	void _update_face_blends() const;
 
 protected:
 	static void _bind_methods();
 
-	virtual void _skeleton_changed(Skeleton3D *p_old, Skeleton3D *p_new) override;
-	virtual void _process_modification() override;
+public:
+	void set_face_tracker(const StringName &p_tracker_name);
+	StringName get_face_tracker() const;
 
-private:
-	struct JointData {
-		int bone = -1;
-		int parent_joint = -1;
-	};
+	void set_target(const NodePath &p_target);
+	NodePath get_target() const;
 
-	StringName tracker_name = "/user/hand_tracker/left";
-	BoneUpdate bone_update = BONE_UPDATE_FULL;
-	JointData joints[XRHandTracker::HAND_JOINT_MAX];
-
-	bool has_stored_previous_transforms = false;
-	Vector<Transform3D> previous_relative_transforms;
-
-	void _get_joint_data();
-	void _tracker_changed(StringName p_tracker_name, XRServer::TrackerType p_tracker_type);
+	void _notification(int p_what);
 };
 
-VARIANT_ENUM_CAST(XRHandModifier3D::BoneUpdate)
+#endif // XR_FACE_MODIFIER_3D_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef GDSCRIPT_PARSER_H
+#define GDSCRIPT_PARSER_H
 
 #include "gdscript_cache.h"
 #include "gdscript_tokenizer.h"
@@ -1666,3 +1667,5 @@ public:
 #endif // DEBUG_ENABLED
 	static void cleanup();
 };
+
+#endif // GDSCRIPT_PARSER_H

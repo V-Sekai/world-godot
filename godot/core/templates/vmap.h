@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef VMAP_H
+#define VMAP_H
 
 #include "core/templates/cowdata.h"
 #include "core/typedefs.h"
@@ -201,3 +202,5 @@ public:
 		_cowdata._ref(p_from._cowdata);
 	}
 };
+
+#endif // VMAP_H

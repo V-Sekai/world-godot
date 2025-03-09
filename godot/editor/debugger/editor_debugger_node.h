@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef EDITOR_DEBUGGER_NODE_H
+#define EDITOR_DEBUGGER_NODE_H
 
 #include "core/object/script_language.h"
 #include "editor/debugger/editor_debugger_server.h"
@@ -217,3 +218,5 @@ public:
 	void add_debugger_plugin(const Ref<EditorDebuggerPlugin> &p_plugin);
 	void remove_debugger_plugin(const Ref<EditorDebuggerPlugin> &p_plugin);
 };
+
+#endif // EDITOR_DEBUGGER_NODE_H

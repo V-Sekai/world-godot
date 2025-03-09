@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef GEOMETRY_3D_H
+#define GEOMETRY_3D_H
 
 #include "core/math/delaunay_3d.h"
 #include "core/math/face3.h"
@@ -839,3 +840,5 @@ public:
 		return n.normalized();
 	}
 };
+
+#endif // GEOMETRY_3D_H

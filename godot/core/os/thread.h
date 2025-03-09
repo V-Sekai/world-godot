@@ -28,8 +28,6 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
-
 #include "platform_config.h"
 
 // Define PLATFORM_THREAD_OVERRIDE in your platform's `platform_config.h`
@@ -41,6 +39,9 @@
 #include "platform_thread.h"
 
 #else
+
+#ifndef THREAD_H
+#define THREAD_H
 
 #include "core/typedefs.h"
 
@@ -206,5 +207,7 @@ public:
 };
 
 #endif // THREADS_ENABLED
+
+#endif // THREAD_H
 
 #endif // PLATFORM_THREAD_OVERRIDE

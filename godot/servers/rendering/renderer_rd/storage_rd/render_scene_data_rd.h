@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef RENDER_SCENE_DATA_RD_H
+#define RENDER_SCENE_DATA_RD_H
 
 #include "servers/rendering/renderer_scene_render.h"
 #include "servers/rendering/storage/render_scene_data.h"
@@ -173,3 +174,5 @@ private:
 		UBO prev_ubo;
 	};
 };
+
+#endif // RENDER_SCENE_DATA_RD_H

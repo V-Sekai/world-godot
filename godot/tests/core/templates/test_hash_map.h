@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TEST_HASH_MAP_H
+#define TEST_HASH_MAP_H
 
 #include "core/templates/hash_map.h"
 
@@ -146,3 +147,5 @@ TEST_CASE("[HashMap] Const iteration") {
 	}
 }
 } // namespace TestHashMap
+
+#endif // TEST_HASH_MAP_H

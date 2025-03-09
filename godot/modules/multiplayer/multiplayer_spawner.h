@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef MULTIPLAYER_SPAWNER_H
+#define MULTIPLAYER_SPAWNER_H
 
 #include "core/templates/local_vector.h"
 #include "scene/main/node.h"
@@ -114,3 +115,5 @@ public:
 
 	MultiplayerSpawner() {}
 };
+
+#endif // MULTIPLAYER_SPAWNER_H

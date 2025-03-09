@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef EDITOR_LOG_H
+#define EDITOR_LOG_H
 
 #include "core/os/thread.h"
 #include "scene/gui/box_container.h"
@@ -190,3 +191,5 @@ public:
 };
 
 VARIANT_ENUM_CAST(EditorLog::MessageType);
+
+#endif // EDITOR_LOG_H

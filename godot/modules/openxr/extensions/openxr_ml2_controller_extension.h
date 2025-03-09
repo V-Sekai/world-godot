@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef OPENXR_ML2_CONTROLLER_EXTENSION_H
+#define OPENXR_ML2_CONTROLLER_EXTENSION_H
 
 #include "openxr_extension_wrapper.h"
 
@@ -43,3 +44,5 @@ public:
 private:
 	bool available = false;
 };
+
+#endif // OPENXR_ML2_CONTROLLER_EXTENSION_H

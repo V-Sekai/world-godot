@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef GDSCRIPT_EXTEND_PARSER_H
+#define GDSCRIPT_EXTEND_PARSER_H
 
 #include "../gdscript_parser.h"
 #include "godot_lsp.h"
@@ -168,3 +169,5 @@ public:
 
 	Error parse(const String &p_code, const String &p_path);
 };
+
+#endif // GDSCRIPT_EXTEND_PARSER_H

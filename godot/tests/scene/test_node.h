@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TEST_NODE_H
+#define TEST_NODE_H
 
 #include "core/object/class_db.h"
 #include "scene/main/node.h"
@@ -892,3 +893,5 @@ TEST_CASE("[SceneTree][Node] Test the process priority") {
 }
 
 } // namespace TestNode
+
+#endif // TEST_NODE_H

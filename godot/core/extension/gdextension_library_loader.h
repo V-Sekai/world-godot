@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef GDEXTENSION_LIBRARY_LOADER_H
+#define GDEXTENSION_LIBRARY_LOADER_H
 
 #include <functional>
 
@@ -80,3 +81,5 @@ public:
 
 	Error parse_gdextension_file(const String &p_path);
 };
+
+#endif // GDEXTENSION_LIBRARY_LOADER_H

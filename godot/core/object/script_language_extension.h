@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef SCRIPT_LANGUAGE_EXTENSION_H
+#define SCRIPT_LANGUAGE_EXTENSION_H
 
 #include "core/extension/ext_wrappers.gen.inc"
 #include "core/object/gdvirtual.gen.inc"
@@ -969,3 +970,5 @@ public:
 #pragma GCC diagnostic pop
 #endif
 };
+
+#endif // SCRIPT_LANGUAGE_EXTENSION_H

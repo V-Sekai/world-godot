@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef SORT_ARRAY_H
+#define SORT_ARRAY_H
 
 #include "core/error/error_macros.h"
 #include "core/typedefs.h"
@@ -315,3 +316,5 @@ public:
 		introselect(p_first, p_nth, p_last, p_array, bitlog(p_last - p_first) * 2);
 	}
 };
+
+#endif // SORT_ARRAY_H

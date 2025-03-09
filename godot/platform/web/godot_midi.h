@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef GODOT_MIDI_H
+#define GODOT_MIDI_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -46,3 +47,5 @@ extern void godot_js_webmidi_close_midi_inputs();
 #ifdef __cplusplus
 }
 #endif
+
+#endif // GODOT_MIDI_H

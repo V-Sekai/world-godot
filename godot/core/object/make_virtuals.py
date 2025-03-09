@@ -207,7 +207,8 @@ def run(target, source, env):
     max_versions = 12
 
     txt = """/* THIS FILE IS GENERATED DO NOT EDIT */
-#pragma once
+#ifndef GDVIRTUAL_GEN_H
+#define GDVIRTUAL_GEN_H
 
 #include "core/object/script_instance.h"
 
@@ -255,6 +256,8 @@ def run(target, source, env):
         txt += generate_version(i, False, True, False, True)
         txt += generate_version(i, True, False, False, True)
         txt += generate_version(i, True, True, False, True)
+
+    txt += "#endif // GDVIRTUAL_GEN_H\n"
 
     with open(str(target[0]), "w", encoding="utf-8", newline="\n") as f:
         f.write(txt)

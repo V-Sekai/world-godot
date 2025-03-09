@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef LRU_H
+#define LRU_H
 
 #include "core/math/math_funcs.h"
 #include "hash_map.h"
@@ -164,3 +165,5 @@ public:
 
 #undef ADDRESS_DIAGNOSTIC_WARNING_DISABLE
 #undef ADDRESS_DIAGNOSTIC_POP
+
+#endif // LRU_H

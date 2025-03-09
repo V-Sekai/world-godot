@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef RENDERER_CANVAS_RENDER_H
+#define RENDERER_CANVAS_RENDER_H
 
 #include "servers/rendering/rendering_method.h"
 #include "servers/rendering_server.h"
@@ -556,3 +557,5 @@ public:
 		singleton = nullptr;
 	}
 };
+
+#endif // RENDERER_CANVAS_RENDER_H

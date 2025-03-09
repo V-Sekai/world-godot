@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef GDSCRIPT_TRANSLATION_PARSER_PLUGIN_H
+#define GDSCRIPT_TRANSLATION_PARSER_PLUGIN_H
 
 #include "../gdscript_parser.h"
 #include "../gdscript_tokenizer.h"
@@ -81,3 +82,5 @@ public:
 
 	GDScriptEditorTranslationParserPlugin();
 };
+
+#endif // GDSCRIPT_TRANSLATION_PARSER_PLUGIN_H

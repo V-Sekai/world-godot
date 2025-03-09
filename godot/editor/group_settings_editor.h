@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef GROUP_SETTINGS_EDITOR_H
+#define GROUP_SETTINGS_EDITOR_H
 
 #include "scene/gui/dialogs.h"
 
@@ -103,3 +104,5 @@ public:
 
 	GroupSettingsEditor();
 };
+
+#endif // GROUP_SETTINGS_EDITOR_H

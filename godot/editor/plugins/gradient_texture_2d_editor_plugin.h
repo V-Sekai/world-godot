@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef GRADIENT_TEXTURE_2D_EDITOR_PLUGIN_H
+#define GRADIENT_TEXTURE_2D_EDITOR_PLUGIN_H
 
 #include "editor/editor_inspector.h"
 #include "editor/plugins/editor_plugin.h"
@@ -117,3 +118,5 @@ class GradientTexture2DEditorPlugin : public EditorPlugin {
 public:
 	GradientTexture2DEditorPlugin();
 };
+
+#endif // GRADIENT_TEXTURE_2D_EDITOR_PLUGIN_H

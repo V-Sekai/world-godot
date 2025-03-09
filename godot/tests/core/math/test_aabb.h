@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TEST_AABB_H
+#define TEST_AABB_H
 
 #include "core/math/aabb.h"
 
@@ -480,3 +481,5 @@ TEST_CASE("[AABB] Finite number checks") {
 }
 
 } // namespace TestAABB
+
+#endif // TEST_AABB_H

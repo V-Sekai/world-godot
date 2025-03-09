@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef GDSCRIPT_HIGHLIGHTER_H
+#define GDSCRIPT_HIGHLIGHTER_H
 
 #include "editor/plugins/script_editor_plugin.h"
 
@@ -115,3 +116,5 @@ public:
 
 	virtual Ref<EditorSyntaxHighlighter> _create() const override;
 };
+
+#endif // GDSCRIPT_HIGHLIGHTER_H

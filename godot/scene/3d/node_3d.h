@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef NODE_3D_H
+#define NODE_3D_H
 
 #include "scene/main/node.h"
 #include "scene/resources/3d/world_3d.h"
@@ -304,3 +305,5 @@ public:
 };
 
 VARIANT_ENUM_CAST(Node3D::RotationEditMode)
+
+#endif // NODE_3D_H

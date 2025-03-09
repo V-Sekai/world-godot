@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef REPLICATION_EDITOR_H
+#define REPLICATION_EDITOR_H
 
 #include "../scene_replication_config.h"
 
@@ -103,3 +104,5 @@ public:
 	ReplicationEditor();
 	~ReplicationEditor() {}
 };
+
+#endif // REPLICATION_EDITOR_H

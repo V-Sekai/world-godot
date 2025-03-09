@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TEXTURE_BUTTON_H
+#define TEXTURE_BUTTON_H
 
 #include "scene/gui/base_button.h"
 #include "scene/resources/bit_map.h"
@@ -103,3 +104,5 @@ public:
 };
 
 VARIANT_ENUM_CAST(TextureButton::StretchMode);
+
+#endif // TEXTURE_BUTTON_H

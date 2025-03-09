@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef MATERIAL_STORAGE_H
+#define MATERIAL_STORAGE_H
 
 #include "servers/rendering_server.h"
 #include "utilities.h"
@@ -98,3 +99,5 @@ public:
 
 	virtual void material_update_dependency(RID p_material, DependencyTracker *p_instance) = 0;
 };
+
+#endif // MATERIAL_STORAGE_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef IMAGE_COMPRESS_BASISU_H
+#define IMAGE_COMPRESS_BASISU_H
 
 #include "core/io/image.h"
 
@@ -57,3 +58,5 @@ Vector<uint8_t> basis_universal_packer(const Ref<Image> &p_image, Image::UsedCha
 
 Ref<Image> basis_universal_unpacker_ptr(const uint8_t *p_data, int p_size);
 Ref<Image> basis_universal_unpacker(const Vector<uint8_t> &p_buffer);
+
+#endif // IMAGE_COMPRESS_BASISU_H

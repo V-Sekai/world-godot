@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef GODOT_PHYSICS_SERVER_2D_H
+#define GODOT_PHYSICS_SERVER_2D_H
 
 #include "godot_joints_2d.h"
 #include "godot_shape_2d.h"
@@ -302,3 +303,5 @@ public:
 	GodotPhysicsServer2D(bool p_using_threads = false);
 	~GodotPhysicsServer2D() {}
 };
+
+#endif // GODOT_PHYSICS_SERVER_2D_H

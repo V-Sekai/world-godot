@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef WSL_PEER_H
+#define WSL_PEER_H
 
 #ifndef WEB_ENABLED
 
@@ -167,3 +168,5 @@ public:
 };
 
 #endif // WEB_ENABLED
+
+#endif // WSL_PEER_H

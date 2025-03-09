@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef SHADER_COMPILER_H
+#define SHADER_COMPILER_H
 
 #include "core/templates/pair.h"
 #include "servers/rendering/shader_language.h"
@@ -132,3 +133,5 @@ public:
 	void initialize(DefaultIdentifierActions p_actions);
 	ShaderCompiler();
 };
+
+#endif // SHADER_COMPILER_H

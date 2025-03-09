@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef EDITOR_SETTINGS_DIALOG_H
+#define EDITOR_SETTINGS_DIALOG_H
 
 #include "scene/gui/dialogs.h"
 
@@ -138,3 +139,5 @@ public:
 	EditorSettingsDialog();
 	~EditorSettingsDialog();
 };
+
+#endif // EDITOR_SETTINGS_DIALOG_H

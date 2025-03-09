@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef VECTOR4_H
+#define VECTOR4_H
 
 #include "core/error/error_macros.h"
 #include "core/math/math_defs.h"
@@ -301,3 +302,5 @@ _FORCE_INLINE_ Vector4 operator*(int32_t p_scalar, const Vector4 &p_vec) {
 _FORCE_INLINE_ Vector4 operator*(int64_t p_scalar, const Vector4 &p_vec) {
 	return p_vec * p_scalar;
 }
+
+#endif // VECTOR4_H

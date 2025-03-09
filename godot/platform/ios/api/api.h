@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef IOS_API_H
+#define IOS_API_H
 
 #if defined(IOS_ENABLED)
 extern void godot_ios_plugins_initialize();
@@ -39,3 +40,5 @@ void register_core_ios_api();
 void unregister_core_ios_api();
 void register_ios_api();
 void unregister_ios_api();
+
+#endif // IOS_API_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef EDITOR_DATA_H
+#define EDITOR_DATA_H
 
 #include "core/templates/list.h"
 #include "scene/resources/texture.h"
@@ -327,3 +328,5 @@ public:
 	EditorSelection();
 	~EditorSelection();
 };
+
+#endif // EDITOR_DATA_H

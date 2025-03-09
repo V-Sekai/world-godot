@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TEST_PROJECT_SETTINGS_H
+#define TEST_PROJECT_SETTINGS_H
 
 #include "core/config/project_settings.h"
 #include "core/io/dir_access.h"
@@ -159,3 +160,5 @@ TEST_CASE("[ProjectSettings] localize_path") {
 }
 
 } // namespace TestProjectSettings
+
+#endif // TEST_PROJECT_SETTINGS_H

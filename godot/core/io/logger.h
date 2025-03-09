@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef LOGGER_H
+#define LOGGER_H
 
 #include "core/io/file_access.h"
 #include "core/string/ustring.h"
@@ -108,3 +109,5 @@ public:
 
 	virtual ~CompositeLogger();
 };
+
+#endif // LOGGER_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef CPU_PARTICLES_3D_GIZMO_PLUGIN_H
+#define CPU_PARTICLES_3D_GIZMO_PLUGIN_H
 
 #include "editor/plugins/node_3d_editor_gizmos.h"
 
@@ -43,3 +44,5 @@ public:
 	void redraw(EditorNode3DGizmo *p_gizmo) override;
 	CPUParticles3DGizmoPlugin();
 };
+
+#endif // CPU_PARTICLES_3D_GIZMO_PLUGIN_H

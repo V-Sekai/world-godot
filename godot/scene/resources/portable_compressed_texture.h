@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef PORTABLE_COMPRESSED_TEXTURE_H
+#define PORTABLE_COMPRESSED_TEXTURE_H
 
 #include "scene/resources/texture.h"
 
@@ -113,3 +114,5 @@ public:
 };
 
 VARIANT_ENUM_CAST(PortableCompressedTexture2D::CompressionMode)
+
+#endif // PORTABLE_COMPRESSED_TEXTURE_H

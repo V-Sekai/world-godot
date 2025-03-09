@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef EMWS_PEER_H
+#define EMWS_PEER_H
 
 #ifdef WEB_ENABLED
 
@@ -110,3 +111,5 @@ public:
 };
 
 #endif // WEB_ENABLED
+
+#endif // EMWS_PEER_H

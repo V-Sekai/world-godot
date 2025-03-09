@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef QUATERNION_H
+#define QUATERNION_H
 
 #include "core/math/math_funcs.h"
 #include "core/math/vector3.h"
@@ -236,3 +237,5 @@ bool Quaternion::operator!=(const Quaternion &p_quaternion) const {
 _FORCE_INLINE_ Quaternion operator*(real_t p_real, const Quaternion &p_quaternion) {
 	return p_quaternion * p_real;
 }
+
+#endif // QUATERNION_H

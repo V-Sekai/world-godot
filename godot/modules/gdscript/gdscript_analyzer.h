@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef GDSCRIPT_ANALYZER_H
+#define GDSCRIPT_ANALYZER_H
 
 #include "gdscript_cache.h"
 #include "gdscript_parser.h"
@@ -166,3 +167,5 @@ public:
 
 	GDScriptAnalyzer(GDScriptParser *p_parser);
 };
+
+#endif // GDSCRIPT_ANALYZER_H

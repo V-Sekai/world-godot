@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef MULTIMESH_EDITOR_PLUGIN_H
+#define MULTIMESH_EDITOR_PLUGIN_H
 
 #include "editor/plugins/editor_plugin.h"
 #include "scene/3d/multimesh_instance_3d.h"
@@ -99,3 +100,5 @@ public:
 	MultiMeshEditorPlugin();
 	~MultiMeshEditorPlugin();
 };
+
+#endif // MULTIMESH_EDITOR_PLUGIN_H

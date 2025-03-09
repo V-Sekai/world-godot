@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef NAVIGATION_MESH_SOURCE_GEOMETRY_DATA_3D_H
+#define NAVIGATION_MESH_SOURCE_GEOMETRY_DATA_3D_H
 
 #include "core/os/rw_lock.h"
 #include "scene/resources/mesh.h"
@@ -108,3 +109,5 @@ public:
 	NavigationMeshSourceGeometryData3D() {}
 	~NavigationMeshSourceGeometryData3D() { clear(); }
 };
+
+#endif // NAVIGATION_MESH_SOURCE_GEOMETRY_DATA_3D_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef NAV_UTILS_H
+#define NAV_UTILS_H
 
 #include "core/math/vector3.h"
 #include "core/templates/hash_map.h"
@@ -339,3 +340,5 @@ struct PerformanceData {
 };
 
 } // namespace gd
+
+#endif // NAV_UTILS_H

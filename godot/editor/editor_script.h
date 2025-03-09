@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef EDITOR_SCRIPT_H
+#define EDITOR_SCRIPT_H
 
 #include "core/object/gdvirtual.gen.inc"
 #include "core/object/ref_counted.h"
@@ -54,3 +55,5 @@ public:
 
 	EditorScript() {}
 };
+
+#endif // EDITOR_SCRIPT_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef VIDEO_STREAM_PLAYER_H
+#define VIDEO_STREAM_PLAYER_H
 
 #include "scene/gui/control.h"
 #include "scene/resources/video_stream.h"
@@ -125,3 +126,5 @@ public:
 	VideoStreamPlayer();
 	~VideoStreamPlayer();
 };
+
+#endif // VIDEO_STREAM_PLAYER_H

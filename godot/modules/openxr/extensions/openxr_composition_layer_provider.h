@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef OPENXR_COMPOSITION_LAYER_PROVIDER_H
+#define OPENXR_COMPOSITION_LAYER_PROVIDER_H
 
 #include "openxr_extension_wrapper.h"
 
@@ -43,3 +44,5 @@ public:
 
 	virtual ~OpenXRCompositionLayerProvider() {}
 };
+
+#endif // OPENXR_COMPOSITION_LAYER_PROVIDER_H

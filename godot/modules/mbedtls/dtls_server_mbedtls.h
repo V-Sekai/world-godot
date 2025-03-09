@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef DTLS_SERVER_MBEDTLS_H
+#define DTLS_SERVER_MBEDTLS_H
 
 #include "tls_context_mbedtls.h"
 
@@ -51,3 +52,5 @@ public:
 	DTLSServerMbedTLS();
 	~DTLSServerMbedTLS();
 };
+
+#endif // DTLS_SERVER_MBEDTLS_H

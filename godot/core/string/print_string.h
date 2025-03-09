@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef PRINT_STRING_H
+#define PRINT_STRING_H
 
 #include "core/variant/variant.h"
 
@@ -85,3 +86,5 @@ template <typename... Args>
 void print_line_rich(const Variant &p_var, Args... p_args) {
 	__print_line_rich(stringify_variants(p_var, p_args...));
 }
+
+#endif // PRINT_STRING_H

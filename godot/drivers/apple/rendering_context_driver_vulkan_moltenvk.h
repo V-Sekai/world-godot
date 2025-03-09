@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef RENDERING_CONTEXT_DRIVER_VULKAN_IOS_H
+#define RENDERING_CONTEXT_DRIVER_VULKAN_IOS_H
 
 #ifdef __APPLE__
 #ifdef VULKAN_ENABLED

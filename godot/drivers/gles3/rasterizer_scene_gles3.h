@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef RASTERIZER_SCENE_GLES3_H
+#define RASTERIZER_SCENE_GLES3_H
 
 #ifdef GLES3_ENABLED
 
@@ -878,3 +879,5 @@ public:
 };
 
 #endif // GLES3_ENABLED
+
+#endif // RASTERIZER_SCENE_GLES3_H

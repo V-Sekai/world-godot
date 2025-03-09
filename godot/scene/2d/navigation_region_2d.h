@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef NAVIGATION_REGION_2D_H
+#define NAVIGATION_REGION_2D_H
 
 #include "scene/resources/2d/navigation_polygon.h"
 
@@ -125,3 +126,5 @@ private:
 	void _region_exit_navigation_map();
 	void _region_update_transform();
 };
+
+#endif // NAVIGATION_REGION_2D_H

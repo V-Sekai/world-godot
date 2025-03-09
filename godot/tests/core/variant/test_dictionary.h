@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TEST_DICTIONARY_H
+#define TEST_DICTIONARY_H
 
 #include "core/variant/typed_dictionary.h"
 #include "tests/test_macros.h"
@@ -594,3 +595,5 @@ TEST_CASE("[Dictionary] Typed copying") {
 }
 
 } // namespace TestDictionary
+
+#endif // TEST_DICTIONARY_H

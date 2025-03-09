@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef GODOT_PHYSICS_SERVER_3D_H
+#define GODOT_PHYSICS_SERVER_3D_H
 
 #include "godot_joint_3d.h"
 #include "godot_shape_3d.h"
@@ -380,3 +381,5 @@ public:
 	GodotPhysicsServer3D(bool p_using_threads = false);
 	~GodotPhysicsServer3D() {}
 };
+
+#endif // GODOT_PHYSICS_SERVER_3D_H

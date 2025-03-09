@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef MESH_LIBRARY_EDITOR_PLUGIN_H
+#define MESH_LIBRARY_EDITOR_PLUGIN_H
 
 #include "editor/plugins/editor_plugin.h"
 #include "scene/resources/3d/mesh_library.h"
@@ -90,3 +91,5 @@ public:
 
 	MeshLibraryEditorPlugin();
 };
+
+#endif // MESH_LIBRARY_EDITOR_PLUGIN_H

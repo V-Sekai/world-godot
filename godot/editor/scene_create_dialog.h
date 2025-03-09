@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef SCENE_CREATE_DIALOG_H
+#define SCENE_CREATE_DIALOG_H
 
 #include "scene/gui/dialogs.h"
 
@@ -96,3 +97,5 @@ public:
 
 	SceneCreateDialog();
 };
+
+#endif // SCENE_CREATE_DIALOG_H

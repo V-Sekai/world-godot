@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef NAVIGATION_OBSTACLE_3D_H
+#define NAVIGATION_OBSTACLE_3D_H
 
 #include "scene/3d/node_3d.h"
 
@@ -140,3 +141,5 @@ private:
 	void _update_transform();
 	void _update_use_3d_avoidance(bool p_use_3d_avoidance);
 };
+
+#endif // NAVIGATION_OBSTACLE_3D_H

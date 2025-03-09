@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef CONNECTIONS_DIALOG_H
+#define CONNECTIONS_DIALOG_H
 
 #include "scene/gui/check_button.h"
 #include "scene/gui/dialogs.h"
@@ -270,3 +271,5 @@ public:
 	ConnectionsDock();
 	~ConnectionsDock();
 };
+
+#endif // CONNECTIONS_DIALOG_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef POST_IMPORT_PLUGIN_SKELETON_REST_FIXER_H
+#define POST_IMPORT_PLUGIN_SKELETON_REST_FIXER_H
 
 #include "resource_importer_scene.h"
 
@@ -42,3 +43,5 @@ public:
 
 	PostImportPluginSkeletonRestFixer();
 };
+
+#endif // POST_IMPORT_PLUGIN_SKELETON_REST_FIXER_H

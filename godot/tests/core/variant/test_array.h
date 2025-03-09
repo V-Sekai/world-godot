@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TEST_ARRAY_H
+#define TEST_ARRAY_H
 
 #include "core/variant/array.h"
 #include "tests/test_macros.h"
@@ -652,3 +653,5 @@ TEST_CASE("[Array] Test rfind_custom") {
 }
 
 } // namespace TestArray
+
+#endif // TEST_ARRAY_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef SHADER_RD_H
+#define SHADER_RD_H
 
 #include "core/os/mutex.h"
 #include "core/string/string_builder.h"
@@ -215,3 +216,5 @@ public:
 
 	virtual ~ShaderRD();
 };
+
+#endif // SHADER_RD_H

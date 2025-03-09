@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef STREAM_PEER_H
+#define STREAM_PEER_H
 
 #include "core/object/ref_counted.h"
 
@@ -151,3 +152,5 @@ public:
 
 	StreamPeerBuffer() {}
 };
+
+#endif // STREAM_PEER_H

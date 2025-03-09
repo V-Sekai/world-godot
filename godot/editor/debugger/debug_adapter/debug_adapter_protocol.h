@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef DEBUG_ADAPTER_PROTOCOL_H
+#define DEBUG_ADAPTER_PROTOCOL_H
 
 #include "core/debugger/debugger_marshalls.h"
 #include "core/io/stream_peer_tcp.h"
@@ -167,3 +168,5 @@ public:
 	DebugAdapterProtocol();
 	~DebugAdapterProtocol();
 };
+
+#endif // DEBUG_ADAPTER_PROTOCOL_H

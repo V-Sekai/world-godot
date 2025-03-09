@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef VARIANT_INTERNAL_H
+#define VARIANT_INTERNAL_H
 
 #include "variant.h"
 
@@ -1589,3 +1590,5 @@ struct VariantTypeConstructor {
 		memnew_placement(r_value, T(*reinterpret_cast<Variant *>(p_variant)));
 	}
 };
+
+#endif // VARIANT_INTERNAL_H

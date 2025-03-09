@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef AUDIO_STREAM_WAV_H
+#define AUDIO_STREAM_WAV_H
 
 #include "servers/audio/audio_stream.h"
 
@@ -304,3 +305,5 @@ public:
 
 VARIANT_ENUM_CAST(AudioStreamWAV::Format)
 VARIANT_ENUM_CAST(AudioStreamWAV::LoopMode)
+
+#endif // AUDIO_STREAM_WAV_H

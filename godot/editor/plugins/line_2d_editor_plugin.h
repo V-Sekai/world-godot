@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef LINE_2D_EDITOR_PLUGIN_H
+#define LINE_2D_EDITOR_PLUGIN_H
 
 #include "editor/plugins/abstract_polygon_2d_editor.h"
 #include "scene/2d/line_2d.h"
@@ -57,3 +58,5 @@ class Line2DEditorPlugin : public AbstractPolygon2DEditorPlugin {
 public:
 	Line2DEditorPlugin();
 };
+
+#endif // LINE_2D_EDITOR_PLUGIN_H

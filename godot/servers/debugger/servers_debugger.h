@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef SERVERS_DEBUGGER_H
+#define SERVERS_DEBUGGER_H
 
 #include "servers/rendering_server.h"
 
@@ -126,3 +127,5 @@ public:
 
 	~ServersDebugger();
 };
+
+#endif // SERVERS_DEBUGGER_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TEXTURE_STORAGE_GLES3_H
+#define TEXTURE_STORAGE_GLES3_H
 
 #ifdef GLES3_ENABLED
 
@@ -730,3 +731,5 @@ inline String TextureStorage::get_framebuffer_error(GLenum p_status) {
 } // namespace GLES3
 
 #endif // GLES3_ENABLED
+
+#endif // TEXTURE_STORAGE_GLES3_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef NAVIGATION_LINK_3D_GIZMO_PLUGIN_H
+#define NAVIGATION_LINK_3D_GIZMO_PLUGIN_H
 
 #include "editor/plugins/node_3d_editor_gizmos.h"
 
@@ -48,3 +49,5 @@ public:
 
 	NavigationLink3DGizmoPlugin();
 };
+
+#endif // NAVIGATION_LINK_3D_GIZMO_PLUGIN_H

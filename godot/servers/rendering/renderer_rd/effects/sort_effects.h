@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef SORT_EFFECTS_RD_H
+#define SORT_EFFECTS_RD_H
 
 #include "servers/rendering/renderer_rd/shaders/effects/sort.glsl.gen.h"
 
@@ -62,3 +63,5 @@ public:
 };
 
 } // namespace RendererRD
+
+#endif // SORT_EFFECTS_RD_H

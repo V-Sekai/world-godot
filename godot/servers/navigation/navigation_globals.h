@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef NAVIGATION_GLOBALS_H
+#define NAVIGATION_GLOBALS_H
 
 namespace NavigationDefaults3D {
 
@@ -62,3 +63,5 @@ constexpr float edge_connection_margin{ 1.0f };
 constexpr float link_connection_radius{ 4.0f };
 
 } //namespace NavigationDefaults2D
+
+#endif // NAVIGATION_GLOBALS_H

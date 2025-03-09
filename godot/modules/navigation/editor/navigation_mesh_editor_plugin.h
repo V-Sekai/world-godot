@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef NAVIGATION_MESH_EDITOR_PLUGIN_H
+#define NAVIGATION_MESH_EDITOR_PLUGIN_H
 
 #ifdef TOOLS_ENABLED
 
@@ -84,3 +85,5 @@ public:
 };
 
 #endif // TOOLS_ENABLED
+
+#endif // NAVIGATION_MESH_EDITOR_PLUGIN_H

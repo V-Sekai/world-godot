@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef AUDIO_STREAM_PLAYER_3D_H
+#define AUDIO_STREAM_PLAYER_3D_H
 
 #include "scene/3d/node_3d.h"
 #include "servers/audio_server.h"
@@ -207,3 +208,5 @@ public:
 
 VARIANT_ENUM_CAST(AudioStreamPlayer3D::AttenuationModel)
 VARIANT_ENUM_CAST(AudioStreamPlayer3D::DopplerTracking)
+
+#endif // AUDIO_STREAM_PLAYER_3D_H

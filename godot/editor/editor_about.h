@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef EDITOR_ABOUT_H
+#define EDITOR_ABOUT_H
 
 #include "scene/gui/dialogs.h"
 #include "scene/gui/item_list.h"
@@ -63,3 +64,5 @@ public:
 	EditorAbout();
 	~EditorAbout();
 };
+
+#endif // EDITOR_ABOUT_H

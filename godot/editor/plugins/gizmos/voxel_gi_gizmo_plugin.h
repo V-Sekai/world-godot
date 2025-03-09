@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef VOXEL_GI_GIZMO_PLUGIN_H
+#define VOXEL_GI_GIZMO_PLUGIN_H
 
 #include "editor/plugins/node_3d_editor_gizmos.h"
 
@@ -54,3 +55,5 @@ public:
 	VoxelGIGizmoPlugin();
 	~VoxelGIGizmoPlugin();
 };
+
+#endif // VOXEL_GI_GIZMO_PLUGIN_H

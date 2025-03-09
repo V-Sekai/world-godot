@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef OPENXR_HTC_VIVE_TRACKER_EXTENSION_H
+#define OPENXR_HTC_VIVE_TRACKER_EXTENSION_H
 
 #include "openxr_extension_wrapper.h"
 
@@ -46,3 +47,5 @@ public:
 private:
 	bool available = false;
 };
+
+#endif // OPENXR_HTC_VIVE_TRACKER_EXTENSION_H

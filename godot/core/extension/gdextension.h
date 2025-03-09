@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef GDEXTENSION_H
+#define GDEXTENSION_H
 
 #include "core/extension/gdextension_interface.h"
 #include "core/extension/gdextension_loader.h"
@@ -225,3 +226,5 @@ public:
 };
 
 #endif // TOOLS_ENABLED
+
+#endif // GDEXTENSION_H

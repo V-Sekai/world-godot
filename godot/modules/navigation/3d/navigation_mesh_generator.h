@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef NAVIGATION_MESH_GENERATOR_H
+#define NAVIGATION_MESH_GENERATOR_H
 
 #ifndef _3D_DISABLED
 
@@ -59,3 +60,5 @@ public:
 };
 
 #endif
+
+#endif // NAVIGATION_MESH_GENERATOR_H

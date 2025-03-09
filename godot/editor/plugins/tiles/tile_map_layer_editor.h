@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TILE_MAP_LAYER_EDITOR_H
+#define TILE_MAP_LAYER_EDITOR_H
 
 #include "tile_atlas_view.h"
 
@@ -421,3 +422,5 @@ public:
 	// Static functions.
 	static Vector<Vector2i> get_line(const TileMapLayer *p_tile_map_layer, Vector2i p_from_cell, Vector2i p_to_cell);
 };
+
+#endif // TILE_MAP_LAYER_EDITOR_H

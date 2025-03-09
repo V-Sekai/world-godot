@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TEST_PLANE_H
+#define TEST_PLANE_H
 
 #include "core/math/plane.h"
 
@@ -190,3 +191,5 @@ TEST_CASE("[Plane] Finite number checks") {
 }
 
 } // namespace TestPlane
+
+#endif // TEST_PLANE_H

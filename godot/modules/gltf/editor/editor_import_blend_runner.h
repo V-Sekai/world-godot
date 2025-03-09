@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef EDITOR_IMPORT_BLEND_RUNNER_H
+#define EDITOR_IMPORT_BLEND_RUNNER_H
 
 #ifdef TOOLS_ENABLED
 
@@ -67,3 +68,5 @@ public:
 };
 
 #endif // TOOLS_ENABLED
+
+#endif // EDITOR_IMPORT_BLEND_RUNNER_H

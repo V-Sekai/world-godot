@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef NAVIGATION_PATH_QUERY_RESULT_2D_H
+#define NAVIGATION_PATH_QUERY_RESULT_2D_H
 
 #include "core/object/ref_counted.h"
 #include "servers/navigation/navigation_utilities.h"
@@ -66,3 +67,5 @@ public:
 };
 
 VARIANT_ENUM_CAST(NavigationPathQueryResult2D::PathSegmentType);
+
+#endif // NAVIGATION_PATH_QUERY_RESULT_2D_H

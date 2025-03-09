@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef SELF_LIST_H
+#define SELF_LIST_H
 
 #include "core/error/error_macros.h"
 #include "core/typedefs.h"
@@ -200,3 +201,5 @@ public:
 		}
 	}
 };
+
+#endif // SELF_LIST_H

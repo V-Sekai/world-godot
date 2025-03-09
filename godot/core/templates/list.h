@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef LIST_H
+#define LIST_H
 
 #include "core/error/error_macros.h"
 #include "core/os/memory.h"
@@ -828,3 +829,5 @@ void List<T, A>::Element::transfer_to_back(List<T, A> *p_dst_list) {
 	data = p_dst_list->_data;
 	p_dst_list->_data->size_cache++;
 }
+
+#endif // LIST_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TEXT_PARAGRAPH_H
+#define TEXT_PARAGRAPH_H
 
 #include "core/templates/local_vector.h"
 #include "scene/resources/font.h"
@@ -163,3 +164,5 @@ public:
 	TextParagraph();
 	~TextParagraph();
 };
+
+#endif // TEXT_PARAGRAPH_H

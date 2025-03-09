@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef VIDEO_STREAM_THEORA_H
+#define VIDEO_STREAM_THEORA_H
 
 #include "core/io/file_access.h"
 #include "core/io/resource_loader.h"
@@ -153,3 +154,5 @@ public:
 	virtual bool handles_type(const String &p_type) const override;
 	virtual String get_resource_type(const String &p_path) const override;
 };
+
+#endif // VIDEO_STREAM_THEORA_H

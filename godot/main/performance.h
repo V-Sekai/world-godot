@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef PERFORMANCE_H
+#define PERFORMANCE_H
 
 #include "core/object/class_db.h"
 #include "core/templates/hash_map.h"
@@ -137,3 +138,5 @@ public:
 };
 
 VARIANT_ENUM_CAST(Performance::Monitor);
+
+#endif // PERFORMANCE_H

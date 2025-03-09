@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef OPENXR_LOCAL_FLOOR_EXTENSION_H
+#define OPENXR_LOCAL_FLOOR_EXTENSION_H
 
 #include "openxr_extension_wrapper.h"
 
@@ -48,3 +49,5 @@ private:
 
 	bool available = false;
 };
+
+#endif // OPENXR_LOCAL_FLOOR_EXTENSION_H

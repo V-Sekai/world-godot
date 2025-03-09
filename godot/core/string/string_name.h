@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef STRING_NAME_H
+#define STRING_NAME_H
 
 #include "core/os/mutex.h"
 #include "core/string/ustring.h"
@@ -239,3 +240,5 @@ StringName _scs_create(const char *p_chr, bool p_static = false);
  */
 
 #define SNAME(m_arg) ([]() -> const StringName & { static StringName sname = _scs_create(m_arg, true); return sname; })()
+
+#endif // STRING_NAME_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef OPENXR_EXTENSION_WRAPPER_H
+#define OPENXR_EXTENSION_WRAPPER_H
 
 #include "core/error/error_macros.h"
 #include "core/math/projection.h"
@@ -124,3 +125,5 @@ public:
 	virtual bool create_projection_fov(const XrFovf p_fov, double p_z_near, double p_z_far, Projection &r_camera_matrix) = 0; // `create_projection_fov` creates a proper projection matrix based on asymmetric FOV data provided by OpenXR.
 	virtual RID get_texture(void *p_swapchain_graphics_data, int p_image_index) = 0; // `get_texture` returns a Godot texture RID for the current active texture in our swapchain.
 };
+
+#endif // OPENXR_EXTENSION_WRAPPER_H

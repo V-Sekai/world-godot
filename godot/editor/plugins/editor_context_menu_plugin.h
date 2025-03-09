@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef EDITOR_CONTEXT_MENU_PLUGIN_H
+#define EDITOR_CONTEXT_MENU_PLUGIN_H
 
 #include "core/object/gdvirtual.gen.inc"
 #include "core/object/ref_counted.h"
@@ -112,3 +113,5 @@ public:
 	static void create();
 	static void cleanup();
 };
+
+#endif // EDITOR_CONTEXT_MENU_PLUGIN_H

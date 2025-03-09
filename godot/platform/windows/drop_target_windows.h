@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef DROP_TARGET_WINDOWS_H
+#define DROP_TARGET_WINDOWS_H
 
 #include "display_server_windows.h"
 
@@ -72,3 +73,5 @@ public:
 #if defined(__GNUC__) && !defined(__clang__)
 #pragma GCC diagnostic pop
 #endif
+
+#endif // DROP_TARGET_WINDOWS_H

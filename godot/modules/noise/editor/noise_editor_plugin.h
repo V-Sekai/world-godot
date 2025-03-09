@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef NOISE_EDITOR_PLUGIN_H
+#define NOISE_EDITOR_PLUGIN_H
 
 #ifdef TOOLS_ENABLED
 
@@ -44,3 +45,5 @@ public:
 };
 
 #endif // TOOLS_ENABLED
+
+#endif // NOISE_EDITOR_PLUGIN_H

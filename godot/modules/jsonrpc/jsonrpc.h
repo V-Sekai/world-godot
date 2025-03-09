@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef JSONRPC_H
+#define JSONRPC_H
 
 #include "core/object/class_db.h"
 #include "core/variant/variant.h"
@@ -65,3 +66,5 @@ public:
 };
 
 VARIANT_ENUM_CAST(JSONRPC::ErrorCode);
+
+#endif // JSONRPC_H

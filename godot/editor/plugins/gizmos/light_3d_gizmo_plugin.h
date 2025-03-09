@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef LIGHT_3D_GIZMO_PLUGIN_H
+#define LIGHT_3D_GIZMO_PLUGIN_H
 
 #include "editor/plugins/node_3d_editor_gizmos.h"
 
@@ -51,3 +52,5 @@ public:
 
 	Light3DGizmoPlugin();
 };
+
+#endif // LIGHT_3D_GIZMO_PLUGIN_H

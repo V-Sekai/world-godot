@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef STYLE_BOX_LINE_H
+#define STYLE_BOX_LINE_H
 
 #include "scene/resources/style_box.h"
 
@@ -65,3 +66,5 @@ public:
 	StyleBoxLine();
 	~StyleBoxLine();
 };
+
+#endif // STYLE_BOX_LINE_H

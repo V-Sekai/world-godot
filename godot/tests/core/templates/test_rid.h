@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef TEST_RID_H
+#define TEST_RID_H
 
 #include "core/os/thread.h"
 #include "core/templates/local_vector.h"
@@ -249,3 +250,5 @@ TEST_CASE("[RID_Owner] Thread safety") {
 	}
 }
 } // namespace TestRID
+
+#endif // TEST_RID_H

@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef STATIC_RAYCASTER_H
+#define STATIC_RAYCASTER_H
 
 #include "core/object/ref_counted.h"
 
@@ -106,3 +107,5 @@ public:
 
 	static Ref<StaticRaycaster> create();
 };
+
+#endif // STATIC_RAYCASTER_H

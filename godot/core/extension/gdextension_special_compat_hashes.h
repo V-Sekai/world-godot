@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef GDEXTENSION_SPECIAL_COMPAT_HASHES_H
+#define GDEXTENSION_SPECIAL_COMPAT_HASHES_H
 
 #ifndef DISABLE_DEPRECATED
 
@@ -57,3 +58,5 @@ public:
 };
 
 #endif // DISABLE_DEPRECATED
+
+#endif // GDEXTENSION_SPECIAL_COMPAT_HASHES_H

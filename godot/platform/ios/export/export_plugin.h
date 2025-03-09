@@ -28,7 +28,8 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#pragma once
+#ifndef IOS_EXPORT_PLUGIN_H
+#define IOS_EXPORT_PLUGIN_H
 
 #include "godot_plugin_config.h"
 
@@ -297,3 +298,5 @@ public:
 		return enabled_plugins;
 	}
 };
+
+#endif // IOS_EXPORT_PLUGIN_H
