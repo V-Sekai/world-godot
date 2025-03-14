@@ -28,14 +28,9 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                 */
 /**************************************************************************/
 
-#ifndef IMAGE_SAVER_DDS_H
-#define IMAGE_SAVER_DDS_H
+#pragma once
 
-#include "core/io/file_access_memory.h"
 #include "core/io/image.h"
-#include "core/io/image_loader.h"
 
 Error save_dds(const String &p_path, const Ref<Image> &p_img);
 Vector<uint8_t> save_dds_buffer(const Ref<Image> &p_img);
-
-#endif // IMAGE_SAVER_DDS_H

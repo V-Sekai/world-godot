@@ -132,7 +132,7 @@ static String format_error_message(DWORD id) {
 
 	LocalFree(messageBuffer);
 
-	return msg.replace("\r", "").replace("\n", "");
+	return msg.remove_chars("\r\n");
 }
 
 void RedirectStream(const char *p_file_name, const char *p_mode, FILE *p_cpp_stream, const DWORD p_std_handle) {
@@ -787,7 +787,7 @@ bool OS_Windows::get_user_prefers_integrated_gpu() const {
 			GetCurrentApplicationUserModelIdPtr GetCurrentApplicationUserModelId = (GetCurrentApplicationUserModelIdPtr)(void *)GetProcAddress(kernel32, "GetCurrentApplicationUserModelId");
 
 			if (GetCurrentApplicationUserModelId) {
-				UINT32 length = sizeof(value_name) / sizeof(value_name[0]);
+				UINT32 length = std::size(value_name);
 				LONG result = GetCurrentApplicationUserModelId(&length, value_name);
 				if (result == ERROR_SUCCESS) {
 					is_packaged = true;
@@ -2186,7 +2186,7 @@ String OS_Windows::get_temp_path() const {
 
 // Get properly capitalized engine name for system paths
 String OS_Windows::get_godot_dir_name() const {
-	return String(VERSION_SHORT_NAME).capitalize();
+	return String(GODOT_VERSION_SHORT_NAME).capitalize();
 }
 
 String OS_Windows::get_system_dir(SystemDir p_dir, bool p_shared_storage) const {
@@ -2340,18 +2340,26 @@ void OS_Windows::add_frame_delay(bool p_can_draw) {
 		target_ticks += dynamic_delay;
 		uint64_t current_ticks = get_ticks_usec();
 
-		if (target_ticks > current_ticks + delay_resolution) {
-			uint64_t delay_time = target_ticks - current_ticks - delay_resolution;
-			// Make sure we always sleep for a multiple of delay_resolution to avoid overshooting.
-			// Refer to: https://learn.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-sleep#remarks
-			delay_time = (delay_time / delay_resolution) * delay_resolution;
-			if (delay_time > 0) {
-				delay_usec(delay_time);
+		if (!is_in_low_processor_usage_mode()) {
+			if (target_ticks > current_ticks + delay_resolution) {
+				uint64_t delay_time = target_ticks - current_ticks - delay_resolution;
+				// Make sure we always sleep for a multiple of delay_resolution to avoid overshooting.
+				// Refer to: https://learn.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-sleep#remarks
+				delay_time = (delay_time / delay_resolution) * delay_resolution;
+				if (delay_time > 0) {
+					delay_usec(delay_time);
+				}
 			}
-		}
-		// Busy wait for the remainder of time.
-		while (get_ticks_usec() < target_ticks) {
-			YieldProcessor();
+			// Busy wait for the remainder of time.
+			while (get_ticks_usec() < target_ticks) {
+				YieldProcessor();
+			}
+		} else {
+			// Use a more relaxed approach for low processor usage mode.
+			// This has worse frame pacing but is more power efficient.
+			if (current_ticks < target_ticks) {
+				delay_usec(target_ticks - current_ticks);
+			}
 		}
 
 		current_ticks = get_ticks_usec();
