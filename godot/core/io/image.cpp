@@ -2590,6 +2590,7 @@ Vector<uint8_t> Image::save_jpg_to_buffer(float p_quality) const {
 
 	return save_jpg_buffer_func(Ref<Image>((Image *)this), p_quality);
 }
+
 Error Image::save_exr(const String &p_path, bool p_grayscale) const {
 	if (save_exr_func == nullptr) {
 		return ERR_UNAVAILABLE;

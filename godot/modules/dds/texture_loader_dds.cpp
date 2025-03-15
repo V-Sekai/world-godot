@@ -385,23 +385,24 @@ static Ref<Image> _dds_load_layer(Ref<FileAccess> p_file, DDSFormat p_dds_format
 	return memnew(Image(p_width, p_height, p_mipmaps > 1, info.format, r_src_data));
 }
 
-static Vector<Ref<Image>> _dds_load_images(Ref<FileAccess> f, DDSFormat dds_format, uint32_t width, uint32_t height, uint32_t mipmaps, uint32_t pitch, uint32_t flags, uint32_t layer_count) {
+static Vector<Ref<Image>> _dds_load_images(Ref<FileAccess> p_f, DDSFormat p_dds_format, uint32_t p_width, uint32_t p_height, uint32_t p_mipmaps, uint32_t p_pitch, uint32_t p_flags, uint32_t p_layer_count) {
 	Vector<uint8_t> src_data;
 	Vector<Ref<Image>> images;
-	images.resize(layer_count);
+	images.resize(p_layer_count);
 
-	for (uint32_t i = 0; i < layer_count; i++) {
-		images.write[i] = _dds_load_layer(f, dds_format, width, height, mipmaps, pitch, flags, src_data);
+	for (uint32_t i = 0; i < p_layer_count; i++) {
+		images.write[i] = _dds_load_layer(p_f, p_dds_format, p_width, p_height, p_mipmaps, p_pitch, p_flags, src_data);
 	}
 
 	return images;
 }
 
-static Ref<Resource> _dds_create_texture(Vector<Ref<Image>> images, uint32_t dds_type, uint32_t width, uint32_t height, uint32_t layer_count, uint32_t mipmaps, Error *r_error) {
-	if ((dds_type & DDST_TYPE_MASK) == DDST_2D) {
-		if (dds_type & DDST_ARRAY) {
-			Ref<Texture2DArray> texture = memnew(Texture2DArray());
-			texture->create_from_images(images);
+static Ref<Resource> _dds_create_texture(const Vector<Ref<Image>> &p_images, uint32_t p_dds_type, uint32_t p_width, uint32_t p_height, uint32_t p_layer_count, uint32_t p_mipmaps, Error *r_error) {
+	if ((p_dds_type & DDST_TYPE_MASK) == DDST_2D) {
+		if (p_dds_type & DDST_ARRAY) {
+			Ref<Texture2DArray> texture;
+			texture.instantiate();
+			texture->create_from_images(p_images);
 
 			if (r_error) {
 				*r_error = OK;
@@ -414,15 +415,16 @@ static Ref<Resource> _dds_create_texture(Vector<Ref<Image>> images, uint32_t dds
 				*r_error = OK;
 			}
 
-			return ImageTexture::create_from_image(images[0]);
+			return ImageTexture::create_from_image(p_images[0]);
 		}
 
-	} else if ((dds_type & DDST_TYPE_MASK) == DDST_CUBEMAP) {
-		ERR_FAIL_COND_V(layer_count % 6 != 0, Ref<Resource>());
+	} else if ((p_layer_count & DDST_TYPE_MASK) == DDST_CUBEMAP) {
+		ERR_FAIL_COND_V(p_layer_count % 6 != 0, Ref<Resource>());
 
-		if (dds_type & DDST_ARRAY) {
-			Ref<CubemapArray> texture = memnew(CubemapArray());
-			texture->create_from_images(images);
+		if (p_dds_type & DDST_ARRAY) {
+			Ref<CubemapArray> texture;
+			texture.instantiate();
+			texture->create_from_images(p_images);
 
 			if (r_error) {
 				*r_error = OK;
@@ -431,8 +433,9 @@ static Ref<Resource> _dds_create_texture(Vector<Ref<Image>> images, uint32_t dds
 			return texture;
 
 		} else {
-			Ref<Cubemap> texture = memnew(Cubemap());
-			texture->create_from_images(images);
+			Ref<Cubemap> texture;
+			texture.instantiate();
+			texture->create_from_images(p_images);
 
 			if (r_error) {
 				*r_error = OK;
@@ -441,9 +444,10 @@ static Ref<Resource> _dds_create_texture(Vector<Ref<Image>> images, uint32_t dds
 			return texture;
 		}
 
-	} else if ((dds_type & DDST_TYPE_MASK) == DDST_3D) {
-		Ref<ImageTexture3D> texture = memnew(ImageTexture3D());
-		texture->create(images[0]->get_format(), width, height, layer_count, mipmaps > 1, images);
+	} else if ((p_dds_type & DDST_TYPE_MASK) == DDST_3D) {
+		Ref<ImageTexture3D> texture;
+		texture.instantiate();
+		texture->create(p_images[0]->get_format(), p_width, p_height, p_layer_count, p_mipmaps > 1, p_images);
 
 		if (r_error) {
 			*r_error = OK;
@@ -455,26 +459,26 @@ static Ref<Resource> _dds_create_texture(Vector<Ref<Image>> images, uint32_t dds
 	return Ref<Resource>();
 }
 
-static Ref<Resource> _dds_create_texture_from_images(Vector<Ref<Image>> images, DDSFormat dds_format, uint32_t width, uint32_t height, uint32_t mipmaps, uint32_t pitch, uint32_t flags, uint32_t layer_count, uint32_t dds_type, Error *r_error) {
-	return _dds_create_texture(images, dds_type, width, height, layer_count, mipmaps, r_error);
+static Ref<Resource> _dds_create_texture_from_images(const Vector<Ref<Image>> &p_images, DDSFormat p_dds_format, uint32_t p_width, uint32_t p_height, uint32_t p_mipmaps, uint32_t p_pitch, uint32_t p_flags, uint32_t p_layer_count, uint32_t p_dds_type, Error *r_error) {
+	return _dds_create_texture(p_images, p_dds_type, p_width, p_height, p_layer_count, p_mipmaps, r_error);
 }
 
-static Vector<Ref<Image>> _dds_load_images_from_buffer(Ref<FileAccess> f, DDSFormat &dds_format, uint32_t &width, uint32_t &height, uint32_t &mipmaps, uint32_t &pitch, uint32_t &flags, uint32_t &layer_count, uint32_t &dds_type, const String &p_path = "") {
-	ERR_FAIL_COND_V_MSG(f.is_null(), Vector<Ref<Image>>(), vformat("Empty DDS texture file."));
-	ERR_FAIL_COND_V_MSG(!f->get_length(), Vector<Ref<Image>>(), vformat("Empty DDS texture file."));
+static Vector<Ref<Image>> _dds_load_images_from_buffer(Ref<FileAccess> p_f, DDSFormat &r_dds_format, uint32_t &r_width, uint32_t &r_height, uint32_t &r_mipmaps, uint32_t &r_pitch, uint32_t &r_flags, uint32_t &r_layer_count, uint32_t &r_dds_type, const String &p_path = "") {
+	ERR_FAIL_COND_V_MSG(p_f.is_null(), Vector<Ref<Image>>(), vformat("Empty DDS texture file."));
+	ERR_FAIL_COND_V_MSG(!p_f->get_length(), Vector<Ref<Image>>(), vformat("Empty DDS texture file."));
 
-	uint32_t magic = f->get_32();
-	uint32_t hsize = f->get_32();
-	flags = f->get_32();
-	height = f->get_32();
-	width = f->get_32();
-	pitch = f->get_32();
-	uint32_t depth = f->get_32();
-	mipmaps = f->get_32();
+	uint32_t magic = p_f->get_32();
+	uint32_t hsize = p_f->get_32();
+	r_flags = p_f->get_32();
+	r_height = p_f->get_32();
+	r_width = p_f->get_32();
+	r_pitch = p_f->get_32();
+	uint32_t depth = p_f->get_32();
+	r_mipmaps = p_f->get_32();
 
 	// Skip reserved.
 	for (int i = 0; i < 11; i++) {
-		f->get_32();
+		p_f->get_32();
 	}
 
 	// Validate.
@@ -484,100 +488,100 @@ static Vector<Ref<Image>> _dds_load_images_from_buffer(Ref<FileAccess> f, DDSFor
 		ERR_FAIL_V_MSG(Vector<Ref<Image>>(), vformat("Invalid or unsupported DDS texture file '%s'.", p_path));
 	}
 
-	/* uint32_t format_size = */ f->get_32();
-	uint32_t format_flags = f->get_32();
-	uint32_t format_fourcc = f->get_32();
-	uint32_t format_rgb_bits = f->get_32();
-	uint32_t format_red_mask = f->get_32();
-	uint32_t format_green_mask = f->get_32();
-	uint32_t format_blue_mask = f->get_32();
-	uint32_t format_alpha_mask = f->get_32();
+	/* uint32_t format_size = */ p_f->get_32();
+	uint32_t format_flags = p_f->get_32();
+	uint32_t format_fourcc = p_f->get_32();
+	uint32_t format_rgb_bits = p_f->get_32();
+	uint32_t format_red_mask = p_f->get_32();
+	uint32_t format_green_mask = p_f->get_32();
+	uint32_t format_blue_mask = p_f->get_32();
+	uint32_t format_alpha_mask = p_f->get_32();
 
-	/* uint32_t caps_1 = */ f->get_32();
-	uint32_t caps_2 = f->get_32();
-	/* uint32_t caps_3 = */ f->get_32();
-	/* uint32_t caps_4 = */ f->get_32();
+	/* uint32_t caps_1 = */ p_f->get_32();
+	uint32_t caps_2 = p_f->get_32();
+	/* uint32_t caps_3 = */ p_f->get_32();
+	/* uint32_t caps_4 = */ p_f->get_32();
 
 	// Skip reserved.
-	f->get_32();
+	p_f->get_32();
 
-	if (f->get_position() < 128) {
-		f->seek(128);
+	if (p_f->get_position() < 128) {
+		p_f->seek(128);
 	}
 
-	layer_count = 1;
-	dds_type = DDST_2D;
+	r_layer_count = 1;
+	r_dds_type = DDST_2D;
 
 	if (caps_2 & DDSC2_CUBEMAP) {
-		dds_type = DDST_CUBEMAP;
-		layer_count *= 6;
+		r_dds_type = DDST_CUBEMAP;
+		r_layer_count *= 6;
 
 	} else if (caps_2 & DDSC2_VOLUME) {
-		dds_type = DDST_3D;
-		layer_count = depth;
+		r_dds_type = DDST_3D;
+		r_layer_count = depth;
 	}
 
-	dds_format = DDS_MAX;
+	r_dds_format = DDS_MAX;
 
 	if (format_flags & DDPF_FOURCC) {
 		// FourCC formats.
 		switch (format_fourcc) {
 			case DDFCC_DXT1: {
-				dds_format = DDS_DXT1;
+				r_dds_format = DDS_DXT1;
 			} break;
 			case DDFCC_DXT2:
 			case DDFCC_DXT3: {
-				dds_format = DDS_DXT3;
+				r_dds_format = DDS_DXT3;
 			} break;
 			case DDFCC_DXT4:
 			case DDFCC_DXT5: {
-				dds_format = DDS_DXT5;
+				r_dds_format = DDS_DXT5;
 			} break;
 			case DDFCC_ATI1:
 			case DDFCC_BC4U: {
-				dds_format = DDS_ATI1;
+				r_dds_format = DDS_ATI1;
 			} break;
 			case DDFCC_ATI2:
 			case DDFCC_BC5U:
 			case DDFCC_A2XY: {
-				dds_format = DDS_ATI2;
+				r_dds_format = DDS_ATI2;
 			} break;
 			case DDFCC_R16F: {
-				dds_format = DDS_R16F;
+				r_dds_format = DDS_R16F;
 			} break;
 			case DDFCC_RG16F: {
-				dds_format = DDS_RG16F;
+				r_dds_format = DDS_RG16F;
 			} break;
 			case DDFCC_RGBA16F: {
-				dds_format = DDS_RGBA16F;
+				r_dds_format = DDS_RGBA16F;
 			} break;
 			case DDFCC_R32F: {
-				dds_format = DDS_R32F;
+				r_dds_format = DDS_R32F;
 			} break;
 			case DDFCC_RG32F: {
-				dds_format = DDS_RG32F;
+				r_dds_format = DDS_RG32F;
 			} break;
 			case DDFCC_RGBA32F: {
-				dds_format = DDS_RGBA32F;
+				r_dds_format = DDS_RGBA32F;
 			} break;
 			case DDFCC_DX10: {
-				uint32_t dxgi_format = f->get_32();
-				uint32_t dimension = f->get_32();
-				/* uint32_t misc_flags_1 = */ f->get_32();
-				uint32_t array_size = f->get_32();
-				/* uint32_t misc_flags_2 = */ f->get_32();
+				uint32_t dxgi_format = p_f->get_32();
+				uint32_t dimension = p_f->get_32();
+				/* uint32_t misc_flags_1 = */ p_f->get_32();
+				uint32_t array_size = p_f->get_32();
+				/* uint32_t misc_flags_2 = */ p_f->get_32();
 
 				if (dimension == DX10D_3D) {
-					dds_type = DDST_3D;
-					layer_count = depth;
+					r_dds_type = DDST_3D;
+					r_layer_count = depth;
 				}
 
 				if (array_size > 1) {
-					layer_count *= array_size;
-					dds_type |= DDST_ARRAY;
+					r_layer_count *= array_size;
+					r_dds_type |= DDST_ARRAY;
 				}
 
-				dds_format = _dxgi_to_dds_format(dxgi_format);
+				r_dds_format = _dxgi_to_dds_format(dxgi_format);
 			} break;
 
 			default: {
@@ -590,31 +594,31 @@ static Vector<Ref<Image>> _dds_load_images_from_buffer(Ref<FileAccess> f, DDSFor
 		if (format_flags & DDPF_ALPHAPIXELS) {
 			// With alpha.
 			if (format_rgb_bits == 32 && format_red_mask == 0xff0000 && format_green_mask == 0xff00 && format_blue_mask == 0xff && format_alpha_mask == 0xff000000) {
-				dds_format = DDS_BGRA8;
+				r_dds_format = DDS_BGRA8;
 			} else if (format_rgb_bits == 32 && format_red_mask == 0xff && format_green_mask == 0xff00 && format_blue_mask == 0xff0000 && format_alpha_mask == 0xff000000) {
-				dds_format = DDS_RGBA8;
+				r_dds_format = DDS_RGBA8;
 			} else if (format_rgb_bits == 16 && format_red_mask == 0x00007c00 && format_green_mask == 0x000003e0 && format_blue_mask == 0x0000001f && format_alpha_mask == 0x00008000) {
-				dds_format = DDS_BGR5A1;
+				r_dds_format = DDS_BGR5A1;
 			} else if (format_rgb_bits == 32 && format_red_mask == 0x3ff00000 && format_green_mask == 0xffc00 && format_blue_mask == 0x3ff && format_alpha_mask == 0xc0000000) {
-				dds_format = DDS_BGR10A2;
+				r_dds_format = DDS_BGR10A2;
 			} else if (format_rgb_bits == 32 && format_red_mask == 0x3ff && format_green_mask == 0xffc00 && format_blue_mask == 0x3ff00000 && format_alpha_mask == 0xc0000000) {
-				dds_format = DDS_RGB10A2;
+				r_dds_format = DDS_RGB10A2;
 			} else if (format_rgb_bits == 16 && format_red_mask == 0xf00 && format_green_mask == 0xf0 && format_blue_mask == 0xf && format_alpha_mask == 0xf000) {
-				dds_format = DDS_BGRA4;
+				r_dds_format = DDS_BGRA4;
 			} else if (format_rgb_bits == 16 && format_red_mask == 0xe0 && format_green_mask == 0x1c && format_blue_mask == 0x3 && format_alpha_mask == 0xff00) {
-				dds_format = DDS_B2GR3A8;
+				r_dds_format = DDS_B2GR3A8;
 			}
 
 		} else {
 			// Without alpha.
 			if (format_rgb_bits == 24 && format_red_mask == 0xff0000 && format_green_mask == 0xff00 && format_blue_mask == 0xff) {
-				dds_format = DDS_BGR8;
+				r_dds_format = DDS_BGR8;
 			} else if (format_rgb_bits == 24 && format_red_mask == 0xff && format_green_mask == 0xff00 && format_blue_mask == 0xff0000) {
-				dds_format = DDS_RGB8;
+				r_dds_format = DDS_RGB8;
 			} else if (format_rgb_bits == 16 && format_red_mask == 0x0000f800 && format_green_mask == 0x000007e0 && format_blue_mask == 0x0000001f) {
-				dds_format = DDS_BGR565;
+				r_dds_format = DDS_BGR565;
 			} else if (format_rgb_bits == 8 && format_red_mask == 0xe0 && format_green_mask == 0x1c && format_blue_mask == 0x3) {
-				dds_format = DDS_B2GR3;
+				r_dds_format = DDS_B2GR3;
 			}
 		}
 
@@ -622,50 +626,50 @@ static Vector<Ref<Image>> _dds_load_images_from_buffer(Ref<FileAccess> f, DDSFor
 		// Other formats.
 		if (format_flags & DDPF_ALPHAONLY && format_rgb_bits == 8 && format_alpha_mask == 0xff) {
 			// Alpha only.
-			dds_format = DDS_LUMINANCE;
+			r_dds_format = DDS_LUMINANCE;
 		}
 	}
 
 	// Depending on the writer, luminance formats may or may not have the DDPF_RGB or DDPF_LUMINANCE flags defined,
 	// so we check for these formats after everything else failed.
-	if (dds_format == DDS_MAX) {
+	if (r_dds_format == DDS_MAX) {
 		if (format_flags & DDPF_ALPHAPIXELS) {
 			// With alpha.
 			if (format_rgb_bits == 16 && format_red_mask == 0xff && format_alpha_mask == 0xff00) {
-				dds_format = DDS_LUMINANCE_ALPHA;
+				r_dds_format = DDS_LUMINANCE_ALPHA;
 			} else if (format_rgb_bits == 8 && format_red_mask == 0xf && format_alpha_mask == 0xf0) {
-				dds_format = DDS_LUMINANCE_ALPHA_4;
+				r_dds_format = DDS_LUMINANCE_ALPHA_4;
 			}
 
 		} else {
 			// Without alpha.
 			if (format_rgb_bits == 8 && format_red_mask == 0xff) {
-				dds_format = DDS_LUMINANCE;
+				r_dds_format = DDS_LUMINANCE;
 			}
 		}
 	}
 
 	// No format detected, error.
-	if (dds_format == DDS_MAX) {
+	if (r_dds_format == DDS_MAX) {
 		ERR_FAIL_V_MSG(Vector<Ref<Image>>(), vformat("Unrecognized or unsupported color layout in DDS '%s'.", p_path));
 	}
 
-	if (!(flags & DDSD_MIPMAPCOUNT)) {
-		mipmaps = 1;
+	if (!(r_flags & DDSD_MIPMAPCOUNT)) {
+		r_mipmaps = 1;
 	}
 
-	return _dds_load_images(f, dds_format, width, height, mipmaps, pitch, flags, layer_count);
+	return _dds_load_images(p_f, r_dds_format, r_width, r_height, r_mipmaps, r_pitch, r_flags, r_layer_count);
 }
 
-static Ref<Resource> _dds_load_from_buffer(Ref<FileAccess> f, Error *r_error, const String &p_path = "") {
+static Ref<Resource> _dds_load_from_buffer(Ref<FileAccess> p_f, Error *r_error, const String &p_path = "") {
 	if (r_error) {
 		*r_error = ERR_FILE_CORRUPT;
 	}
 
 	DDSFormat dds_format;
-	uint32_t width, height, mipmaps, pitch, flags, layer_count, dds_type;
+	uint32_t width = 0, height = 0, mipmaps = 0, pitch = 0, flags = 0, layer_count = 0, dds_type = 0;
 
-	Vector<Ref<Image>> images = _dds_load_images_from_buffer(f, dds_format, width, height, mipmaps, pitch, flags, layer_count, dds_type, p_path);
+	Vector<Ref<Image>> images = _dds_load_images_from_buffer(p_f, dds_format, width, height, mipmaps, pitch, flags, layer_count, dds_type, p_path);
 	return _dds_create_texture_from_images(images, dds_format, width, height, mipmaps, pitch, flags, layer_count, dds_type, r_error);
 }
 

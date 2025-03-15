@@ -30,7 +30,7 @@
 
 #pragma once
 
-#include "modules/dds/image_saver_dds.h"
+#include "../image_saver_dds.h"
 
 #include "core/config/project_settings.h"
 #include "core/io/dir_access.h"
@@ -40,7 +40,8 @@
 #include "tests/test_utils.h"
 
 namespace TestDDS {
-void init(const String &p_test, const String &p_copy_target = String()) {
+String init(const String &p_test, const String &p_copy_target = String()) {
+	String old_resource_path = TestProjectSettingsInternalsAccessor::resource_path();
 	Error err;
 	// Setup project settings since it's needed for the import process.
 	String project_folder = TestUtils::get_temp_path(p_test.get_file().get_basename());
@@ -51,7 +52,7 @@ void init(const String &p_test, const String &p_copy_target = String()) {
 	err = ProjectSettings::get_singleton()->setup(project_folder, String(), true);
 
 	if (p_copy_target.is_empty()) {
-		return;
+		return old_resource_path;
 	}
 
 	// Copy all the necessary test data files to the res:// directory.
@@ -70,10 +71,11 @@ void init(const String &p_test, const String &p_copy_target = String()) {
 		output->close();
 	}
 	da->list_dir_end();
+	return old_resource_path;
 }
 
 TEST_CASE("[SceneTree][DDSSaver] Save DDS - Save valid image with mipmap" * doctest::skip(true)) {
-	init("save_dds_valid_image_with_mipmap");
+	String old_resource_path = init("save_dds_valid_image_with_mipmap");
 	Ref<Image> image = Image::create_empty(4, 4, false, Image::FORMAT_RGBA8);
 	image->fill(Color(1, 0, 0)); // Fill with red color
 	image->generate_mipmaps();
@@ -92,10 +94,11 @@ TEST_CASE("[SceneTree][DDSSaver] Save DDS - Save valid image with mipmap" * doct
 	CHECK_MESSAGE(metrics.has("root_mean_squared"), "Metrics dictionary contains 'root_mean_squared'.");
 	float rms = metrics["root_mean_squared"];
 	CHECK(rms == 0.0f);
+	TestProjectSettingsInternalsAccessor::resource_path() = old_resource_path;
 }
 
 TEST_CASE("[SceneTree][DDSSaver] Save DDS - Save valid image with BPTC and S3TC compression" * doctest::skip(true)) {
-	init("save_dds_valid_image_bptc_s3tc");
+	String old_resource_path = init("save_dds_valid_image_bptc_s3tc");
 	Ref<Image> image_bptc = Image::create_empty(4, 4, false, Image::FORMAT_RGBA8);
 	image_bptc->fill(Color(0, 0, 1)); // Fill with blue color
 	image_bptc->compress_from_channels(Image::COMPRESS_BPTC, Image::USED_CHANNELS_RGBA);
@@ -133,10 +136,11 @@ TEST_CASE("[SceneTree][DDSSaver] Save DDS - Save valid image with BPTC and S3TC 
 	CHECK_MESSAGE(metrics_s3tc.has("root_mean_squared"), "Metrics dictionary contains 'root_mean_squared' for S3TC.");
 	float rms_s3tc = metrics_s3tc["root_mean_squared"];
 	CHECK(rms_s3tc == 0.0f);
+	TestProjectSettingsInternalsAccessor::resource_path() = old_resource_path;
 }
 
 TEST_CASE("[SceneTree][DDSSaver] Save DDS - Save valid uncompressed image") {
-	init("save_dds_valid_uncompressed");
+	String old_resource_path = init("save_dds_valid_uncompressed");
 	Ref<Image> image = Image::create_empty(4, 4, false, Image::FORMAT_RGBA8);
 	image->fill(Color(0, 0, 1)); // Fill with blue color
 	Error err = image->save_dds("res://valid_image_uncompressed.dds");
@@ -152,5 +156,6 @@ TEST_CASE("[SceneTree][DDSSaver] Save DDS - Save valid uncompressed image") {
 	CHECK_MESSAGE(metrics.has("root_mean_squared"), "Metrics dictionary contains 'root_mean_squared' for uncompressed.");
 	float rms = metrics["root_mean_squared"];
 	CHECK(rms == 0.0f);
+	TestProjectSettingsInternalsAccessor::resource_path() = old_resource_path;
 }
 } //namespace TestDDS

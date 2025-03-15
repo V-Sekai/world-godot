@@ -32,7 +32,7 @@
 
 #include "core/io/image.h"
 
-#define PF_FOURCC(s) ((uint32_t)(((s)[3] << 24U) | ((s)[2] << 16U) | ((s)[1] << 8U) | ((s)[0])))
+#define PF_FOURCC(m_s) ((uint32_t)(((m_s)[3] << 24U) | ((m_s)[2] << 16U) | ((m_s)[1] << 8U) | ((m_s)[0])))
 
 // Reference: https://docs.microsoft.com/en-us/windows/win32/direct3ddds/dds-header
 
@@ -79,7 +79,7 @@ enum DDSFourCC {
 	DDFCC_RGBA16F = 113,
 	DDFCC_R32F = 114,
 	DDFCC_RG32F = 115,
-	DDFCC_RGBA32F = 116
+	DDFCC_RGBA32F = 116,
 };
 
 // Reference: https://learn.microsoft.com/en-us/windows/win32/api/dxgiformat/ne-dxgiformat-dxgi_format
@@ -113,7 +113,7 @@ enum DXGIFormat {
 	DXGI_BC6H_SF16 = 96,
 	DXGI_BC7_UNORM = 98,
 	DXGI_BC7_UNORM_SRGB = 99,
-	DXGI_B4G4R4A4_UNORM = 115
+	DXGI_B4G4R4A4_UNORM = 115,
 };
 
 // The legacy bitmasked format names here represent the actual data layout in the files,
@@ -199,5 +199,5 @@ static const DDSFormatInfo dds_format_info[DDS_MAX] = {
 	{ "BGRA4", false, 1, 2, Image::FORMAT_RGBA8 },
 	{ "GRAYSCALE", false, 1, 1, Image::FORMAT_L8 },
 	{ "GRAYSCALE_ALPHA", false, 1, 2, Image::FORMAT_LA8 },
-	{ "GRAYSCALE_ALPHA_4", false, 1, 1, Image::FORMAT_LA8 }
+	{ "GRAYSCALE_ALPHA_4", false, 1, 1, Image::FORMAT_LA8 },
 };
