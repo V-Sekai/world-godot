@@ -31,7 +31,6 @@
 #include "image.h"
 
 #include "core/config/project_settings.h"
-#include "core/error/error_list.h"
 #include "core/error/error_macros.h"
 #include "core/io/image_loader.h"
 #include "core/io/resource_loader.h"
@@ -799,7 +798,7 @@ Image::Format Image::get_format() const {
 }
 
 static double _bicubic_interp_kernel(double x) {
-	x = ABS(x);
+	x = Math::abs(x);
 
 	double bc = 0;
 
