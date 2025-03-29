@@ -315,9 +315,16 @@ build-platform-target platform target arch="auto" precision="double" osx_bundle=
             ;;
     esac
     just handle-special-cases {{platform}} {{target}}
+
+    # Remove intermediate build files before copy
+    rm -rf $WORLD_PWD/godot/bin/obj
+
+    # In Github runner copy editor as hardlink to save space
+    if [[ "$(just is-github-actions)" == "true" ]]; then COPYSYM="-l"; else COPYSYM=""; fi
+
     if [[ "{{target}}" == "editor" ]]; then
         mkdir -p $WORLD_PWD/editors
-        cp -rf $WORLD_PWD/godot/bin/* $WORLD_PWD/editors
+        cp $COPYSYM -rf $WORLD_PWD/godot/bin/* $WORLD_PWD/editors
     elif [[ "{{target}}" =~ template_* && \
             "{{platform}}" =~ ^(mac|i)os && \
             "{{osx_bundle}}" == "no" ]]; then
@@ -385,3 +392,11 @@ package-tpz folder tpzname versionpy:
     mkdir -p tpz_temp && mv {{folder}} tpz_temp/templates && cd tpz_temp \
       && zip -r ../{{tpzname}}.tpz templates && cd ..
     rm -r tpz_temp
+
+is-github-actions:
+    #!/usr/bin/env bash
+    if [[ "$CI" == "true" && "$GITHUB_ACTIONS" == "true" ]]; then
+      echo "true"
+    else
+      echo "false"
+    fi
