@@ -82,12 +82,16 @@
 // 2D
 #include "servers/navigation_server_2d.h"
 #include "servers/navigation_server_2d_dummy.h"
+#ifndef PHYSICS_2D_DISABLED
 #include "servers/physics_server_2d.h"
 #include "servers/physics_server_2d_dummy.h"
+#endif // PHYSICS_2D_DISABLED
 
-#ifndef _3D_DISABLED
+#ifndef PHYSICS_3D_DISABLED
 #include "servers/physics_server_3d.h"
 #include "servers/physics_server_3d_dummy.h"
+#endif // PHYSICS_3D_DISABLED
+#ifndef _3D_DISABLED
 #include "servers/xr_server.h"
 #endif // _3D_DISABLED
 
@@ -164,11 +168,15 @@ static DisplayServer *display_server = nullptr;
 static RenderingServer *rendering_server = nullptr;
 static TextServerManager *tsman = nullptr;
 static ThemeDB *theme_db = nullptr;
+#ifndef PHYSICS_2D_DISABLED
 static PhysicsServer2DManager *physics_server_2d_manager = nullptr;
 static PhysicsServer2D *physics_server_2d = nullptr;
-#ifndef _3D_DISABLED
+#endif // PHYSICS_2D_DISABLED
+#ifndef PHYSICS_3D_DISABLED
 static PhysicsServer3DManager *physics_server_3d_manager = nullptr;
 static PhysicsServer3D *physics_server_3d = nullptr;
+#endif // PHYSICS_3D_DISABLED
+#ifndef _3D_DISABLED
 static XRServer *xr_server = nullptr;
 #endif // _3D_DISABLED
 // We error out if setup2() doesn't turn this true
@@ -327,7 +335,7 @@ static Vector<String> get_files_with_extension(const String &p_root, const Strin
 
 // FIXME: Could maybe be moved to have less code in main.cpp.
 void initialize_physics() {
-#ifndef _3D_DISABLED
+#ifndef PHYSICS_3D_DISABLED
 	/// 3D Physics Server
 	physics_server_3d = PhysicsServer3DManager::get_singleton()->new_server(
 			GLOBAL_GET(PhysicsServer3DManager::setting_property_name));
@@ -345,8 +353,9 @@ void initialize_physics() {
 	// Should be impossible, but make sure it's not null.
 	ERR_FAIL_NULL_MSG(physics_server_3d, "Failed to initialize PhysicsServer3D.");
 	physics_server_3d->init();
-#endif // _3D_DISABLED
+#endif // PHYSICS_3D_DISABLED
 
+#ifndef PHYSICS_2D_DISABLED
 	// 2D Physics server
 	physics_server_2d = PhysicsServer2DManager::get_singleton()->new_server(
 			GLOBAL_GET(PhysicsServer2DManager::get_singleton()->setting_property_name));
@@ -364,16 +373,19 @@ void initialize_physics() {
 	// Should be impossible, but make sure it's not null.
 	ERR_FAIL_NULL_MSG(physics_server_2d, "Failed to initialize PhysicsServer2D.");
 	physics_server_2d->init();
+#endif // PHYSICS_2D_DISABLED
 }
 
 void finalize_physics() {
-#ifndef _3D_DISABLED
+#ifndef PHYSICS_3D_DISABLED
 	physics_server_3d->finish();
 	memdelete(physics_server_3d);
-#endif // _3D_DISABLED
+#endif // PHYSICS_3D_DISABLED
 
+#ifndef PHYSICS_2D_DISABLED
 	physics_server_2d->finish();
 	memdelete(physics_server_2d);
+#endif // PHYSICS_2D_DISABLED
 }
 
 void finalize_display() {
@@ -707,10 +719,12 @@ Error Main::test_setup() {
 		tsman->add_interface(ts);
 	}
 
-#ifndef _3D_DISABLED
+#ifndef PHYSICS_3D_DISABLED
 	physics_server_3d_manager = memnew(PhysicsServer3DManager);
-#endif // _3D_DISABLED
+#endif // PHYSICS_3D_DISABLED
+#ifndef PHYSICS_2D_DISABLED
 	physics_server_2d_manager = memnew(PhysicsServer2DManager);
+#endif // PHYSICS_2D_DISABLED
 
 	// From `Main::setup2()`.
 	register_early_core_singletons();
@@ -740,7 +754,7 @@ Error Main::test_setup() {
 	// Default theme will be initialized later, after modules and ScriptServer are ready.
 	initialize_theme_db();
 
-	NavigationServer3DManager::initialize_server(); // 3D server first because 2D depends on it.
+	NavigationServer3DManager::initialize_server();
 	NavigationServer2DManager::initialize_server();
 
 	register_scene_types();
@@ -825,7 +839,7 @@ void Main::test_cleanup() {
 
 	finalize_theme_db();
 
-	NavigationServer2DManager::finalize_server(); // 2D goes first as it uses the 3D server behind the scene.
+	NavigationServer2DManager::finalize_server();
 	NavigationServer3DManager::finalize_server();
 
 	GDExtensionManager::get_singleton()->deinitialize_extensions(GDExtension::INITIALIZATION_LEVEL_SERVERS);
@@ -844,14 +858,16 @@ void Main::test_cleanup() {
 	if (tsman) {
 		memdelete(tsman);
 	}
-#ifndef _3D_DISABLED
+#ifndef PHYSICS_3D_DISABLED
 	if (physics_server_3d_manager) {
 		memdelete(physics_server_3d_manager);
 	}
-#endif // _3D_DISABLED
+#endif // PHYSICS_3D_DISABLED
+#ifndef PHYSICS_2D_DISABLED
 	if (physics_server_2d_manager) {
 		memdelete(physics_server_2d_manager);
 	}
+#endif // PHYSICS_2D_DISABLED
 	if (globals) {
 		memdelete(globals);
 	}
@@ -2975,10 +2991,12 @@ Error Main::setup2(bool p_show_boot_logo) {
 		tsman->add_interface(ts);
 	}
 
-#ifndef _3D_DISABLED
+#ifndef PHYSICS_3D_DISABLED
 	physics_server_3d_manager = memnew(PhysicsServer3DManager);
-#endif // _3D_DISABLED
+#endif // PHYSICS_3D_DISABLED
+#ifndef PHYSICS_2D_DISABLED
 	physics_server_2d_manager = memnew(PhysicsServer2DManager);
+#endif // PHYSICS_2D_DISABLED
 
 	register_server_types();
 	{
@@ -3101,14 +3119,16 @@ Error Main::setup2(bool p_show_boot_logo) {
 			if (tsman) {
 				memdelete(tsman);
 			}
-#ifndef _3D_DISABLED
+#ifndef PHYSICS_3D_DISABLED
 			if (physics_server_3d_manager) {
 				memdelete(physics_server_3d_manager);
 			}
-#endif // _3D_DISABLED
+#endif // PHYSICS_3D_DISABLED
+#ifndef PHYSICS_2D_DISABLED
 			if (physics_server_2d_manager) {
 				memdelete(physics_server_2d_manager);
 			}
+#endif // PHYSICS_2D_DISABLED
 
 			return err;
 		}
@@ -3478,7 +3498,7 @@ Error Main::setup2(bool p_show_boot_logo) {
 
 	MAIN_PRINT("Main: Load Navigation");
 
-	NavigationServer3DManager::initialize_server(); // 3D server first because 2D depends on it.
+	NavigationServer3DManager::initialize_server();
 	NavigationServer2DManager::initialize_server();
 
 	register_scene_types();
@@ -4084,12 +4104,16 @@ int Main::start() {
 		}
 		if (debug_navigation) {
 			sml->set_debug_navigation_hint(true);
+			NavigationServer2D::get_singleton()->set_debug_navigation_enabled(true);
 			NavigationServer3D::get_singleton()->set_debug_navigation_enabled(true);
 		}
 		if (debug_avoidance) {
+			NavigationServer2D::get_singleton()->set_debug_avoidance_enabled(true);
 			NavigationServer3D::get_singleton()->set_debug_avoidance_enabled(true);
 		}
 		if (debug_navigation || debug_avoidance) {
+			NavigationServer2D::get_singleton()->set_active(true);
+			NavigationServer2D::get_singleton()->set_debug_enabled(true);
 			NavigationServer3D::get_singleton()->set_active(true);
 			NavigationServer3D::get_singleton()->set_debug_enabled(true);
 		}
@@ -4559,19 +4583,23 @@ bool Main::iteration() {
 		// may be the same, and no interpolation takes place.
 		OS::get_singleton()->get_main_loop()->iteration_prepare();
 
-#ifndef _3D_DISABLED
+#ifndef PHYSICS_3D_DISABLED
 		PhysicsServer3D::get_singleton()->sync();
 		PhysicsServer3D::get_singleton()->flush_queries();
-#endif // _3D_DISABLED
+#endif // PHYSICS_3D_DISABLED
 
+#ifndef PHYSICS_2D_DISABLED
 		PhysicsServer2D::get_singleton()->sync();
 		PhysicsServer2D::get_singleton()->flush_queries();
+#endif // PHYSICS_2D_DISABLED
 
 		if (OS::get_singleton()->get_main_loop()->physics_process(physics_step * time_scale)) {
-#ifndef _3D_DISABLED
+#ifndef PHYSICS_3D_DISABLED
 			PhysicsServer3D::get_singleton()->end_sync();
-#endif // _3D_DISABLED
+#endif // PHYSICS_3D_DISABLED
+#ifndef PHYSICS_2D_DISABLED
 			PhysicsServer2D::get_singleton()->end_sync();
+#endif // PHYSICS_2D_DISABLED
 
 			Engine::get_singleton()->_in_physics = false;
 			exit = true;
@@ -4580,6 +4608,7 @@ bool Main::iteration() {
 
 		uint64_t navigation_begin = OS::get_singleton()->get_ticks_usec();
 
+		NavigationServer2D::get_singleton()->process(physics_step * time_scale);
 		NavigationServer3D::get_singleton()->process(physics_step * time_scale);
 
 		navigation_process_ticks = MAX(navigation_process_ticks, OS::get_singleton()->get_ticks_usec() - navigation_begin); // keep the largest one for reference
@@ -4587,13 +4616,15 @@ bool Main::iteration() {
 
 		message_queue->flush();
 
-#ifndef _3D_DISABLED
+#ifndef PHYSICS_3D_DISABLED
 		PhysicsServer3D::get_singleton()->end_sync();
 		PhysicsServer3D::get_singleton()->step(physics_step * time_scale);
-#endif // _3D_DISABLED
+#endif // PHYSICS_3D_DISABLED
 
+#ifndef PHYSICS_2D_DISABLED
 		PhysicsServer2D::get_singleton()->end_sync();
 		PhysicsServer2D::get_singleton()->step(physics_step * time_scale);
+#endif // PHYSICS_2D_DISABLED
 
 		message_queue->flush();
 
@@ -4820,7 +4851,7 @@ void Main::cleanup(bool p_force) {
 	finalize_theme_db();
 
 	// Before deinitializing server extensions, finalize servers which may be loaded as extensions.
-	NavigationServer2DManager::finalize_server(); // 2D goes first as it uses the 3D server behind the scene.
+	NavigationServer2DManager::finalize_server();
 	NavigationServer3DManager::finalize_server();
 	finalize_physics();
 
@@ -4868,14 +4899,16 @@ void Main::cleanup(bool p_force) {
 	if (tsman) {
 		memdelete(tsman);
 	}
-#ifndef _3D_DISABLED
+#ifndef PHYSICS_3D_DISABLED
 	if (physics_server_3d_manager) {
 		memdelete(physics_server_3d_manager);
 	}
-#endif // _3D_DISABLED
+#endif // PHYSICS_3D_DISABLED
+#ifndef PHYSICS_2D_DISABLED
 	if (physics_server_2d_manager) {
 		memdelete(physics_server_2d_manager);
 	}
+#endif // PHYSICS_2D_DISABLED
 	if (globals) {
 		memdelete(globals);
 	}
