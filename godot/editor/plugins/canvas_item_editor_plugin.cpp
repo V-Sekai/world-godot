@@ -4743,7 +4743,7 @@ void CanvasItemEditor::_popup_callback(int p_op) {
 
 			undo_redo->create_action(TTR("Paste Pose"));
 			for (const PoseClipboard &E : pose_clipboard) {
-				Node2D *n2d = Object::cast_to<Node2D>(ObjectDB::get_instance(E.id));
+				Node2D *n2d = ObjectDB::get_instance<Node2D>(E.id);
 				if (!n2d) {
 					continue;
 				}
@@ -6084,7 +6084,7 @@ bool CanvasItemEditorViewport::_create_instance(Node *p_parent, const String &p_
 }
 
 void CanvasItemEditorViewport::_perform_drop_data() {
-	ERR_FAIL_COND(selected_files.size() <= 0);
+	ERR_FAIL_COND(selected_files.is_empty());
 
 	_remove_preview();
 
@@ -6294,7 +6294,7 @@ void CanvasItemEditorViewport::drop_data(const Point2 &p_point, const Variant &p
 	if (d.has("type") && String(d["type"]) == "files") {
 		selected_files = d["files"];
 	}
-	if (selected_files.size() == 0) {
+	if (selected_files.is_empty()) {
 		return;
 	}
 
