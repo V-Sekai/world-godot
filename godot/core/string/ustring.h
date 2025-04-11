@@ -279,7 +279,7 @@ class String {
 	bool _base_is_subsequence_of(const String &p_string, bool case_insensitive) const;
 	int _count(const String &p_string, int p_from, int p_to, bool p_case_insensitive) const;
 	int _count(const char *p_string, int p_from, int p_to, bool p_case_insensitive) const;
-	String _camelcase_to_underscore() const;
+	String _separate_compound_words() const;
 
 public:
 	enum {
@@ -396,6 +396,9 @@ public:
 	String replace_first(const char *p_key, const char *p_with) const;
 	String replace(const String &p_key, const String &p_with) const;
 	String replace(const char *p_key, const char *p_with) const;
+	String replace_char(char32_t p_key, char32_t p_with) const;
+	String replace_chars(const String &p_keys, char32_t p_with) const;
+	String replace_chars(const char *p_keys, char32_t p_with) const;
 	String replacen(const String &p_key, const String &p_with) const;
 	String replacen(const char *p_key, const char *p_with) const;
 	String repeat(int p_count) const;
@@ -451,6 +454,7 @@ public:
 	String to_camel_case() const;
 	String to_pascal_case() const;
 	String to_snake_case() const;
+	String to_kebab_case() const;
 
 	String get_with_code_lines() const;
 	int get_slice_count(const String &p_splitter) const;
@@ -511,7 +515,7 @@ public:
 		return string;
 	}
 
-	CharString utf8() const;
+	CharString utf8(Vector<uint8_t> *r_ch_length_map = nullptr) const;
 	Error append_utf8(const char *p_utf8, int p_len = -1, bool p_skip_cr = false);
 	Error append_utf8(const Span<char> &p_range, bool p_skip_cr = false) {
 		return append_utf8(p_range.ptr(), p_range.size(), p_skip_cr);
@@ -572,6 +576,7 @@ public:
 	String xml_unescape() const;
 	String uri_encode() const;
 	String uri_decode() const;
+	String uri_file_decode() const;
 	String c_escape() const;
 	String c_escape_multiline() const;
 	String c_unescape() const;

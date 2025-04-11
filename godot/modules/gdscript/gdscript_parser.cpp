@@ -269,6 +269,9 @@ void GDScriptParser::override_completion_context(const Node *p_for_node, Complet
 	context.current_argument = p_argument;
 	context.node = p_node;
 	context.parser = this;
+	if (!completion_call_stack.is_empty()) {
+		context.call = completion_call_stack.back()->get();
+	}
 	completion_context = context;
 }
 
@@ -288,6 +291,9 @@ void GDScriptParser::make_completion_context(CompletionType p_type, Node *p_node
 	context.current_argument = p_argument;
 	context.node = p_node;
 	context.parser = this;
+	if (!completion_call_stack.is_empty()) {
+		context.call = completion_call_stack.back()->get();
+	}
 	completion_context = context;
 }
 
@@ -306,6 +312,9 @@ void GDScriptParser::make_completion_context(CompletionType p_type, Variant::Typ
 	context.current_line = tokenizer->get_cursor_line();
 	context.builtin_type = p_builtin_type;
 	context.parser = this;
+	if (!completion_call_stack.is_empty()) {
+		context.call = completion_call_stack.back()->get();
+	}
 	completion_context = context;
 }
 
@@ -317,9 +326,6 @@ void GDScriptParser::push_completion_call(Node *p_call) {
 	call.call = p_call;
 	call.argument = 0;
 	completion_call_stack.push_back(call);
-	if (previous.cursor_place == GDScriptTokenizerText::CURSOR_MIDDLE || previous.cursor_place == GDScriptTokenizerText::CURSOR_END || current.cursor_place == GDScriptTokenizerText::CURSOR_BEGINNING) {
-		completion_call = call;
-	}
 }
 
 void GDScriptParser::pop_completion_call() {
@@ -331,7 +337,7 @@ void GDScriptParser::pop_completion_call() {
 }
 
 void GDScriptParser::set_last_completion_call_arg(int p_argument) {
-	if (!for_completion || passed_cursor) {
+	if (!for_completion) {
 		return;
 	}
 	ERR_FAIL_COND_MSG(completion_call_stack.is_empty(), "Trying to set argument on empty completion call stack");
@@ -477,12 +483,6 @@ GDScriptTokenizer::Token GDScriptParser::advance() {
 	if (current.type == GDScriptTokenizer::Token::TK_EOF) {
 		ERR_FAIL_COND_V_MSG(current.type == GDScriptTokenizer::Token::TK_EOF, current, "GDScript parser bug: Trying to advance past the end of stream.");
 	}
-	if (for_completion && !completion_call_stack.is_empty()) {
-		if (completion_call.call == nullptr && tokenizer->is_past_cursor()) {
-			completion_call = completion_call_stack.back()->get();
-			passed_cursor = true;
-		}
-	}
 	previous = current;
 	current = tokenizer->scan();
 	while (current.type == GDScriptTokenizer::Token::ERROR) {
@@ -613,12 +613,12 @@ void GDScriptParser::parse_program() {
 	current_class = head;
 	bool can_have_class_or_extends = true;
 
-#define PUSH_PENDING_ANNOTATIONS_TO_HEAD                  \
-	if (!annotation_stack.is_empty()) {                   \
-		for (AnnotationNode * annot : annotation_stack) { \
-			head->annotations.push_back(annot);           \
-		}                                                 \
-		annotation_stack.clear();                         \
+#define PUSH_PENDING_ANNOTATIONS_TO_HEAD                 \
+	if (!annotation_stack.is_empty()) {                  \
+		for (AnnotationNode *annot : annotation_stack) { \
+			head->annotations.push_back(annot);          \
+		}                                                \
+		annotation_stack.clear();                        \
 	}
 
 	while (!check(GDScriptTokenizer::Token::TK_EOF)) {
@@ -3340,6 +3340,7 @@ GDScriptParser::ExpressionNode *GDScriptParser::parse_call(ExpressionNode *p_pre
 	int argument_index = 0;
 	do {
 		make_completion_context(ct, call, argument_index);
+		set_last_completion_call_arg(argument_index);
 		if (check(GDScriptTokenizer::Token::PARENTHESIS_CLOSE)) {
 			// Allow for trailing comma.
 			break;
@@ -4357,7 +4358,7 @@ static StringName _find_narrowest_native_or_global_class(const GDScriptParser::D
 			}
 
 			if (p_type.is_meta_type) {
-				return script.is_valid() ? script->get_class() : Script::get_class_static();
+				return script.is_valid() ? script->get_class_name() : Script::get_class_static();
 			}
 			if (script.is_null()) {
 				return p_type.native_type;
@@ -5257,7 +5258,7 @@ PropertyInfo GDScriptParser::DataType::to_property_info(const String &p_name) co
 		case SCRIPT:
 			result.type = Variant::OBJECT;
 			if (is_meta_type) {
-				result.class_name = script_type.is_valid() ? script_type->get_class() : Script::get_class_static();
+				result.class_name = script_type.is_valid() ? script_type->get_class_name() : Script::get_class_static();
 			} else if (script_type.is_valid() && script_type->get_global_name() != StringName()) {
 				result.class_name = script_type->get_global_name();
 			} else {

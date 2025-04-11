@@ -1317,8 +1317,7 @@ Error RenderingServer::mesh_create_surface_data_from_arrays(SurfaceData *r_surfa
 	}
 	Vector<SurfaceData::LOD> lods;
 	if (index_array_len) {
-		List<Variant> keys;
-		p_lods.get_key_list(&keys);
+		LocalVector<Variant> keys = p_lods.get_key_list();
 		keys.sort(); // otherwise lod levels may get skipped
 		for (const Variant &E : keys) {
 			float distance = E;
@@ -2794,6 +2793,7 @@ void RenderingServer::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("camera_set_perspective", "camera", "fovy_degrees", "z_near", "z_far"), &RenderingServer::camera_set_perspective);
 	ClassDB::bind_method(D_METHOD("camera_set_orthogonal", "camera", "size", "z_near", "z_far"), &RenderingServer::camera_set_orthogonal);
 	ClassDB::bind_method(D_METHOD("camera_set_frustum", "camera", "size", "offset", "z_near", "z_far"), &RenderingServer::camera_set_frustum);
+	ClassDB::bind_method(D_METHOD("camera_set_override_projection", "camera", "matrix"), &RenderingServer::camera_set_override_projection);
 	ClassDB::bind_method(D_METHOD("camera_set_transform", "camera", "transform"), &RenderingServer::camera_set_transform);
 	ClassDB::bind_method(D_METHOD("camera_set_cull_mask", "camera", "layers"), &RenderingServer::camera_set_cull_mask);
 	ClassDB::bind_method(D_METHOD("camera_set_environment", "camera", "env"), &RenderingServer::camera_set_environment);

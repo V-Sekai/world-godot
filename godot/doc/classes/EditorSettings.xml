@@ -233,6 +233,9 @@
 		<member name="docks/property_editor/subresource_hue_tint" type="float" setter="" getter="">
 			The tint intensity to use for the subresources background in the Inspector dock. The tint is used to distinguish between different subresources in the inspector. Higher values result in a more noticeable background color difference.
 		</member>
+		<member name="docks/scene_tree/accessibility_warnings" type="bool" setter="" getter="">
+			If [code]true[/code], accessibility related warnings are displayed alongside other configuration warnings.
+		</member>
 		<member name="docks/scene_tree/ask_before_deleting_related_animation_tracks" type="bool" setter="" getter="">
 			If [code]true[/code], when a node is deleted with animation tracks referencing it, a confirmation dialog appears before the tracks are deleted. The dialog will appear even when using the "Delete (No Confirm)" shortcut.
 		</member>
@@ -1101,6 +1104,10 @@
 		<member name="interface/touchscreen/enable_pan_and_scale_gestures" type="bool" setter="" getter="">
 			If [code]true[/code], enable two finger pan and scale gestures on touchscreen devices.
 			[b]Note:[/b] Defaults to [code]true[/code] on touchscreen devices.
+		</member>
+		<member name="interface/touchscreen/enable_touch_actions_panel" type="bool" setter="" getter="">
+			If [code]true[/code], enables the TouchActionsPanel to provide easy access to keyboard shortcuts on touchscreen devices.
+			[b]Note:[/b] Only available in the Android editor.
 		</member>
 		<member name="interface/touchscreen/increase_scrollbar_touch_area" type="bool" setter="" getter="">
 			If [code]true[/code], increases the scrollbar touch area to improve usability on touchscreen devices.
