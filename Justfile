@@ -370,7 +370,7 @@ handle-android target:
         ls -l bin/
     fi
 
-package-tpz folder tpzname versionpy:
+package-tpz folder tpzname versionpy precision="double":
     #!/usr/bin/env bash
     cd {{folder}}
     rm *.arm64.a || true  # Avoid Godot error on template import
@@ -388,6 +388,9 @@ package-tpz folder tpzname versionpy:
     cat {{versionpy}} | tr -d ' ' | tr -s '\n' ' ' \
       | sed -E 's/.*major=([0-9]).minor=([0-9]).*status=\"([a-z]*)\".*/\1.\2.\3/' \
       > {{folder}}/version.txt
+    if [ "{{precision}}" = "double" ]; then
+      echo ".double" >> {{folder}}/version.txt
+    fi
     echo "Godot TPZ Version: $( cat {{folder}}/version.txt )"
     mkdir -p tpz_temp && mv {{folder}} tpz_temp/templates && cd tpz_temp \
       && zip -r ../{{tpzname}}.tpz templates && cd ..
