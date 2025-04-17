@@ -404,6 +404,7 @@ void GraphNode::_accessibility_action_slot(const Variant &p_data) {
 }
 
 void GraphNode::gui_input(const Ref<InputEvent> &p_event) {
+	ERR_FAIL_COND(p_event.is_null());
 	if (port_pos_dirty) {
 		_port_pos_update();
 	}
@@ -534,6 +535,8 @@ void GraphNode::gui_input(const Ref<InputEvent> &p_event) {
 		queue_accessibility_update();
 		queue_redraw();
 	}
+
+	GraphElement::gui_input(p_event);
 }
 
 void GraphNode::_notification(int p_what) {
@@ -635,10 +638,6 @@ void GraphNode::_notification(int p_what) {
 
 			// Draw body (slots area) stylebox.
 			draw_style_box(sb_to_draw_panel, body_rect);
-
-			if (has_focus()) {
-				draw_style_box(theme_cache.panel_focus, body_rect);
-			}
 
 			// Draw title bar stylebox above.
 			draw_style_box(sb_to_draw_titlebar, titlebar_rect);
@@ -977,10 +976,15 @@ Size2 GraphNode::get_minimum_size() const {
 
 void GraphNode::_port_pos_update() {
 	int edgeofs = theme_cache.port_h_offset;
+	int separation = theme_cache.separation;
+
+	// This helps to immediately achieve the initial y "original point" of the slots, which the sum of the titlebar height and the top margin of the panel.
+	int vertical_ofs = titlebar_hbox->get_size().height + theme_cache.titlebar->get_minimum_size().height + theme_cache.panel->get_margin(SIDE_TOP);
 
 	left_port_cache.clear();
 	right_port_cache.clear();
-	int slot_index = 0;
+
+	slot_count = 0; // Reset the slot count, which is the index of the current slot.
 
 	for (int i = 0; i < get_child_count(false); i++) {
 		Control *child = as_sortable_control(get_child(i, false), SortableVisibilityMode::IGNORE);
@@ -988,31 +992,33 @@ void GraphNode::_port_pos_update() {
 			continue;
 		}
 
-		Size2i size = child->get_rect().size;
-		Point2 pos = child->get_position();
+		Size2 size = child->get_size();
 
-		if (slot_table.has(slot_index)) {
-			if (slot_table[slot_index].enable_left) {
-				PortCache port_cache;
-				port_cache.pos = Point2i(edgeofs, pos.y + size.height / 2);
-				port_cache.type = slot_table[slot_index].type_left;
-				port_cache.color = slot_table[slot_index].color_left;
-				port_cache.slot_index = slot_index;
-				left_port_cache.push_back(port_cache);
+		if (slot_table.has(slot_count)) {
+			const Slot &slot = slot_table[slot_count];
+
+			int port_y;
+
+			// Check if it is using resort layout (e.g. Shader Graph nodes slots).
+			if (slot_y_cache.is_empty()) {
+				port_y = vertical_ofs + size.height * 0.5; // The y centor is calculated from the widget position.
+			} else {
+				port_y = child->get_position().y + size.height * 0.5; // The y centor is calculated from the class object position.
 			}
-			if (slot_table[slot_index].enable_right) {
-				PortCache port_cache;
-				port_cache.pos = Point2i(get_size().width - edgeofs, pos.y + size.height / 2);
-				port_cache.type = slot_table[slot_index].type_right;
-				port_cache.color = slot_table[slot_index].color_right;
-				port_cache.slot_index = slot_index;
-				right_port_cache.push_back(port_cache);
+
+			if (slot.enable_left) {
+				PortCache port_cache_left{ Point2i(edgeofs, port_y), slot_count, slot.type_left, slot.color_left };
+				left_port_cache.push_back(port_cache_left);
+			}
+			if (slot.enable_right) {
+				PortCache port_cache_right{ Point2i(get_size().width - edgeofs, port_y), slot_count, slot.type_right, slot.color_right };
+				right_port_cache.push_back(port_cache_right);
 			}
 		}
-
-		slot_index++;
+		vertical_ofs += size.height + separation; // Add the height of the child and the separation to the vertical offset.
+		slot_count++; // Go to the next slot
 	}
-	slot_count = slot_index;
+
 	if (selected_slot >= slot_count) {
 		selected_slot = -1;
 	}

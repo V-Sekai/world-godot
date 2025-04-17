@@ -507,7 +507,7 @@ void LottieParser::registerSlot(LottieObject* obj, const char* sid)
         (*slot)->pairs.push({obj});
         return;
     }
-    comp->slots.push(new LottieSlot(strdup(sid), obj, type));
+    comp->slots.push(new LottieSlot(context.layer, context.parent, strdup(sid), obj, type));
 }
 
 
@@ -651,15 +651,12 @@ void LottieParser::parseStrokeDash(LottieStroke* stroke)
     enterArray();
     while (nextArrayValue()) {
         enterObject();
-        int idx = 0;
+        const char* style = nullptr;
         while (auto key = nextObjectKey()) {
-            if (KEY_AS("n")) {
-                auto style = getString();
-                if (!strcmp("o", style)) idx = 0;           //offset
-                else if (!strcmp("d", style)) idx = 1;      //dash
-                else if (!strcmp("g", style)) idx = 2;      //gap
-            } else if (KEY_AS("v")) {
-                parseProperty<LottieProperty::Type::Float>(stroke->dash(idx));
+            if (KEY_AS("n")) style = getString();
+            else if (KEY_AS("v")) {
+                if (style && !strcmp("o", style)) parseProperty<LottieProperty::Type::Float>(stroke->dashOffset());
+                else parseProperty<LottieProperty::Type::Float>(stroke->dashValue());
             } else skip(key);
         }
     }
@@ -998,6 +995,19 @@ LottieObject* LottieParser::parseAsset()
 }
 
 
+void LottieParser::parseFontData(LottieFont* font, const char* data)
+{
+    if (!data) return;
+    if (strncmp(data, "data:font/ttf;base64,", sizeof("data:font/ttf;base64,") - 1) != 0) {
+        TVGLOG("LOTTIE", "Unsupported embeded font data format");
+        return;
+    }
+
+    auto ttf = data + sizeof("data:font/ttf;base64,") - 1;
+    font->data.size = b64Decode(ttf, strlen(ttf), &font->data.b64src);
+}
+
+
 LottieFont* LottieParser::parseFont()
 {
     enterObject();
@@ -1008,10 +1018,13 @@ LottieFont* LottieParser::parseFont()
         if (KEY_AS("fName")) font->name = getStringCopy();
         else if (KEY_AS("fFamily")) font->family = getStringCopy();
         else if (KEY_AS("fStyle")) font->style = getStringCopy();
+        else if (KEY_AS("fPath")) parseFontData(font, getString());
         else if (KEY_AS("ascent")) font->ascent = getFloat();
         else if (KEY_AS("origin")) font->origin = (LottieFont::Origin) getInt();
         else skip(key);
     }
+
+    font->prepare();
     return font;
 }
 
@@ -1525,41 +1538,36 @@ bool LottieParser::apply(LottieSlot* slot, bool byDefault)
 
     //OPTIMIZE: we can create the property directly, without object
     LottieObject* obj = nullptr;  //slot object
+    context = {slot->context.layer, slot->context.parent};
 
     switch (slot->type) {
         case LottieProperty::Type::Position: {
             obj = new LottieTransform;
-            context.parent = obj;
             parseSlotProperty<LottieProperty::Type::Position>(static_cast<LottieTransform*>(obj)->position);
             break;
         }
         case LottieProperty::Type::Point: {
             obj = new LottieTransform;
-            context.parent = obj;
             parseSlotProperty<LottieProperty::Type::Point>(static_cast<LottieTransform*>(obj)->scale);
             break;
         }
         case LottieProperty::Type::Float: {
             obj = new LottieTransform;
-            context.parent = obj;
             parseSlotProperty<LottieProperty::Type::Float>(static_cast<LottieTransform*>(obj)->rotation);
             break;
         }
         case LottieProperty::Type::Opacity: {
             obj = new LottieSolid;
-            context.parent = obj;
             parseSlotProperty<LottieProperty::Type::Opacity>(static_cast<LottieSolid*>(obj)->opacity);
             break;
         }
         case LottieProperty::Type::Color: {
             obj = new LottieSolid;
-            context.parent = obj;
             parseSlotProperty<LottieProperty::Type::Color>(static_cast<LottieSolid*>(obj)->color);
             break;
         }
         case LottieProperty::Type::ColorStop: {
             obj = new LottieGradient;
-            context.parent = obj;
             while (auto key = nextObjectKey()) {
                 if (KEY_AS("p")) parseColorStop(static_cast<LottieGradient*>(obj));
                 else skip(key);
@@ -1568,7 +1576,6 @@ bool LottieParser::apply(LottieSlot* slot, bool byDefault)
         }
         case LottieProperty::Type::TextDoc: {
             obj = new LottieText;
-            context.parent = obj;
             parseSlotProperty<LottieProperty::Type::TextDoc>(static_cast<LottieText*>(obj)->doc);
             break;
         }
@@ -1577,7 +1584,6 @@ bool LottieParser::apply(LottieSlot* slot, bool byDefault)
                 if (KEY_AS("p")) obj = parseAsset();
                 else skip(key);
             }
-            context.parent = obj;
             break;
         }
         default: break;

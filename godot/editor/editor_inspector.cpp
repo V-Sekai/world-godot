@@ -420,11 +420,6 @@ void EditorProperty::_notification(int p_what) {
 				draw_style_box(bg_stylebox, bottom_child_rect);
 			}
 
-			Ref<StyleBox> focus_sb = get_theme_stylebox(SNAME("Focus"), EditorStringName(EditorStyles));
-			if (focus_sb.is_valid() && has_focus()) {
-				draw_style_box(focus_sb, Rect2(Vector2(), get_size()));
-			}
-
 			Color color;
 			if (draw_warning || draw_prop_warning) {
 				color = get_theme_color(is_read_only() ? SNAME("readonly_warning_color") : SNAME("warning_color"));
@@ -1580,11 +1575,6 @@ void EditorInspectorCategory::_notification(int p_what) {
 
 			draw_style_box(sb, Rect2(Vector2(), get_size()));
 
-			Ref<StyleBox> focus_sb = get_theme_stylebox(SNAME("Focus"), EditorStringName(EditorStyles));
-			if (focus_sb.is_valid() && has_focus()) {
-				draw_style_box(focus_sb, Rect2(Vector2(), get_size()));
-			}
-
 			Ref<Font> font = get_theme_font(SNAME("bold"), EditorStringName(EditorFonts));
 			int font_size = get_theme_font_size(SNAME("bold_size"), EditorStringName(EditorFonts));
 
@@ -1831,12 +1821,6 @@ void EditorInspectorSection::_notification(int p_what) {
 				c = c.lightened(Input::get_singleton()->is_mouse_button_pressed(MouseButton::LEFT) ? -0.05 : 0.2);
 			}
 			draw_rect(header_rect, c);
-
-			// Draw focus.
-			Ref<StyleBox> focus_sb = get_theme_stylebox(SNAME("Focus"), EditorStringName(EditorStyles));
-			if (focus_sb.is_valid() && has_focus()) {
-				draw_style_box(focus_sb, Rect2(Vector2(), get_size()));
-			}
 
 			// Draw header title, folding arrow and count of revertable properties.
 			{
@@ -2783,7 +2767,7 @@ void EditorInspectorArray::drop_data_fw(const Point2 &p_point, const Variant &p_
 	Dictionary dict = p_data;
 
 	int to_drop = dict["index"];
-	int drop_position = (p_point == Vector2(INFINITY, INFINITY)) ? selected : _drop_position();
+	int drop_position = (p_point == Vector2(Math::INF, Math::INF)) ? selected : _drop_position();
 	if (drop_position < 0) {
 		return;
 	}
@@ -2801,7 +2785,7 @@ bool EditorInspectorArray::can_drop_data_fw(const Point2 &p_point, const Variant
 		return false;
 	}
 	Dictionary dict = p_data;
-	int drop_position = (p_point == Vector2(INFINITY, INFINITY)) ? selected : _drop_position();
+	int drop_position = (p_point == Vector2(Math::INF, Math::INF)) ? selected : _drop_position();
 	if (!dict.has("type") || dict["type"] != "property_array_element" || String(dict["property_array_prefix"]) != array_element_prefix || drop_position < 0) {
 		return false;
 	}
@@ -4972,12 +4956,6 @@ void EditorInspector::_clear_current_favorites() {
 	update_tree();
 }
 
-void EditorInspector::_update_theme() {
-	updating_theme = true;
-	add_theme_style_override(SceneStringName(panel), get_theme_stylebox(SceneStringName(panel), SNAME("Tree")));
-	updating_theme = false;
-}
-
 void EditorInspector::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_TRANSLATION_CHANGED: {
@@ -5005,15 +4983,9 @@ void EditorInspector::_notification(int p_what) {
 			ERR_FAIL_NULL(EditorFeatureProfileManager::get_singleton());
 			EditorFeatureProfileManager::get_singleton()->connect("current_feature_profile_changed", callable_mp(this, &EditorInspector::_feature_profile_changed));
 			set_process(is_visible_in_tree());
-			get_parent()->connect(SceneStringName(theme_changed), callable_mp(this, &EditorInspector::_update_theme));
-			_update_theme();
 			if (!is_sub_inspector()) {
 				get_tree()->connect("node_removed", callable_mp(this, &EditorInspector::_node_removed));
 			}
-		} break;
-
-		case NOTIFICATION_EXIT_TREE: {
-			get_parent()->disconnect(SceneStringName(theme_changed), callable_mp(this, &EditorInspector::_update_theme));
 		} break;
 
 		case NOTIFICATION_PREDELETE: {
@@ -5075,10 +5047,6 @@ void EditorInspector::_notification(int p_what) {
 		} break;
 
 		case EditorSettings::NOTIFICATION_EDITOR_SETTINGS_CHANGED: {
-			if (!is_sub_inspector() && EditorThemeManager::is_generated_theme_outdated()) {
-				_update_theme();
-			}
-
 			if (use_settings_name_style && EditorSettings::get_singleton()->check_changed_settings_in_group("interface/editor/localize_settings")) {
 				EditorPropertyNameProcessor::Style style = EditorPropertyNameProcessor::get_settings_style();
 				if (property_name_style != style) {

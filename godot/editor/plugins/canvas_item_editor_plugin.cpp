@@ -32,7 +32,6 @@
 
 #include "core/config/project_settings.h"
 #include "core/input/input.h"
-#include "core/io/resource_importer.h"
 #include "core/os/keyboard.h"
 #include "editor/debugger/editor_debugger_node.h"
 #include "editor/editor_main_screen.h"
@@ -49,7 +48,6 @@
 #include "editor/scene_tree_dock.h"
 #include "editor/themes/editor_scale.h"
 #include "editor/themes/editor_theme_manager.h"
-#include "scene/2d/animated_sprite_2d.h"
 #include "scene/2d/audio_stream_player_2d.h"
 #include "scene/2d/physics/touch_screen_button.h"
 #include "scene/2d/polygon_2d.h"
@@ -64,7 +62,6 @@
 #include "scene/gui/view_panner.h"
 #include "scene/main/canvas_layer.h"
 #include "scene/main/window.h"
-#include "scene/resources/atlas_texture.h"
 #include "scene/resources/packed_scene.h"
 #include "scene/resources/style_box_texture.h"
 
@@ -2038,7 +2035,14 @@ bool CanvasItemEditor::_gui_input_scale(const Ref<InputEvent> &p_event) {
 			Size2 scale_max;
 			if (drag_type != DRAG_SCALE_BOTH) {
 				for (CanvasItem *ci : drag_selection) {
-					scale_max = scale_max.max(ci->_edit_get_scale());
+					Size2 scale = ci->_edit_get_scale();
+
+					if (Math::abs(scale.x) > Math::abs(scale_max.x)) {
+						scale_max.x = scale.x;
+					}
+					if (Math::abs(scale.y) > Math::abs(scale_max.y)) {
+						scale_max.y = scale.y;
+					}
 				}
 			}
 
@@ -2867,14 +2871,14 @@ Control::CursorShape CanvasItemEditor::get_cursor_shape(const Point2 &p_pos) con
 
 	List<CanvasItem *> selection = _get_edited_canvas_items();
 	if (selection.size() == 1) {
-		const double angle = Math::fposmod((double)selection.front()->get()->get_global_transform_with_canvas().get_rotation(), Math_PI);
-		if (angle > Math_PI * 7.0 / 8.0) {
+		const double angle = Math::fposmod((double)selection.front()->get()->get_global_transform_with_canvas().get_rotation(), Math::PI);
+		if (angle > Math::PI * 7.0 / 8.0) {
 			rotation_array_index = 0;
-		} else if (angle > Math_PI * 5.0 / 8.0) {
+		} else if (angle > Math::PI * 5.0 / 8.0) {
 			rotation_array_index = 1;
-		} else if (angle > Math_PI * 3.0 / 8.0) {
+		} else if (angle > Math::PI * 3.0 / 8.0) {
 			rotation_array_index = 2;
-		} else if (angle > Math_PI * 1.0 / 8.0) {
+		} else if (angle > Math::PI * 1.0 / 8.0) {
 			rotation_array_index = 3;
 		} else {
 			rotation_array_index = 0;
@@ -3106,7 +3110,7 @@ void CanvasItemEditor::_draw_rulers() {
 			viewport->draw_line(Point2(0, position.y), Point2(RULER_WIDTH, position.y), graduation_color, Math::round(EDSCALE));
 			real_t val = (ruler_transform * major_subdivide * minor_subdivide).xform(Point2(0, i)).y;
 
-			Transform2D text_xform = Transform2D(-Math_PI / 2.0, Point2(font->get_ascent(font_size) + Math::round(EDSCALE), position.y - 2));
+			Transform2D text_xform = Transform2D(-Math::PI / 2.0, Point2(font->get_ascent(font_size) + Math::round(EDSCALE), position.y - 2));
 			viewport->draw_set_transform_matrix(viewport->get_transform() * text_xform);
 			viewport->draw_string(font, Point2(), TS->format_number(vformat(((int)val == val) ? "%d" : "%.1f", val)), HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, font_color);
 			viewport->draw_set_transform_matrix(viewport->get_transform());
@@ -3213,7 +3217,7 @@ void CanvasItemEditor::_draw_ruler_tool() {
 		Vector2 length_vector = (begin - end).abs() / zoom;
 
 		const real_t horizontal_angle_rad = length_vector.angle();
-		const real_t vertical_angle_rad = Math_PI / 2.0 - horizontal_angle_rad;
+		const real_t vertical_angle_rad = Math::PI / 2.0 - horizontal_angle_rad;
 
 		Ref<Font> font = get_theme_font(SNAME("bold"), EditorStringName(EditorFonts));
 		int font_size = 1.3 * get_theme_font_size(SNAME("bold_size"), EditorStringName(EditorFonts));
@@ -3249,15 +3253,15 @@ void CanvasItemEditor::_draw_ruler_tool() {
 			const Vector2 end_to_begin = (end - begin);
 
 			real_t arc_1_start_angle = end_to_begin.x < 0
-					? (end_to_begin.y < 0 ? 3.0 * Math_PI / 2.0 - vertical_angle_rad : Math_PI / 2.0)
-					: (end_to_begin.y < 0 ? 3.0 * Math_PI / 2.0 : Math_PI / 2.0 - vertical_angle_rad);
+					? (end_to_begin.y < 0 ? 3.0 * Math::PI / 2.0 - vertical_angle_rad : Math::PI / 2.0)
+					: (end_to_begin.y < 0 ? 3.0 * Math::PI / 2.0 : Math::PI / 2.0 - vertical_angle_rad);
 			real_t arc_1_end_angle = arc_1_start_angle + vertical_angle_rad;
 			// Constrain arc to triangle height & max size.
 			real_t arc_1_radius = MIN(MIN(arc_radius_max_length_percent * ruler_length, Math::abs(end_to_begin.y)), arc_max_radius);
 
 			real_t arc_2_start_angle = end_to_begin.x < 0
 					? (end_to_begin.y < 0 ? 0.0 : -horizontal_angle_rad)
-					: (end_to_begin.y < 0 ? Math_PI - horizontal_angle_rad : Math_PI);
+					: (end_to_begin.y < 0 ? Math::PI - horizontal_angle_rad : Math::PI);
 			real_t arc_2_end_angle = arc_2_start_angle + horizontal_angle_rad;
 			// Constrain arc to triangle width & max size.
 			real_t arc_2_radius = MIN(MIN(arc_radius_max_length_percent * ruler_length, Math::abs(end_to_begin.x)), arc_max_radius);
@@ -3278,8 +3282,8 @@ void CanvasItemEditor::_draw_ruler_tool() {
 		viewport->draw_string(font, text_pos, TS->format_number(vformat("%.1f px", length_vector.length())), HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, font_color);
 
 		if (draw_secondary_lines) {
-			const int horizontal_angle = round(180 * horizontal_angle_rad / Math_PI);
-			const int vertical_angle = round(180 * vertical_angle_rad / Math_PI);
+			const int horizontal_angle = round(180 * horizontal_angle_rad / Math::PI);
+			const int vertical_angle = round(180 * vertical_angle_rad / Math::PI);
 
 			Point2 text_pos2 = text_pos;
 			text_pos2.x = begin.x < text_pos.x ? MIN(text_pos.x - text_width, begin.x - text_width / 2) : MAX(text_pos.x + text_width, begin.x - text_width / 2);
@@ -3658,7 +3662,7 @@ void CanvasItemEditor::_draw_selection() {
 					int next = (i + 1) % 4;
 
 					Vector2 ofs = ((endpoints[i] - endpoints[prev]).normalized() + ((endpoints[i] - endpoints[next]).normalized())).normalized();
-					ofs *= Math_SQRT2 * (select_handle->get_size().width / 2);
+					ofs *= Math::SQRT2 * (select_handle->get_size().width / 2);
 
 					select_handle->draw(vp_ci, (endpoints[i] + ofs - (select_handle->get_size() / 2)).floor());
 
@@ -4260,8 +4264,8 @@ void CanvasItemEditor::_selection_changed() {
 	}
 	selected_from_canvas = false;
 
-	if (temp_pivot != Vector2(INFINITY, INFINITY)) {
-		temp_pivot = Vector2(INFINITY, INFINITY);
+	if (temp_pivot != Vector2(Math::INF, Math::INF)) {
+		temp_pivot = Vector2(Math::INF, Math::INF);
 		viewport->queue_redraw();
 	}
 }
@@ -5986,24 +5990,6 @@ void CanvasItemEditorViewport::_create_texture_node(Node *p_parent, Node *p_chil
 			Vector2(0, texture_size.height)
 		};
 		undo_redo->add_do_property(p_child, "polygon", list);
-	} else if (Object::cast_to<AnimatedSprite2D>(p_child)) {
-		// Currently this metadata is only set by ResourceImporterLottie.
-		Dictionary meta = ResourceFormatImporter::get_singleton()->get_resource_metadata(p_path);
-		Ref<SpriteFrames> frames;
-		frames.instantiate();
-		frames->set_animation_speed(SceneStringName(default_), meta.get("fps", 5));
-		Size2i sprite_size = meta["sprite_size"];
-		for (int i = 0; i < (int)meta["frame_count"]; i++) {
-			int x = i % (int)meta["columns"] * sprite_size.width;
-			int y = i / (int)meta["columns"] * sprite_size.height;
-			Ref<AtlasTexture> atlas_texture;
-			atlas_texture.instantiate();
-			atlas_texture->set_atlas(texture);
-			atlas_texture->set_region(Rect2(x, y, sprite_size.width, sprite_size.height));
-			frames->add_frame(SceneStringName(default_), atlas_texture);
-		}
-		undo_redo->add_do_property(p_child, SceneStringName(autoplay), SceneStringName(default_));
-		undo_redo->add_do_property(p_child, "sprite_frames", frames);
 	}
 
 	// Compute the global position
@@ -6196,7 +6182,7 @@ void CanvasItemEditorViewport::_perform_drop_data() {
 }
 
 bool CanvasItemEditorViewport::can_drop_data(const Point2 &p_point, const Variant &p_data) const {
-	if (p_point == Vector2(INFINITY, INFINITY)) {
+	if (p_point == Vector2(Math::INF, Math::INF)) {
 		return false;
 	}
 	Dictionary d = p_data;
@@ -6330,7 +6316,7 @@ bool CanvasItemEditorViewport::_is_any_texture_selected() const {
 }
 
 void CanvasItemEditorViewport::drop_data(const Point2 &p_point, const Variant &p_data) {
-	if (p_point == Vector2(INFINITY, INFINITY)) {
+	if (p_point == Vector2(Math::INF, Math::INF)) {
 		return;
 	}
 	bool is_shift = Input::get_singleton()->is_key_pressed(Key::SHIFT);
@@ -6415,7 +6401,6 @@ CanvasItemEditorViewport::CanvasItemEditorViewport(CanvasItemEditor *p_canvas_it
 	texture_node_types.push_back("GPUParticles2D");
 	texture_node_types.push_back("Polygon2D");
 	texture_node_types.push_back("TouchScreenButton");
-	texture_node_types.push_back("AnimatedSprite2D");
 	// Control
 	texture_node_types.push_back("TextureRect");
 	texture_node_types.push_back("TextureButton");

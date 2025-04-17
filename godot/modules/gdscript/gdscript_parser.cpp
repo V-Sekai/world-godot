@@ -2720,16 +2720,16 @@ GDScriptParser::ExpressionNode *GDScriptParser::parse_builtin_constant(Expressio
 
 	switch (op_type) {
 		case GDScriptTokenizer::Token::CONST_PI:
-			constant->value = Math_PI;
+			constant->value = Math::PI;
 			break;
 		case GDScriptTokenizer::Token::CONST_TAU:
-			constant->value = Math_TAU;
+			constant->value = Math::TAU;
 			break;
 		case GDScriptTokenizer::Token::CONST_INF:
-			constant->value = INFINITY;
+			constant->value = Math::INF;
 			break;
 		case GDScriptTokenizer::Token::CONST_NAN:
-			constant->value = NAN;
+			constant->value = Math::NaN;
 			break;
 		default:
 			return nullptr; // Unreachable.
@@ -3122,13 +3122,9 @@ GDScriptParser::ExpressionNode *GDScriptParser::parse_dictionary(ExpressionNode 
 				case DictionaryNode::LUA_TABLE:
 					if (key != nullptr && key->type != Node::IDENTIFIER && key->type != Node::LITERAL) {
 						push_error(R"(Expected identifier or string as Lua-style dictionary key (e.g "{ key = value }").)");
-						advance();
-						break;
 					}
 					if (key != nullptr && key->type == Node::LITERAL && static_cast<LiteralNode *>(key)->value.get_type() != Variant::STRING) {
 						push_error(R"(Expected identifier or string as Lua-style dictionary key (e.g "{ key = value }").)");
-						advance();
-						break;
 					}
 					if (!match(GDScriptTokenizer::Token::EQUAL)) {
 						if (match(GDScriptTokenizer::Token::COLON)) {
@@ -3168,6 +3164,21 @@ GDScriptParser::ExpressionNode *GDScriptParser::parse_dictionary(ExpressionNode 
 			if (key != nullptr && value != nullptr) {
 				dictionary->elements.push_back({ key, value });
 			}
+
+			// Do phrase level recovery by inserting an imaginary expression for missing keys or values.
+			// This ensures the successfully parsed expression is part of the AST and can be analyzed.
+			if (key != nullptr && value == nullptr) {
+				LiteralNode *dummy = alloc_recovery_node<LiteralNode>();
+				dummy->value = Variant();
+
+				dictionary->elements.push_back({ key, dummy });
+			} else if (key == nullptr && value != nullptr) {
+				LiteralNode *dummy = alloc_recovery_node<LiteralNode>();
+				dummy->value = Variant();
+
+				dictionary->elements.push_back({ dummy, value });
+			}
+
 		} while (match(GDScriptTokenizer::Token::COMMA) && !is_at_end());
 	}
 	pop_multiline();

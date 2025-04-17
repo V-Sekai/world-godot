@@ -239,6 +239,10 @@ private:
 
 	HashSet<CanvasLayer *> canvas_layers;
 
+	bool use_font_oversampling = true;
+	float font_oversampling = 1.0;
+	float font_oversampling_override = 0.0;
+
 	RID viewport;
 	RID current_canvas;
 	RID subwindow_canvas;
@@ -367,7 +371,7 @@ private:
 		HashMap<int, ObjectID> touch_focus;
 		Control *mouse_focus = nullptr;
 		Control *mouse_click_grabber = nullptr;
-		BitField<MouseButtonMask> mouse_focus_mask;
+		BitField<MouseButtonMask> mouse_focus_mask = MouseButtonMask::NONE;
 		Control *key_focus = nullptr;
 		Control *mouse_over = nullptr;
 		LocalVector<Control *> mouse_over_hierarchy;
@@ -573,6 +577,14 @@ public:
 
 	void set_use_taa(bool p_use_taa);
 	bool is_using_taa() const;
+
+	void set_use_oversampling(bool p_oversampling);
+	bool is_using_oversampling() const;
+
+	void set_oversampling_override(float p_oversampling);
+	float get_oversampling_override() const;
+
+	float get_oversampling() const { return font_oversampling; }
 
 	void set_scaling_3d_mode(Scaling3DMode p_scaling_3d_mode);
 	Scaling3DMode get_scaling_3d_mode() const;

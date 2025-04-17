@@ -805,12 +805,12 @@ void TextEdit::_notification(int p_what) {
 			queue_redraw();
 		} break;
 
-		case NOTIFICATION_INTERNAL_PHYSICS_PROCESS: {
+		case NOTIFICATION_INTERNAL_PROCESS: {
 			if (scrolling && get_v_scroll() != target_v_scroll) {
 				double target_y = target_v_scroll - get_v_scroll();
 				double dist = abs(target_y);
 				// To ensure minimap is responsive override the speed setting.
-				double vel = ((target_y / dist) * ((minimap_clicked) ? 3000 : v_scroll_speed)) * get_physics_process_delta_time();
+				double vel = ((target_y / dist) * ((minimap_clicked) ? 3000 : v_scroll_speed)) * get_process_delta_time();
 
 				// Prevent small velocities from blocking scrolling.
 				if (Math::abs(vel) < v_scroll->get_step()) {
@@ -821,14 +821,14 @@ void TextEdit::_notification(int p_what) {
 					set_v_scroll(target_v_scroll);
 					scrolling = false;
 					minimap_clicked = false;
-					set_physics_process_internal(false);
+					set_process_internal(false);
 				} else {
 					set_v_scroll(get_v_scroll() + vel);
 				}
 			} else {
 				scrolling = false;
 				minimap_clicked = false;
-				set_physics_process_internal(false);
+				set_process_internal(false);
 			}
 		} break;
 
@@ -3401,7 +3401,7 @@ bool TextEdit::can_drop_data(const Point2 &p_point, const Variant &p_data) const
 void TextEdit::drop_data(const Point2 &p_point, const Variant &p_data) {
 	Control::drop_data(p_point, p_data);
 
-	if (p_point == Vector2(INFINITY, INFINITY)) {
+	if (p_point == Vector2(Math::INF, Math::INF)) {
 		insert_text_at_caret(p_data);
 	} else if (p_data.is_string() && is_editable()) {
 		Point2i pos = get_line_column_at_pos(get_local_mouse_pos());
@@ -8527,7 +8527,7 @@ void TextEdit::_scroll_up(real_t p_delta, bool p_animate) {
 			queue_accessibility_update();
 		} else {
 			scrolling = true;
-			set_physics_process_internal(true);
+			set_process_internal(true);
 		}
 	} else {
 		set_v_scroll(target_v_scroll);
@@ -8556,7 +8556,7 @@ void TextEdit::_scroll_down(real_t p_delta, bool p_animate) {
 			queue_accessibility_update();
 		} else {
 			scrolling = true;
-			set_physics_process_internal(true);
+			set_process_internal(true);
 		}
 	} else {
 		set_v_scroll(target_v_scroll);

@@ -204,7 +204,7 @@ private:
 		ProcessThreadGroup process_thread_group = PROCESS_THREAD_GROUP_INHERIT;
 		Node *process_thread_group_owner = nullptr;
 		int process_thread_group_order = 0;
-		BitField<ProcessThreadMessages> process_thread_messages;
+		BitField<ProcessThreadMessages> process_thread_messages = {};
 		void *process_group = nullptr; // to avoid cyclic dependency
 
 		int multiplayer_authority = 1; // Server by default.
@@ -387,6 +387,8 @@ protected:
 	void _validate_property(PropertyInfo &p_property) const;
 
 protected:
+	virtual bool _uses_signal_mutex() const override { return false; } // Node uses thread guards instead.
+
 	virtual void input(const Ref<InputEvent> &p_event);
 	virtual void shortcut_input(const Ref<InputEvent> &p_key_event);
 	virtual void unhandled_input(const Ref<InputEvent> &p_event);

@@ -238,12 +238,12 @@ Node *LassoDB::calc_top_redirecting_power(Node *snapped_origin,
 			if (next.is_valid() && next->valid_origin() &&
 					!next->matching_origin(snapped_origin_Node3D)) {
 				Vector3 point_vector = viewpoint.origin - next->get_origin_pos();
-				if (point_vector.angle_to(snapped_vector) < Math_PI / 4.0) {
+				if (point_vector.angle_to(snapped_vector) < Math::PI / 4.0) {
 					Vector3 point_xyz = local_basis.xform(point_vector);
 					Vector2 point_xy = Vector2(point_xyz[0], -point_xyz[1]);
 
 					if (Math::abs(redirection_direction.angle_to(point_xy)) >=
-							Math_PI / 2) {
+							Math::PI / 2) {
 						continue;
 						// Keep the redirect power at infinity if the joystick is more than
 						// 90 degrees away from the point.

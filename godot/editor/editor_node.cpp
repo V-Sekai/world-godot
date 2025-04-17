@@ -3363,7 +3363,7 @@ void EditorNode::_menu_option_confirm(int p_option, bool p_confirmed) {
 			about->popup_centered(Size2(780, 500) * EDSCALE);
 		} break;
 		case HELP_SUPPORT_GODOT_DEVELOPMENT: {
-			OS::get_singleton()->shell_open("https://godotengine.org/donate");
+			OS::get_singleton()->shell_open("https://fund.godotengine.org");
 		} break;
 	}
 }
@@ -7848,6 +7848,9 @@ EditorNode::EditorNode() {
 		PackedStringArray renderers = ProjectSettings::get_singleton()->get_custom_property_info().get(StringName("rendering/renderer/rendering_method")).hint_string.split(",", false);
 		for (int i = 0; i < renderers.size(); i++) {
 			String rendering_method = renderers[i];
+			if (rendering_method == "dummy") {
+				continue;
+			}
 			_add_renderer_entry(rendering_method, false);
 			renderer->set_item_metadata(i, rendering_method);
 			// Lowercase for standard comparison.

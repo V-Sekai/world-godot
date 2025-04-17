@@ -488,22 +488,22 @@ void GDScriptLanguage::get_public_functions(List<MethodInfo> *p_functions) const
 void GDScriptLanguage::get_public_constants(List<Pair<String, Variant>> *p_constants) const {
 	Pair<String, Variant> pi;
 	pi.first = "PI";
-	pi.second = Math_PI;
+	pi.second = Math::PI;
 	p_constants->push_back(pi);
 
 	Pair<String, Variant> tau;
 	tau.first = "TAU";
-	tau.second = Math_TAU;
+	tau.second = Math::TAU;
 	p_constants->push_back(tau);
 
 	Pair<String, Variant> infinity;
 	infinity.first = "INF";
-	infinity.second = INFINITY;
+	infinity.second = Math::INF;
 	p_constants->push_back(infinity);
 
 	Pair<String, Variant> nan;
 	nan.first = "NAN";
-	nan.second = NAN;
+	nan.second = Math::NaN;
 	p_constants->push_back(nan);
 }
 
@@ -872,7 +872,7 @@ static String _make_arguments_hint(const GDScriptParser::FunctionNode *p_functio
 
 static void _get_directory_contents(EditorFileSystemDirectory *p_dir, HashMap<String, ScriptLanguage::CodeCompletionOption> &r_list, const StringName &p_required_type = StringName()) {
 	const String quote_style = EDITOR_GET("text_editor/completion/use_single_quotes") ? "'" : "\"";
-	const bool requires_type = p_required_type;
+	const bool requires_type = !p_required_type.is_empty();
 
 	for (int i = 0; i < p_dir->get_file_count(); i++) {
 		if (requires_type && !ClassDB::is_parent_class(p_dir->get_file_type(i), p_required_type)) {

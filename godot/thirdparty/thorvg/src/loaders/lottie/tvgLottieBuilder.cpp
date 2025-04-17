@@ -22,6 +22,13 @@
 
 #include <cstring>
 #include <algorithm>
+#ifdef _WIN32
+    #include <malloc.h>
+#elif defined(__linux__) || defined(__ZEPHYR__)
+    #include <alloca.h>
+#else
+    #include <stdlib.h>
+#endif
 
 #include "tvgCommon.h"
 #include "tvgMath.h"
@@ -160,12 +167,8 @@ void LottieBuilder::updateTransform(LottieLayer* layer, float frameNo)
 
     _updateTransform(transform, frameNo, layer->autoOrient, matrix, layer->cache.opacity, exps);
 
-    if (parent) {
-        if (!identity((const Matrix*) &parent->cache.matrix)) {
-            if (identity((const Matrix*) &matrix)) layer->cache.matrix = parent->cache.matrix;
-            else layer->cache.matrix = parent->cache.matrix * matrix;
-        }
-    }
+    if (parent) layer->cache.matrix = parent->cache.matrix * matrix;
+
     layer->cache.frameNo = frameNo;
 }
 
@@ -175,25 +178,30 @@ void LottieBuilder::updateTransform(LottieGroup* parent, LottieObject** child, f
     auto transform = static_cast<LottieTransform*>(*child);
     if (!transform) return;
 
+    Matrix m;
     uint8_t opacity;
 
     if (parent->mergeable()) {
-        if (!ctx->transform) ctx->transform = (Matrix*)malloc(sizeof(Matrix));
-        _updateTransform(transform, frameNo, false, *ctx->transform, opacity, exps);
+        if (ctx->transform) {
+            _updateTransform(transform, frameNo, false, m, opacity, exps);
+            *ctx->transform *= m;
+        } else {
+            ctx->transform = new Matrix;
+            _updateTransform(transform, frameNo, false, *ctx->transform, opacity, exps);
+        }
         return;
     }
 
     ctx->merging = nullptr;
 
-    Matrix matrix;
-    if (!_updateTransform(transform, frameNo, false, matrix, opacity, exps)) return;
+    if (!_updateTransform(transform, frameNo, false, m, opacity, exps)) return;
 
-    ctx->propagator->transform(PP(ctx->propagator)->transform() * matrix);
+    ctx->propagator->transform(PP(ctx->propagator)->transform() * m);
     ctx->propagator->opacity(MULTIPLY(opacity, PP(ctx->propagator)->opacity));
 
     //FIXME: preserve the stroke width. too workaround, need a better design.
     if (P(ctx->propagator)->rs.strokeWidth() > 0.0f) {
-        auto denominator = sqrtf(matrix.e11 * matrix.e11 + matrix.e12 * matrix.e12);
+        auto denominator = sqrtf(m.e11 * m.e11 + m.e12 * m.e12);
         if (denominator > 1.0f) ctx->propagator->stroke(ctx->propagator->strokeWidth() / denominator);
     }
 }
@@ -230,10 +238,15 @@ static void _updateStroke(LottieStroke* stroke, float frameNo, RenderContext* ct
     ctx->propagator->strokeMiterlimit(stroke->miterLimit);
 
     if (stroke->dashattr) {
-        float dashes[2];
-        dashes[0] = stroke->dashSize(frameNo, exps);
-        dashes[1] = dashes[0] + stroke->dashGap(frameNo, exps);
-        P(ctx->propagator)->strokeDash(dashes, 2, stroke->dashOffset(frameNo, exps));
+        auto size = stroke->dashattr->size == 1 ? 2 : stroke->dashattr->size;
+        auto dashes = (float*)alloca(size * sizeof(float));
+        for (uint8_t i = 0; i < stroke->dashattr->size; ++i) {
+            auto value = stroke->dashattr->values[i](frameNo, exps);
+            //FIXME: allow the zero value in the engine level.
+            dashes[i] = value < FLT_EPSILON ? 0.01f : value;
+        }
+        if (stroke->dashattr->size == 1) dashes[1] = dashes[0];
+        P(ctx->propagator)->strokeDash(dashes, size, stroke->dashattr->offset(frameNo, exps));
     } else {
         ctx->propagator->stroke(nullptr, 0);
     }
@@ -478,7 +491,7 @@ void LottieBuilder::updateRect(LottieGroup* parent, LottieObject** child, float 
     } else {
         r = std::min({r, size.x * 0.5f, size.y * 0.5f});
     }
-    
+
     if (!ctx->repeaters.empty()) {
         auto shape = rect->pooling();
         shape->reset();
@@ -528,7 +541,7 @@ static void _appendCircle(Shape* shape, float cx, float cy, float rx, float ry, 
             points[i] *= *transform;
         }
     }
-    
+
     shape->appendPath(commands, cmdsCnt, points, ptsCnt);
 }
 
@@ -982,6 +995,21 @@ void LottieBuilder::updateImage(LottieGroup* layer)
 }
 
 
+void _fontURLText(LottieText* text, Scene* main, float frameNo, LottieExpressions* exps)
+{
+    auto& doc = text->doc(frameNo);
+    if (!doc.text) return;
+
+    const float ptPerPx = 0.75f; //1 pt = 1/72; 1 in = 96 px; -> 72/96 = 0.75
+    auto txt = Text::gen();
+    txt->font(doc.name, doc.size * 100.0f * ptPerPx);
+    txt->translate(0.0f, -doc.size * 100.0f);
+    txt->text(doc.text);
+    txt->fill(doc.color.rgb[0], doc.color.rgb[1], doc.color.rgb[2]);
+    main->push(std::move(txt));
+}
+
+
 void LottieBuilder::updateText(LottieLayer* layer, float frameNo)
 {
     auto text = static_cast<LottieText*>(layer->children.first());
@@ -990,6 +1018,11 @@ void LottieBuilder::updateText(LottieLayer* layer, float frameNo)
     auto p = doc.text;
 
     if (!p || !text->font) return;
+
+    if (text->font->origin == LottieFont::Origin::FontURL) {
+        _fontURLText(text, layer->scene, frameNo, exps);
+        return;
+    }
 
     auto scale = doc.size;
     Point cursor = {0.0f, 0.0f};
@@ -1478,7 +1511,6 @@ void LottieBuilder::updateLayer(LottieComposition* comp, Scene* scene, LottieLay
 
     updateEffect(layer, frameNo);
 
-    //the given matte source was composited by the target earlier.
     if (!layer->matteSrc) scene->push(cast(layer->scene));
 }
 
@@ -1568,6 +1600,7 @@ static bool _buildComposition(LottieComposition* comp, LottieLayer* parent)
         }
 
         if (child->matteTarget) {
+            child->matteTarget->matteSrc = true;
             //parenting
             _buildHierarchy(parent, child->matteTarget);
             //precomp referencing
