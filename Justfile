@@ -47,7 +47,7 @@ build-small-macos-editor-double:
                     precision=double \
                     platform=macos \
                     target=template_release \
-                    vulkan=yes \
+                    vulkan=no \
                     opengl3=no \
                     metal=no \
                     disable_3d=no \
@@ -231,7 +231,7 @@ build-platform-target platform target arch="auto" precision="double" osx_bundle=
                     precision={{precision}} \
                     target={{target}} \
                     test=yes \
-                    vulkan=yes \
+                    vulkan=no \
                     vulkan_sdk_path=$VULKAN_SDK_ROOT/MoltenVK/MoltenVK/static/MoltenVK.xcframework \
                     osxcross_sdk=darwin24 \
                     generate_bundle={{osx_bundle}} \
@@ -301,7 +301,7 @@ build-platform-target platform target arch="auto" precision="double" osx_bundle=
                     precision={{precision}} \
                     target={{target}} \
                     test=yes \
-                    vulkan=yes \
+                    vulkan=no \
                     vulkan_sdk_path=$VULKAN_SDK_ROOT/MoltenVK/MoltenVK/static/MoltenVK.xcframework \
                     osxcross_sdk=darwin24 \
                     generate_bundle={{osx_bundle}} \
