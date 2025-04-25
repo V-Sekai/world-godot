@@ -374,7 +374,7 @@ void PostImportPluginSkeletonRestFixer::internal_process(InternalImportCategory 
 				src_dir.normalize();
 
 				// Rotate rest.
-				if (Math::rad_to_deg((1.0 - src_dir.dot(prof_dir)) * Math::PI) > float(p_options["retarget/rest_fixer/fix_silhouette/threshold"])) {
+				if (Math::abs(Math::rad_to_deg(src_dir.angle_to(prof_dir))) > float(p_options["retarget/rest_fixer/fix_silhouette/threshold"])) {
 					Basis diff_b = Basis(Quaternion(src_dir, prof_dir));
 					// Apply rotation difference as global transform to skeleton.
 					Basis src_pg;
