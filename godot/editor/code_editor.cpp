@@ -940,7 +940,7 @@ void CodeTextEditor::_text_editor_gui_input(const Ref<InputEvent> &p_event) {
 #ifndef ANDROID_ENABLED
 	Ref<InputEventMagnifyGesture> magnify_gesture = p_event;
 	if (magnify_gesture.is_valid()) {
-		_zoom_to(zoom_factor * powf(magnify_gesture->get_factor(), 0.25f));
+		_zoom_to(zoom_factor * std::pow(magnify_gesture->get_factor(), 0.25f));
 		accept_event();
 		return;
 	}
@@ -1688,9 +1688,9 @@ void CodeTextEditor::set_error_count(int p_error_count) {
 	error_button->set_text(itos(p_error_count));
 	error_button->set_visible(p_error_count > 0);
 	if (p_error_count > 0) {
-		_set_show_errors_panel(false);
 		idle->set_wait_time(idle_time_with_errors); // Parsing should happen sooner.
 	} else {
+		_set_show_errors_panel(false);
 		idle->set_wait_time(idle_time);
 	}
 }

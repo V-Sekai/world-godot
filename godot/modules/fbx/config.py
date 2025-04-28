@@ -12,7 +12,6 @@ def get_doc_classes():
         "EditorSceneFormatImporterFBX2GLTF",
         "EditorSceneFormatImporterUFBX",
         "FBXDocument",
-        "FBXDocumentExtensionConvertImporterMesh",
         "FBXState",
     ]
 
