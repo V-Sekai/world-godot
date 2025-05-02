@@ -38,9 +38,9 @@
 		<method name="get_absolute_time" qualifiers="const" experimental="">
 			<return type="float" />
 			<description>
-				Returns the absolute time in seconds of the [AudioServer] timeline based on the number of audio frames mixed. Used to schedule sounds to be played in the future with higher accuracy.
+				Returns the absolute time in seconds of the [AudioServer]'s timeline, based on the number of audio frames mixed. Used to schedule sounds to be played with high precision timing, such as with [method AudioStreamPlayer.play_scheduled].
 				[b]Note:[/b] This value only updates each time an audio chunk is mixed and should not be relied on as an accurate "current" time of the [AudioServer].
-				[b]Example:[/b] Schedule two sounds to be played at the same time ~1 second in the future:
+				[b]Example:[/b] Schedule two sounds to be played at the same time, roughly 1 second in the future:
 				[codeblocks]
 				[gdscript]
 				var future_time = AudioServer.get_absolute_time() + 1

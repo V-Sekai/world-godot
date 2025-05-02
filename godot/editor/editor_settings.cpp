@@ -920,6 +920,7 @@ void EditorSettings::_load_defaults(Ref<ConfigFile> p_extra_config) {
 	_initial_set("editors/panning/simple_panning", false);
 	_initial_set("editors/panning/warped_mouse_panning", true);
 	_initial_set("editors/panning/2d_editor_pan_speed", 20, true);
+	EDITOR_SETTING_BASIC(Variant::INT, PROPERTY_HINT_ENUM, "editors/panning/zoom_style", 0, "Vertical,Horizontal");
 
 	// Tiles editor
 	_initial_set("editors/tiles_editor/display_grid", true);
@@ -1216,6 +1217,7 @@ const String EditorSettings::_get_project_metadata_path() const {
 
 #ifndef DISABLE_DEPRECATED
 void EditorSettings::_remove_deprecated_settings() {
+	erase("network/connection/engine_version_update_mode");
 	erase("run/output/always_open_output_on_play");
 	erase("run/output/always_close_output_on_stop");
 }

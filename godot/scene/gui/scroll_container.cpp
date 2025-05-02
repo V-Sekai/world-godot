@@ -399,6 +399,7 @@ void ScrollContainer::_reposition_children() {
 	}
 
 	if (draw_focus_border) {
+		focus_panel->set_position(Vector2(0, 0));
 		focus_panel->set_size(get_size());
 	}
 	queue_redraw();
@@ -823,7 +824,7 @@ ScrollContainer::ScrollContainer() {
 	focus_panel->set_visible(draw_focus_border);
 	add_child(focus_panel, false, INTERNAL_MODE_BACK);
 
-	deadzone = GLOBAL_GET("gui/common/default_scroll_deadzone");
+	deadzone = GLOBAL_GET_CACHED(int, "gui/common/default_scroll_deadzone");
 
 	set_clip_contents(true);
 }

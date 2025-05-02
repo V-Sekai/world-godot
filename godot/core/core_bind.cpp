@@ -46,8 +46,6 @@ namespace CoreBind {
 
 ////// ResourceLoader //////
 
-ResourceLoader *ResourceLoader::singleton = nullptr;
-
 Error ResourceLoader::load_threaded_request(const String &p_path, const String &p_type_hint, bool p_use_sub_threads, CacheMode p_cache_mode) {
 	return ::ResourceLoader::load_threaded_request(p_path, p_type_hint, p_use_sub_threads, ResourceFormatLoader::CacheMode(p_cache_mode));
 }
@@ -183,6 +181,10 @@ Error ResourceSaver::save(const Ref<Resource> &p_resource, const String &p_path,
 	return ::ResourceSaver::save(p_resource, p_path, p_flags);
 }
 
+Error ResourceSaver::set_uid(const String &p_path, ResourceUID::ID p_uid) {
+	return ::ResourceSaver::set_uid(p_path, p_uid);
+}
+
 Vector<String> ResourceSaver::get_recognized_extensions(const Ref<Resource> &p_resource) {
 	List<String> exts;
 	::ResourceSaver::get_recognized_extensions(p_resource, &exts);
@@ -205,10 +207,9 @@ ResourceUID::ID ResourceSaver::get_resource_id_for_path(const String &p_path, bo
 	return ::ResourceSaver::get_resource_id_for_path(p_path, p_generate);
 }
 
-ResourceSaver *ResourceSaver::singleton = nullptr;
-
 void ResourceSaver::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("save", "resource", "path", "flags"), &ResourceSaver::save, DEFVAL(""), DEFVAL((uint32_t)FLAG_NONE));
+	ClassDB::bind_method(D_METHOD("set_uid", "resource", "uid"), &ResourceSaver::set_uid);
 	ClassDB::bind_method(D_METHOD("get_recognized_extensions", "type"), &ResourceSaver::get_recognized_extensions);
 	ClassDB::bind_method(D_METHOD("add_resource_format_saver", "format_saver", "at_front"), &ResourceSaver::add_resource_format_saver, DEFVAL(false));
 	ClassDB::bind_method(D_METHOD("remove_resource_format_saver", "format_saver"), &ResourceSaver::remove_resource_format_saver);
@@ -731,8 +732,6 @@ void OS::remove_logger(const Ref<Logger> &p_logger) {
 	logger_bind->loggers.erase(p_logger);
 }
 
-OS *OS::singleton = nullptr;
-
 void OS::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_entropy", "size"), &OS::get_entropy);
 	ClassDB::bind_method(D_METHOD("get_system_ca_certificates"), &OS::get_system_ca_certificates);
@@ -885,8 +884,6 @@ OS::~OS() {
 }
 
 ////// Geometry2D //////
-
-Geometry2D *Geometry2D::singleton = nullptr;
 
 Geometry2D *Geometry2D::get_singleton() {
 	return singleton;
@@ -1147,8 +1144,6 @@ void Geometry2D::_bind_methods() {
 
 ////// Geometry3D //////
 
-Geometry3D *Geometry3D::singleton = nullptr;
-
 Geometry3D *Geometry3D::get_singleton() {
 	return singleton;
 }
@@ -1290,8 +1285,6 @@ void Geometry3D::_bind_methods() {
 }
 
 ////// Marshalls //////
-
-Marshalls *Marshalls::singleton = nullptr;
 
 Marshalls *Marshalls::get_singleton() {
 	return singleton;
@@ -2137,8 +2130,6 @@ void Engine::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "physics_jitter_fix"), "set_physics_jitter_fix", "get_physics_jitter_fix");
 }
 
-Engine *Engine::singleton = nullptr;
-
 ////// EngineDebugger //////
 
 bool EngineDebugger::is_active() {
@@ -2283,8 +2274,6 @@ EngineDebugger::~EngineDebugger() {
 	}
 	captures.clear();
 }
-
-EngineDebugger *EngineDebugger::singleton = nullptr;
 
 void EngineDebugger::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("is_active"), &EngineDebugger::is_active);

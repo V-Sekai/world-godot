@@ -33,11 +33,9 @@
 #include "container.h"
 #include "core/config/project_settings.h"
 #include "core/input/input_map.h"
-#include "core/math/geometry_2d.h"
 #include "core/os/os.h"
+#include "core/string/string_builder.h"
 #include "core/string/translation_server.h"
-#include "scene/gui/label.h"
-#include "scene/gui/panel.h"
 #include "scene/gui/scroll_container.h"
 #include "scene/main/canvas_layer.h"
 #include "scene/main/window.h"
@@ -666,7 +664,7 @@ Rect2 Control::get_parent_anchorable_rect() const {
 		Node *scene_root_parent = edited_scene_root ? edited_scene_root->get_parent() : nullptr;
 
 		if (scene_root_parent && get_viewport() == scene_root_parent->get_viewport()) {
-			parent_rect.size = Size2(GLOBAL_GET("display/window/size/viewport_width"), GLOBAL_GET("display/window/size/viewport_height"));
+			parent_rect.size = Size2(GLOBAL_GET_CACHED(real_t, "display/window/size/viewport_width"), GLOBAL_GET_CACHED(real_t, "display/window/size/viewport_height"));
 		} else {
 			parent_rect = get_viewport()->get_visible_rect();
 		}
@@ -3393,14 +3391,14 @@ bool Control::is_layout_rtl() const {
 		data.is_rtl_dirty = false;
 		if (data.layout_dir == LAYOUT_DIRECTION_INHERITED) {
 #ifdef TOOLS_ENABLED
-			if (is_part_of_edited_scene() && GLOBAL_GET(SNAME("internationalization/rendering/force_right_to_left_layout_direction"))) {
+			if (is_part_of_edited_scene() && GLOBAL_GET_CACHED(bool, "internationalization/rendering/force_right_to_left_layout_direction")) {
 				data.is_rtl = true;
 				return data.is_rtl;
 			}
 			if (is_inside_tree()) {
 				Node *edited_scene_root = get_tree()->get_edited_scene_root();
 				if (edited_scene_root == this) {
-					int proj_root_layout_direction = GLOBAL_GET(SNAME("internationalization/rendering/root_node_layout_direction"));
+					int proj_root_layout_direction = GLOBAL_GET_CACHED(int, "internationalization/rendering/root_node_layout_direction");
 					if (proj_root_layout_direction == 1) {
 						data.is_rtl = false;
 					} else if (proj_root_layout_direction == 2) {
@@ -3416,7 +3414,7 @@ bool Control::is_layout_rtl() const {
 				}
 			}
 #else
-			if (GLOBAL_GET(SNAME("internationalization/rendering/force_right_to_left_layout_direction"))) {
+			if (GLOBAL_GET_CACHED(bool, "internationalization/rendering/force_right_to_left_layout_direction")) {
 				data.is_rtl = true;
 				return data.is_rtl;
 			}
@@ -3449,14 +3447,14 @@ bool Control::is_layout_rtl() const {
 				data.is_rtl = TS->is_locale_right_to_left(locale);
 			}
 		} else if (data.layout_dir == LAYOUT_DIRECTION_APPLICATION_LOCALE) {
-			if (GLOBAL_GET(SNAME("internationalization/rendering/force_right_to_left_layout_direction"))) {
+			if (GLOBAL_GET_CACHED(bool, "internationalization/rendering/force_right_to_left_layout_direction")) {
 				data.is_rtl = true;
 			} else {
 				String locale = TranslationServer::get_singleton()->get_tool_locale();
 				data.is_rtl = TS->is_locale_right_to_left(locale);
 			}
 		} else if (data.layout_dir == LAYOUT_DIRECTION_SYSTEM_LOCALE) {
-			if (GLOBAL_GET(SNAME("internationalization/rendering/force_right_to_left_layout_direction"))) {
+			if (GLOBAL_GET_CACHED(bool, "internationalization/rendering/force_right_to_left_layout_direction")) {
 				const_cast<Control *>(this)->data.is_rtl = true;
 			} else {
 				String locale = OS::get_singleton()->get_locale();
@@ -3992,10 +3990,37 @@ void Control::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "layout_mode", PROPERTY_HINT_ENUM, "Position,Anchors,Container,Uncontrolled", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_INTERNAL), "_set_layout_mode", "_get_layout_mode");
 	ADD_PROPERTY_DEFAULT("layout_mode", LayoutMode::LAYOUT_MODE_POSITION);
 
-	const String anchors_presets_options = "Custom:-1,PresetFullRect:15,"
-										   "PresetTopLeft:0,PresetTopRight:1,PresetBottomRight:3,PresetBottomLeft:2,"
-										   "PresetCenterLeft:4,PresetCenterTop:5,PresetCenterRight:6,PresetCenterBottom:7,PresetCenter:8,"
-										   "PresetLeftWide:9,PresetTopWide:10,PresetRightWide:11,PresetBottomWide:12,PresetVCenterWide:13,PresetHCenterWide:14";
+	constexpr struct {
+		const char *name;
+		LayoutPreset value;
+	} anchors_presets[] = {
+		{ TTRC("Full Rect"), PRESET_FULL_RECT },
+		{ TTRC("Top Left"), PRESET_TOP_LEFT },
+		{ TTRC("Top Right"), PRESET_TOP_RIGHT },
+		{ TTRC("Bottom Right"), PRESET_BOTTOM_RIGHT },
+		{ TTRC("Bottom Left"), PRESET_BOTTOM_LEFT },
+		{ TTRC("Center Left"), PRESET_CENTER_LEFT },
+		{ TTRC("Center Top"), PRESET_CENTER_TOP },
+		{ TTRC("Center Right"), PRESET_CENTER_RIGHT },
+		{ TTRC("Center Bottom"), PRESET_CENTER_BOTTOM },
+		{ TTRC("Center"), PRESET_CENTER },
+		{ TTRC("Left Wide"), PRESET_LEFT_WIDE },
+		{ TTRC("Top Wide"), PRESET_TOP_WIDE },
+		{ TTRC("Right Wide"), PRESET_RIGHT_WIDE },
+		{ TTRC("Bottom Wide"), PRESET_BOTTOM_WIDE },
+		{ TTRC("VCenter Wide"), PRESET_VCENTER_WIDE },
+		{ TTRC("HCenter Wide"), PRESET_HCENTER_WIDE },
+	};
+	StringBuilder builder;
+	builder.append(TTRC("Custom"));
+	builder.append(":-1");
+	for (size_t i = 0; i < std::size(anchors_presets); i++) {
+		builder.append(",");
+		builder.append(anchors_presets[i].name);
+		builder.append(":");
+		builder.append(itos(anchors_presets[i].value));
+	}
+	const String anchors_presets_options = builder.as_string();
 
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "anchors_preset", PROPERTY_HINT_ENUM, anchors_presets_options, PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_INTERNAL), "_set_anchors_layout_preset", "_get_anchors_layout_preset");
 	ADD_PROPERTY_DEFAULT("anchors_preset", -1);
