@@ -35,12 +35,18 @@
 #import <AppKit/AppKit.h>
 #import <Foundation/Foundation.h>
 
-class OS_MacOS_NSApp;
+@interface GodotApplicationDelegate : NSObject <NSUserInterfaceItemSearching, NSApplicationDelegate> {
+	bool high_contrast;
+	bool reduce_motion;
+	bool reduce_transparency;
+	bool voice_over;
+}
 
-@interface GodotApplicationDelegate : NSObject <NSUserInterfaceItemSearching, NSApplicationDelegate>
-
-- (GodotApplicationDelegate *)initWithOS:(OS_MacOS_NSApp *)os;
-
+- (void)forceUnbundledWindowActivationHackStep1;
+- (void)forceUnbundledWindowActivationHackStep2;
+- (void)forceUnbundledWindowActivationHackStep3;
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context;
+- (void)accessibilityDisplayOptionsChange:(NSNotification *)notification;
 - (bool)getHighContrast;
 - (bool)getReduceMotion;
 - (bool)getReduceTransparency;

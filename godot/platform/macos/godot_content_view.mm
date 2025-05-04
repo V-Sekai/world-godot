@@ -31,7 +31,6 @@
 #import "godot_content_view.h"
 
 #import "display_server_macos.h"
-#import "godot_window.h"
 #import "key_mapping_macos.h"
 
 #include "main/main.h"
@@ -154,12 +153,7 @@
 // MARK: Backing Layer
 
 - (CALayer *)makeBackingLayer {
-	CAMetalLayer *layer = [CAMetalLayer new];
-	layer.edgeAntialiasingMask = 0;
-	layer.masksToBounds = NO;
-	layer.presentsWithTransaction = NO;
-	[layer removeAllAnimations];
-	return layer;
+	return [[CAMetalLayer class] layer];
 }
 
 - (BOOL)wantsUpdateLayer {
