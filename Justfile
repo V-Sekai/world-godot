@@ -231,6 +231,7 @@ build-platform-target platform target arch="auto" precision="double" osx_bundle=
                     precision={{precision}} \
                     target={{target}} \
                     test=yes \
+                    opengl=no \
                     vulkan=no \
                     vulkan_sdk_path=$VULKAN_SDK_ROOT/MoltenVK/MoltenVK/static/MoltenVK.xcframework \
                     osxcross_sdk=darwin24 \
