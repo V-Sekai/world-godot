@@ -68,13 +68,18 @@ jobs:
             ${{ env.CACHE_NAME }}-${{ env.GODOT_BASE_BRANCH }}-refs/heads/${{ env.GODOT_BASE_BRANCH }}  
             ${{ env.CACHE_NAME }}-${{ env.GODOT_BASE_BRANCH }} 
   
+      - name: Install Vulkan SDK
+        uses: humbletim/install-vulkan-sdk@v1.2
+        with:
+          version: 1.4.309.0
+          cache: true
+
       - name: Fetch dependencies and Build Platform Target 
         run: | 
-          export PLATFORM_ARGS="fetch-vulkan-sdk"
           if [ ${{ matrix.target }} == "templates" ]; then
-            hyperfine --show-output --runs 1 'just $PLATFORM_ARGS && just build-platform-templates ${{ matrix.platform }} auto ${{ matrix.precision }}'
+            hyperfine --show-output --runs 1 'just build-platform-templates ${{ matrix.platform }} auto ${{ matrix.precision }}'
           else
-            hyperfine --show-output --runs 1 'just $PLATFORM_ARGS && just build-platform-target ${{ matrix.platform }} ${{ matrix.target }} auto ${{ matrix.precision }}'
+            hyperfine --show-output --runs 1 'just build-platform-target ${{ matrix.platform }} ${{ matrix.target }} auto ${{ matrix.precision }}'
           fi
 
       - name: Upload Artifacts
