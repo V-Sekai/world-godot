@@ -354,6 +354,16 @@ void EditorNode::_update_title() {
 	}
 }
 
+void EditorNode::_update_unsaved_cache() {
+	bool is_unsaved = EditorUndoRedoManager::get_singleton()->is_history_unsaved(EditorUndoRedoManager::GLOBAL_HISTORY) ||
+			EditorUndoRedoManager::get_singleton()->is_history_unsaved(editor_data.get_current_edited_scene_history_id());
+
+	if (unsaved_cache != is_unsaved) {
+		unsaved_cache = is_unsaved;
+		_update_title();
+	}
+}
+
 void EditorNode::input(const Ref<InputEvent> &p_event) {
 	// EditorNode::get_singleton()->set_process_input is set to true in ProgressDialog
 	// only when the progress dialog is visible.
@@ -573,6 +583,10 @@ void EditorNode::_update_theme(bool p_skip_creation) {
 		main_vbox->set_anchors_and_offsets_preset(Control::PRESET_FULL_RECT, Control::PRESET_MODE_MINSIZE, theme->get_constant(SNAME("window_border_margin"), EditorStringName(Editor)));
 		main_vbox->add_theme_constant_override("separation", theme->get_constant(SNAME("top_bar_separation"), EditorStringName(Editor)));
 
+		if (main_menu_button != nullptr) {
+			main_menu_button->set_button_icon(theme->get_icon(SNAME("TripleBar"), EditorStringName(EditorIcons)));
+		}
+
 		editor_main_screen->add_theme_style_override(SceneStringName(panel), theme->get_stylebox(SNAME("Content"), EditorStringName(EditorStyles)));
 		bottom_panel->add_theme_style_override(SceneStringName(panel), theme->get_stylebox(SNAME("BottomPanel"), EditorStringName(EditorStyles)));
 		distraction_free->set_button_icon(theme->get_icon(SNAME("DistractionFree"), EditorStringName(EditorIcons)));
@@ -688,13 +702,6 @@ void EditorNode::_notification(int p_what) {
 		} break;
 
 		case NOTIFICATION_PROCESS: {
-			bool global_unsaved = EditorUndoRedoManager::get_singleton()->is_history_unsaved(EditorUndoRedoManager::GLOBAL_HISTORY);
-			bool scene_or_global_unsaved = global_unsaved || EditorUndoRedoManager::get_singleton()->is_history_unsaved(editor_data.get_current_edited_scene_history_id());
-			if (unsaved_cache != scene_or_global_unsaved) {
-				unsaved_cache = scene_or_global_unsaved;
-				_update_title();
-			}
-
 			if (editor_data.is_scene_changed(-1)) {
 				scene_tabs->update_scene_tabs();
 			}
@@ -934,6 +941,7 @@ void EditorNode::_notification(int p_what) {
 			if (EditorSettings::get_singleton()->check_changed_settings_in_group("interface/editor")) {
 				_update_update_spinner();
 				_update_vsync_mode();
+				_update_main_menu_type();
 				DisplayServer::get_singleton()->screen_set_keep_on(EDITOR_GET("interface/editor/keep_screen_on"));
 			}
 
@@ -1970,6 +1978,7 @@ int EditorNode::_save_external_resources(bool p_also_save_external_data) {
 	}
 
 	EditorUndoRedoManager::get_singleton()->set_history_as_saved(EditorUndoRedoManager::GLOBAL_HISTORY);
+	_update_unsaved_cache();
 
 	return saved;
 }
@@ -2089,6 +2098,7 @@ void EditorNode::_save_scene(String p_file, int idx) {
 	}
 
 	scene->propagate_notification(NOTIFICATION_EDITOR_POST_SAVE);
+	_update_unsaved_cache();
 }
 
 void EditorNode::save_all_scenes() {
@@ -2723,7 +2733,11 @@ void EditorNode::_edit_current(bool p_skip_foreign, bool p_skip_inspector_update
 			SceneTreeDock::get_singleton()->set_selection({ current_node });
 			InspectorDock::get_singleton()->update(current_node);
 			if (!inspector_only && !skip_main_plugin) {
-				skip_main_plugin = stay_in_script_editor_on_node_selected && !ScriptEditor::get_singleton()->is_editor_floating() && ScriptEditor::get_singleton()->is_visible_in_tree();
+				if (!ScriptEditor::get_singleton()->is_editor_floating() && ScriptEditor::get_singleton()->is_visible_in_tree()) {
+					skip_main_plugin = stay_in_script_editor_on_node_selected;
+				} else {
+					skip_main_plugin = !editor_main_screen->can_auto_switch_screens();
+				}
 			}
 		} else {
 			NodeDock::get_singleton()->set_node(nullptr);
@@ -2802,9 +2816,7 @@ void EditorNode::_edit_current(bool p_skip_foreign, bool p_skip_inspector_update
 				if (!changing_scene) {
 					main_plugin->edit(current_obj);
 				}
-			}
-
-			else if (main_plugin != editor_plugin_screen && (!ScriptEditor::get_singleton() || !ScriptEditor::get_singleton()->is_visible_in_tree() || ScriptEditor::get_singleton()->can_take_away_focus())) {
+			} else if (main_plugin != editor_plugin_screen) {
 				// Unedit previous plugin.
 				editor_plugin_screen->edit(nullptr);
 				active_plugins[editor_owner_id].erase(editor_plugin_screen);
@@ -3061,6 +3073,7 @@ void EditorNode::_menu_option_confirm(int p_option, bool p_confirmed) {
 					}
 				}
 			}
+			_update_unsaved_cache();
 		} break;
 		case SCENE_REDO: {
 			EditorUndoRedoManager *undo_redo = EditorUndoRedoManager::get_singleton();
@@ -3087,6 +3100,7 @@ void EditorNode::_menu_option_confirm(int p_option, bool p_confirmed) {
 					}
 				}
 			}
+			_update_unsaved_cache();
 		} break;
 
 		case SCENE_RELOAD_SAVED_SCENE: {
@@ -3110,6 +3124,7 @@ void EditorNode::_menu_option_confirm(int p_option, bool p_confirmed) {
 					unsaved_message = _get_unsaved_scene_dialog_text(scene_filename, started_timestamp);
 					confirmation->set_text(unsaved_message + "\n\n" + TTR("Save before reloading the scene?"));
 					confirmation->popup_centered();
+					confirmation_button->show();
 					confirmation_button->grab_focus();
 					break;
 				} else {
@@ -3199,6 +3214,7 @@ void EditorNode::_menu_option_confirm(int p_option, bool p_confirmed) {
 					}
 					confirmation->reset_size();
 					confirmation->popup_centered();
+					confirmation_button->hide();
 					break;
 				}
 
@@ -3567,6 +3583,7 @@ int EditorNode::_next_unsaved_scene(bool p_valid_filename, int p_start) {
 
 void EditorNode::_exit_editor(int p_exit_code) {
 	exiting = true;
+	waiting_for_first_scan = false;
 	resource_preview->stop(); // Stop early to avoid crashes.
 	_save_editor_layout();
 
@@ -4006,18 +4023,15 @@ void EditorNode::_set_main_scene_state(Dictionary p_state, Node *p_for_scene) {
 	changing_scene = false;
 
 	if (get_edited_scene()) {
-		int current_tab = editor_main_screen->get_selected_index();
-		if (current_tab < 2) {
+		if (editor_main_screen->can_auto_switch_screens()) {
 			// Switch between 2D and 3D if currently in 2D or 3D.
 			Node *selected_node = SceneTreeDock::get_singleton()->get_tree_editor()->get_selected();
 			if (!selected_node) {
 				selected_node = get_edited_scene();
 			}
-
-			if (Object::cast_to<CanvasItem>(selected_node)) {
-				editor_main_screen->select(EditorMainScreen::EDITOR_2D);
-			} else if (Object::cast_to<Node3D>(selected_node)) {
-				editor_main_screen->select(EditorMainScreen::EDITOR_3D);
+			const int plugin_index = editor_main_screen->get_plugin_index(editor_data.get_handling_main_editor(selected_node));
+			if (plugin_index >= 0) {
+				editor_main_screen->select(plugin_index);
 			}
 		}
 	}
@@ -4111,6 +4125,7 @@ void EditorNode::_set_current_scene_nocheck(int p_idx) {
 	}
 
 	_update_undo_redo_allowed();
+	_update_unsaved_cache();
 }
 
 void EditorNode::setup_color_picker(ColorPicker *p_picker) {
@@ -4808,7 +4823,7 @@ void EditorNode::_update_recent_scenes() {
 	recent_scenes->clear();
 
 	if (rc.size() == 0) {
-		recent_scenes->add_item(TTR("No Recent Scenes"), -1);
+		recent_scenes->add_item(TTRC("No Recent Scenes"), -1);
 		recent_scenes->set_item_disabled(-1, true);
 	} else {
 		String path;
@@ -6029,11 +6044,13 @@ Dictionary EditorNode::drag_resource(const Ref<Resource> &p_res, Control *p_from
 
 	{
 		// TODO: make proper previews
-		Ref<ImageTexture> texture = theme->get_icon(SNAME("FileBigThumb"), EditorStringName(EditorIcons));
-		Ref<Image> img = texture->get_image();
-		img = img->duplicate();
-		img->resize(48, 48); // meh
-		preview = ImageTexture::create_from_image(img);
+		Ref<Texture2D> texture = theme->get_icon(SNAME("FileBigThumb"), EditorStringName(EditorIcons));
+		if (texture.is_valid()) {
+			Ref<Image> img = texture->get_image();
+			img = img->duplicate();
+			img->resize(48, 48); // meh
+			preview = ImageTexture::create_from_image(img);
+		}
 	}
 
 	drag_preview->set_texture(preview);
@@ -7080,6 +7097,112 @@ void EditorNode::set_unfocused_low_processor_usage_mode_enabled(bool p_enabled) 
 	unfocused_low_processor_usage_mode_enabled = p_enabled;
 }
 
+void EditorNode::_update_main_menu_type() {
+	bool use_menu_button = EDITOR_GET("interface/editor/collapse_main_menu");
+	bool global_menu = !bool(EDITOR_GET("interface/editor/use_embedded_menu")) && NativeMenu::get_singleton()->has_feature(NativeMenu::FEATURE_GLOBAL_MENU);
+
+	bool already_using_button = main_menu_button != nullptr;
+	bool already_using_bar = main_menu_bar != nullptr;
+	if ((use_menu_button && already_using_button) || (!use_menu_button && already_using_bar)) {
+		return; // Already correctly configured.
+	}
+
+	if (use_menu_button && !global_menu) {
+		main_menu_button = memnew(MenuButton);
+		main_menu_button->set_text(TTRC("Main Menu"));
+		main_menu_button->set_theme_type_variation("MainScreenButton");
+		main_menu_button->set_focus_mode(Control::FOCUS_NONE);
+		if (is_inside_tree()) {
+			main_menu_button->set_button_icon(theme->get_icon(SNAME("TripleBar"), EditorStringName(EditorIcons)));
+		}
+		main_menu_button->set_switch_on_hover(true);
+
+		if (main_menu_bar != nullptr) {
+			Vector<PopupMenu *> menus_to_move;
+			for (int i = 0; i < main_menu_bar->get_child_count(); i++) {
+				PopupMenu *menu = Object::cast_to<PopupMenu>(main_menu_bar->get_child(i));
+				if (menu != nullptr) {
+					menus_to_move.push_back(menu);
+				}
+			}
+			for (PopupMenu *menu : menus_to_move) {
+				main_menu_bar->remove_child(menu);
+				main_menu_button->get_popup()->add_submenu_node_item(menu->get_name(), menu);
+			}
+		}
+
+#ifdef ANDROID_ENABLED
+		// Align main menu icon visually with TouchActionsPanel buttons.
+		main_menu_button->get_popup()->add_theme_constant_override("v_separation", 16 * EDSCALE);
+		menu_btn_spacer = memnew(Control);
+		menu_btn_spacer->set_custom_minimum_size(Vector2(8, 0) * EDSCALE);
+		title_bar->add_child(menu_btn_spacer);
+		title_bar->move_child(menu_btn_spacer, 0);
+#endif
+		title_bar->add_child(main_menu_button);
+		if (menu_btn_spacer == nullptr) {
+			title_bar->move_child(main_menu_button, 0);
+		} else {
+			title_bar->move_child(main_menu_button, 1);
+		}
+		memdelete_notnull(main_menu_bar);
+		main_menu_bar = nullptr;
+
+		if (project_run_bar != nullptr) {
+			// Adjust spacers to center 2D / 3D / Script buttons.
+			int max_w = MAX(project_run_bar->get_minimum_size().x + right_menu_hb->get_minimum_size().x, main_menu_button->get_minimum_size().x);
+			left_spacer->set_custom_minimum_size(Size2(MAX(0, max_w - main_menu_button->get_minimum_size().x), 0));
+			right_spacer->set_custom_minimum_size(Size2(MAX(0, max_w - project_run_bar->get_minimum_size().x - right_menu_hb->get_minimum_size().x), 0));
+		}
+	} else {
+		main_menu_bar = memnew(MenuBar);
+		main_menu_bar->set_mouse_filter(Control::MOUSE_FILTER_STOP);
+		main_menu_bar->set_v_size_flags(Control::SIZE_SHRINK_CENTER);
+		main_menu_bar->set_theme_type_variation("MainMenuBar");
+		main_menu_bar->set_start_index(0); // Main menu, add to the start of global menu.
+		main_menu_bar->set_prefer_global_menu(global_menu);
+		main_menu_bar->set_switch_on_hover(true);
+
+		if (main_menu_button != nullptr) {
+			Vector<PopupMenu *> menus_to_move;
+			for (int i = 0; i < main_menu_button->get_item_count(); i++) {
+				PopupMenu *menu = main_menu_button->get_popup()->get_item_submenu_node(i);
+				if (menu != nullptr) {
+					menus_to_move.push_back(menu);
+				}
+			}
+			for (PopupMenu *menu : menus_to_move) {
+				menu->get_parent()->remove_child(menu);
+				main_menu_bar->add_child(menu);
+			}
+		}
+
+		title_bar->add_child(main_menu_bar);
+		title_bar->move_child(main_menu_bar, 0);
+
+		memdelete_notnull(menu_btn_spacer);
+		memdelete_notnull(main_menu_button);
+		menu_btn_spacer = nullptr;
+		main_menu_button = nullptr;
+
+		if (project_run_bar != nullptr) {
+			// Adjust spacers to center 2D / 3D / Script buttons.
+			int max_w = MAX(project_run_bar->get_minimum_size().x + right_menu_hb->get_minimum_size().x, main_menu_bar->get_minimum_size().x);
+			left_spacer->set_custom_minimum_size(Size2(MAX(0, max_w - main_menu_bar->get_minimum_size().x), 0));
+			right_spacer->set_custom_minimum_size(Size2(MAX(0, max_w - project_run_bar->get_minimum_size().x - right_menu_hb->get_minimum_size().x), 0));
+		}
+	}
+}
+
+void EditorNode::_add_to_main_menu(const String &p_name, PopupMenu *p_menu) {
+	p_menu->set_name(p_name);
+	if (main_menu_button != nullptr) {
+		main_menu_button->get_popup()->add_submenu_node_item(p_name, p_menu);
+	} else {
+		main_menu_bar->add_child(p_menu);
+	}
+}
+
 #ifdef ANDROID_ENABLED
 void EditorNode::_touch_actions_panel_mode_changed() {
 	int panel_mode = EDITOR_GET("interface/touchscreen/touch_actions_panel");
@@ -7168,7 +7291,9 @@ EditorNode::EditorNode() {
 	add_child(epnp);
 
 	EditorUndoRedoManager::get_singleton()->connect("version_changed", callable_mp(this, &EditorNode::_update_undo_redo_allowed));
+	EditorUndoRedoManager::get_singleton()->connect("version_changed", callable_mp(this, &EditorNode::_update_unsaved_cache));
 	EditorUndoRedoManager::get_singleton()->connect("history_changed", callable_mp(this, &EditorNode::_update_undo_redo_allowed));
+	EditorUndoRedoManager::get_singleton()->connect("history_changed", callable_mp(this, &EditorNode::_update_unsaved_cache));
 	ProjectSettings::get_singleton()->connect("settings_changed", callable_mp(this, &EditorNode::_update_from_settings));
 	GDExtensionManager::get_singleton()->connect("extensions_reloaded", callable_mp(this, &EditorNode::_gdextensions_reloaded));
 
@@ -7426,21 +7551,27 @@ EditorNode::EditorNode() {
 	main_vbox = memnew(VBoxContainer);
 
 #ifdef ANDROID_ENABLED
-	main_hbox = memnew(HBoxContainer);
-	main_hbox->set_anchors_and_offsets_preset(Control::PRESET_FULL_RECT);
+	base_vbox = memnew(VBoxContainer);
+	base_vbox->set_anchors_and_offsets_preset(Control::PRESET_FULL_RECT, Control::PRESET_MODE_MINSIZE, theme->get_constant(SNAME("window_border_margin"), EditorStringName(Editor)));
 
+	title_bar = memnew(EditorTitleBar);
+	base_vbox->add_child(title_bar);
+
+	main_hbox = memnew(HBoxContainer);
 	main_hbox->add_child(main_vbox);
 	main_vbox->set_h_size_flags(Control::SIZE_EXPAND_FILL);
+	main_hbox->set_v_size_flags(Control::SIZE_EXPAND_FILL);
+	base_vbox->add_child(main_hbox);
 
 	_touch_actions_panel_mode_changed();
 
-	gui_base->add_child(main_hbox);
+	gui_base->add_child(base_vbox);
 #else
 	gui_base->add_child(main_vbox);
-#endif
 
 	title_bar = memnew(EditorTitleBar);
 	main_vbox->add_child(title_bar);
+#endif
 
 	left_l_hsplit = memnew(DockSplitContainer);
 	left_l_hsplit->set_name("DockHSplitLeftL");
@@ -7595,19 +7726,10 @@ EditorNode::EditorNode() {
 		title_bar->add_child(left_menu_spacer);
 	}
 
-	main_menu = memnew(MenuBar);
-	main_menu->set_mouse_filter(Control::MOUSE_FILTER_STOP);
-	title_bar->add_child(main_menu);
-	main_menu->set_v_size_flags(Control::SIZE_SHRINK_CENTER);
-	main_menu->set_theme_type_variation("MainMenuBar");
-	main_menu->set_start_index(0); // Main menu, add to the start of global menu.
-	main_menu->set_prefer_global_menu(global_menu);
-	main_menu->set_switch_on_hover(true);
+	_update_main_menu_type();
 
 	file_menu = memnew(PopupMenu);
-	file_menu->set_name(TTRC("Scene"));
-	main_menu->add_child(file_menu);
-	main_menu->set_menu_tooltip(0, TTR("Operations with scene files."));
+	_add_to_main_menu(TTRC("Scene"), file_menu);
 
 	accept = memnew(AcceptDialog);
 	accept->set_autowrap(true);
@@ -7722,7 +7844,7 @@ EditorNode::EditorNode() {
 	if (global_menu && NativeMenu::get_singleton()->has_system_menu(NativeMenu::APPLICATION_MENU_ID)) {
 		apple_menu = memnew(PopupMenu);
 		apple_menu->set_system_menu(NativeMenu::APPLICATION_MENU_ID);
-		main_menu->add_child(apple_menu);
+		main_menu_bar->add_child(apple_menu);
 
 		apple_menu->add_shortcut(ED_GET_SHORTCUT("editor/editor_settings"), EDITOR_OPEN_SETTINGS);
 		apple_menu->add_separator();
@@ -7731,8 +7853,7 @@ EditorNode::EditorNode() {
 #endif
 
 	project_menu = memnew(PopupMenu);
-	project_menu->set_name(TTRC("Project"));
-	main_menu->add_child(project_menu);
+	_add_to_main_menu(TTRC("Project"), project_menu);
 
 	project_menu->add_shortcut(ED_SHORTCUT_AND_COMMAND("editor/project_settings", TTRC("Project Settings..."), Key::NONE, TTRC("Project Settings")), PROJECT_OPEN_SETTINGS);
 	project_menu->connect(SceneStringName(id_pressed), callable_mp(this, &EditorNode::_menu_option));
@@ -7764,7 +7885,7 @@ EditorNode::EditorNode() {
 	project_menu->add_shortcut(ED_GET_SHORTCUT("editor/quit_to_project_list"), PROJECT_QUIT_TO_PROJECT_MANAGER, true);
 
 	// Spacer to center 2D / 3D / Script buttons.
-	HBoxContainer *left_spacer = memnew(HBoxContainer);
+	left_spacer = memnew(HBoxContainer);
 	left_spacer->set_mouse_filter(Control::MOUSE_FILTER_PASS);
 	left_spacer->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	title_bar->add_child(left_spacer);
@@ -7782,18 +7903,17 @@ EditorNode::EditorNode() {
 
 	HBoxContainer *main_editor_button_hb = memnew(HBoxContainer);
 	main_editor_button_hb->set_mouse_filter(Control::MOUSE_FILTER_STOP);
+	main_editor_button_hb->set_name("EditorMainScreenButtons");
 	editor_main_screen->set_button_container(main_editor_button_hb);
 	title_bar->add_child(main_editor_button_hb);
 	title_bar->set_center_control(main_editor_button_hb);
 
 	// Options are added and handled by DebuggerEditorPlugin.
 	debug_menu = memnew(PopupMenu);
-	debug_menu->set_name(TTRC("Debug"));
-	main_menu->add_child(debug_menu);
+	_add_to_main_menu(TTRC("Debug"), debug_menu);
 
 	settings_menu = memnew(PopupMenu);
-	settings_menu->set_name(TTRC("Editor"));
-	main_menu->add_child(settings_menu);
+	_add_to_main_menu(TTRC("Editor"), settings_menu);
 
 #ifdef MACOS_ENABLED
 	if (!global_menu) {
@@ -7842,11 +7962,10 @@ EditorNode::EditorNode() {
 #endif
 
 	help_menu = memnew(PopupMenu);
-	help_menu->set_name(TTRC("Help"));
 	if (global_menu && NativeMenu::get_singleton()->has_system_menu(NativeMenu::HELP_MENU_ID)) {
 		help_menu->set_system_menu(NativeMenu::HELP_MENU_ID);
 	}
-	main_menu->add_child(help_menu);
+	_add_to_main_menu(TTRC("Help"), help_menu);
 
 	help_menu->connect(SceneStringName(id_pressed), callable_mp(this, &EditorNode::_menu_option));
 
@@ -7871,7 +7990,7 @@ EditorNode::EditorNode() {
 	help_menu->add_icon_shortcut(_get_editor_theme_native_menu_icon(SNAME("Heart"), global_menu, dark_mode), ED_SHORTCUT_AND_COMMAND("editor/support_development", TTRC("Support Godot Development")), HELP_SUPPORT_GODOT_DEVELOPMENT);
 
 	// Spacer to center 2D / 3D / Script buttons.
-	Control *right_spacer = memnew(Control);
+	right_spacer = memnew(Control);
 	right_spacer->set_mouse_filter(Control::MOUSE_FILTER_PASS);
 	right_spacer->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	title_bar->add_child(right_spacer);
@@ -7882,7 +8001,7 @@ EditorNode::EditorNode() {
 	project_run_bar->connect("play_pressed", callable_mp(this, &EditorNode::_project_run_started));
 	project_run_bar->connect("stop_pressed", callable_mp(this, &EditorNode::_project_run_stopped));
 
-	HBoxContainer *right_menu_hb = memnew(HBoxContainer);
+	right_menu_hb = memnew(HBoxContainer);
 	right_menu_hb->set_mouse_filter(Control::MOUSE_FILTER_STOP);
 	title_bar->add_child(right_menu_hb);
 
@@ -8409,10 +8528,15 @@ EditorNode::EditorNode() {
 	screenshot_timer->set_owner(get_owner());
 
 	// Adjust spacers to center 2D / 3D / Script buttons.
-	int max_w = MAX(project_run_bar->get_minimum_size().x + right_menu_hb->get_minimum_size().x, main_menu->get_minimum_size().x);
-	left_spacer->set_custom_minimum_size(Size2(MAX(0, max_w - main_menu->get_minimum_size().x), 0));
-	right_spacer->set_custom_minimum_size(Size2(MAX(0, max_w - project_run_bar->get_minimum_size().x - right_menu_hb->get_minimum_size().x), 0));
-
+	if (main_menu_button != nullptr) {
+		int max_w = MAX(project_run_bar->get_minimum_size().x + right_menu_hb->get_minimum_size().x, main_menu_button->get_minimum_size().x);
+		left_spacer->set_custom_minimum_size(Size2(MAX(0, max_w - main_menu_button->get_minimum_size().x), 0));
+		right_spacer->set_custom_minimum_size(Size2(MAX(0, max_w - project_run_bar->get_minimum_size().x - right_menu_hb->get_minimum_size().x), 0));
+	} else {
+		int max_w = MAX(project_run_bar->get_minimum_size().x + right_menu_hb->get_minimum_size().x, main_menu_bar->get_minimum_size().x);
+		left_spacer->set_custom_minimum_size(Size2(MAX(0, max_w - main_menu_bar->get_minimum_size().x), 0));
+		right_spacer->set_custom_minimum_size(Size2(MAX(0, max_w - project_run_bar->get_minimum_size().x - right_menu_hb->get_minimum_size().x), 0));
+	}
 	// Extend menu bar to window title.
 	if (can_expand) {
 		DisplayServer::get_singleton()->process_events();

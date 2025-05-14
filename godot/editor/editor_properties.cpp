@@ -31,6 +31,7 @@
 #include "editor_properties.h"
 
 #include "core/config/project_settings.h"
+#include "core/input/input_map.h"
 #include "editor/create_dialog.h"
 #include "editor/editor_node.h"
 #include "editor/editor_properties_array_dict.h"
@@ -283,8 +284,7 @@ void EditorPropertyMultilineText::update_property() {
 
 void EditorPropertyMultilineText::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_THEME_CHANGED:
-		case NOTIFICATION_ENTER_TREE: {
+		case NOTIFICATION_THEME_CHANGED: {
 			Ref<Texture2D> df = get_editor_theme_icon(SNAME("DistractionFree"));
 			open_big_text->set_button_icon(df);
 
@@ -436,7 +436,6 @@ void EditorPropertyTextEnum::setup(const Vector<String> &p_options, bool p_strin
 
 void EditorPropertyTextEnum::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_ENTER_TREE:
 		case NOTIFICATION_THEME_CHANGED: {
 			edit_button->set_button_icon(get_editor_theme_icon(SNAME("Edit")));
 			accept_button->set_button_icon(get_editor_theme_icon(SNAME("ImportCheck")));
@@ -529,7 +528,6 @@ void EditorPropertyLocale::setup(const String &p_hint_text) {
 
 void EditorPropertyLocale::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_ENTER_TREE:
 		case NOTIFICATION_THEME_CHANGED: {
 			locale_edit->set_button_icon(get_editor_theme_icon(SNAME("Translation")));
 		} break;
@@ -642,7 +640,6 @@ void EditorPropertyPath::set_save_mode() {
 
 void EditorPropertyPath::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_ENTER_TREE:
 		case NOTIFICATION_THEME_CHANGED: {
 			if (folder) {
 				path_edit->set_button_icon(get_editor_theme_icon(SNAME("FolderBrowse")));
@@ -1235,7 +1232,6 @@ void EditorPropertyLayersGrid::_bind_methods() {
 
 void EditorPropertyLayers::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_ENTER_TREE:
 		case NOTIFICATION_THEME_CHANGED: {
 			button->set_texture_normal(get_editor_theme_icon(SNAME("GuiTabMenuHl")));
 			button->set_texture_pressed(get_editor_theme_icon(SNAME("GuiTabMenuHl")));
@@ -1759,8 +1755,7 @@ void EditorPropertyEasing::setup(bool p_positive_only, bool p_flip) {
 
 void EditorPropertyEasing::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_THEME_CHANGED:
-		case NOTIFICATION_ENTER_TREE: {
+		case NOTIFICATION_THEME_CHANGED: {
 			preset->clear();
 			preset->add_icon_item(get_editor_theme_icon(SNAME("CurveLinear")), "Linear", EASING_LINEAR);
 			preset->add_icon_item(get_editor_theme_icon(SNAME("CurveIn")), "Ease In", EASING_IN);
@@ -1827,7 +1822,6 @@ void EditorPropertyRect2::update_property() {
 
 void EditorPropertyRect2::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_ENTER_TREE:
 		case NOTIFICATION_THEME_CHANGED: {
 			const Color *colors = _get_property_colors();
 			for (int i = 0; i < 4; i++) {
@@ -1922,7 +1916,6 @@ void EditorPropertyRect2i::update_property() {
 
 void EditorPropertyRect2i::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_ENTER_TREE:
 		case NOTIFICATION_THEME_CHANGED: {
 			const Color *colors = _get_property_colors();
 			for (int i = 0; i < 4; i++) {
@@ -2017,7 +2010,6 @@ void EditorPropertyPlane::update_property() {
 
 void EditorPropertyPlane::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_ENTER_TREE:
 		case NOTIFICATION_THEME_CHANGED: {
 			const Color *colors = _get_property_colors();
 			for (int i = 0; i < 4; i++) {
@@ -2160,7 +2152,6 @@ void EditorPropertyQuaternion::_warning_pressed() {
 
 void EditorPropertyQuaternion::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_ENTER_TREE:
 		case NOTIFICATION_THEME_CHANGED: {
 			const Color *colors = _get_property_colors();
 			for (int i = 0; i < 4; i++) {
@@ -2314,7 +2305,6 @@ void EditorPropertyAABB::update_property() {
 
 void EditorPropertyAABB::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_ENTER_TREE:
 		case NOTIFICATION_THEME_CHANGED: {
 			const Color *colors = _get_property_colors();
 			for (int i = 0; i < 6; i++) {
@@ -2388,7 +2378,6 @@ void EditorPropertyTransform2D::update_property() {
 
 void EditorPropertyTransform2D::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_ENTER_TREE:
 		case NOTIFICATION_THEME_CHANGED: {
 			const Color *colors = _get_property_colors();
 			for (int i = 0; i < 6; i++) {
@@ -2476,7 +2465,6 @@ void EditorPropertyBasis::update_property() {
 
 void EditorPropertyBasis::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_ENTER_TREE:
 		case NOTIFICATION_THEME_CHANGED: {
 			const Color *colors = _get_property_colors();
 			for (int i = 0; i < 9; i++) {
@@ -2566,7 +2554,6 @@ void EditorPropertyTransform3D::update_using_transform(Transform3D p_transform) 
 
 void EditorPropertyTransform3D::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_ENTER_TREE:
 		case NOTIFICATION_THEME_CHANGED: {
 			const Color *colors = _get_property_colors();
 			for (int i = 0; i < 12; i++) {
@@ -2664,7 +2651,6 @@ void EditorPropertyProjection::update_using_transform(Projection p_transform) {
 
 void EditorPropertyProjection::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_ENTER_TREE:
 		case NOTIFICATION_THEME_CHANGED: {
 			const Color *colors = _get_property_colors();
 			for (int i = 0; i < 16; i++) {
@@ -2746,7 +2732,6 @@ void EditorPropertyColor::_popup_closed() {
 
 void EditorPropertyColor::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_ENTER_TREE:
 		case NOTIFICATION_THEME_CHANGED: {
 			picker->set_custom_minimum_size(Size2(0, get_theme_constant(SNAME("color_picker_button_height"), EditorStringName(Editor))));
 		} break;
@@ -3027,7 +3012,6 @@ void EditorPropertyNodePath::setup(const Vector<StringName> &p_valid_types, bool
 
 void EditorPropertyNodePath::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_ENTER_TREE:
 		case NOTIFICATION_THEME_CHANGED: {
 			menu->set_button_icon(get_editor_theme_icon(SNAME("GuiTabMenuHl")));
 			menu->get_popup()->set_item_icon(ACTION_CLEAR, get_editor_theme_icon(SNAME("Clear")));
@@ -3655,6 +3639,38 @@ static EditorPropertyRangeHint _parse_range_hint(PropertyHint p_hint, const Stri
 	return hint;
 }
 
+static EditorProperty *get_input_action_editor(const String &p_hint_text, bool is_string_name) {
+	// TODO: Should probably use a better editor GUI with a search bar.
+	// Said GUI could also handle showing builtin options, requiring 1 less hint.
+	EditorPropertyTextEnum *editor = memnew(EditorPropertyTextEnum);
+	Vector<String> options;
+	Vector<String> builtin_options;
+	List<PropertyInfo> pinfo;
+	ProjectSettings::get_singleton()->get_property_list(&pinfo);
+	Vector<String> hints = p_hint_text.remove_char(' ').split(",", false);
+
+	HashMap<String, List<Ref<InputEvent>>> builtins = InputMap::get_singleton()->get_builtins();
+	bool show_builtin = hints.has("show_builtin");
+
+	for (const PropertyInfo &pi : pinfo) {
+		if (!pi.name.begins_with("input/")) {
+			continue;
+		}
+
+		const String action_name = pi.name.get_slicec('/', 1);
+		if (builtins.has(action_name)) {
+			if (show_builtin) {
+				builtin_options.append(action_name);
+			}
+		} else {
+			options.append(action_name);
+		}
+	}
+	options.append_array(builtin_options);
+	editor->setup(options, is_string_name, hints.has("loose_mode"));
+	return editor;
+}
+
 EditorProperty *EditorInspectorDefaultPlugin::get_editor_for_property(Object *p_object, const Variant::Type p_type, const String &p_path, const PropertyHint p_hint, const String &p_hint_text, const BitField<PropertyUsageFlags> p_usage, const bool p_wide) {
 	double default_float_step = EDITOR_GET("interface/inspector/default_float_step");
 
@@ -3768,6 +3784,8 @@ EditorProperty *EditorInspectorDefaultPlugin::get_editor_for_property(Object *p_
 				Vector<String> options = p_hint_text.split(",", false);
 				editor->setup(options, false, (p_hint == PROPERTY_HINT_ENUM_SUGGESTION));
 				return editor;
+			} else if (p_hint == PROPERTY_HINT_INPUT_NAME) {
+				return get_input_action_editor(p_hint_text, false);
 			} else if (p_hint == PROPERTY_HINT_MULTILINE_TEXT) {
 				EditorPropertyMultilineText *editor = memnew(EditorPropertyMultilineText);
 				return editor;
@@ -3920,6 +3938,8 @@ EditorProperty *EditorInspectorDefaultPlugin::get_editor_for_property(Object *p_
 				Vector<String> options = p_hint_text.split(",", false);
 				editor->setup(options, true, (p_hint == PROPERTY_HINT_ENUM_SUGGESTION));
 				return editor;
+			} else if (p_hint == PROPERTY_HINT_INPUT_NAME) {
+				return get_input_action_editor(p_hint_text, true);
 			} else {
 				EditorPropertyText *editor = memnew(EditorPropertyText);
 				if (p_hint == PROPERTY_HINT_PLACEHOLDER_TEXT) {

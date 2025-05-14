@@ -2957,7 +2957,6 @@ void EditorInspectorArray::_notification(int p_what) {
 			DisplayServer::get_singleton()->accessibility_update_set_value(ae, vformat(TTR("Array: %s"), get_label()));
 		} break;
 
-		case NOTIFICATION_ENTER_TREE:
 		case NOTIFICATION_THEME_CHANGED: {
 			Color color = get_theme_color(SNAME("dark_color_1"), EditorStringName(Editor));
 			odd_style->set_bg_color(color.darkened(-0.08));
@@ -2987,7 +2986,6 @@ void EditorInspectorArray::_notification(int p_what) {
 			}
 
 			add_button->set_button_icon(get_editor_theme_icon(SNAME("Add")));
-			update_minimum_size();
 		} break;
 
 		case NOTIFICATION_DRAG_BEGIN: {
@@ -3155,7 +3153,6 @@ void EditorPaginator::update(int p_page, int p_max_page) {
 
 void EditorPaginator::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_ENTER_TREE:
 		case NOTIFICATION_THEME_CHANGED: {
 			first_page_button->set_button_icon(get_editor_theme_icon(SNAME("PageFirst")));
 			prev_page_button->set_button_icon(get_editor_theme_icon(SNAME("PagePrevious")));
@@ -4664,7 +4661,7 @@ void EditorInspector::_edit_set(const String &p_name, const Variant &p_value, bo
 		_edit_request_change(object, p_name);
 		emit_signal(_prop_edited, p_name);
 	} else {
-		undo_redo->create_action(vformat(TTR("Set %s"), p_name), UndoRedo::MERGE_ENDS);
+		undo_redo->create_action(vformat(TTR("Set %s"), p_name), UndoRedo::MERGE_ENDS, nullptr, false, mark_unsaved);
 		undo_redo->add_do_property(object, p_name, p_value);
 		bool valid = false;
 		Variant value = object->get(p_name, &valid);

@@ -208,7 +208,6 @@ public:
 	virtual void add_callback(const String &p_function, const PackedStringArray &p_args) = 0;
 	virtual void update_settings() = 0;
 	virtual void set_debugger_active(bool p_active) = 0;
-	virtual bool can_lose_focus_on_node_selection() { return true; }
 	virtual void update_toggle_files_button() {}
 
 	virtual bool show_members_overview() = 0;
@@ -537,7 +536,8 @@ class ScriptEditor : public PanelContainer {
 	void _on_find_in_files_modified_files(const PackedStringArray &paths);
 	void _on_find_in_files_close_button_clicked();
 
-	void _set_zoom_factor(float p_zoom_factor);
+	void _set_script_zoom_factor(float p_zoom_factor);
+	void _update_code_editor_zoom_factor(CodeTextEditor *p_code_text_editor);
 
 	void _window_changed(bool p_visible);
 
@@ -596,8 +596,6 @@ public:
 
 	void trigger_live_script_reload(const String &p_script_path);
 	void trigger_live_script_reload_all();
-
-	bool can_take_away_focus() const;
 
 	VSplitContainer *get_left_list_split() { return list_split; }
 
