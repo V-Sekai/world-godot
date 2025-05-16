@@ -234,12 +234,13 @@ build-platform-target platform target arch="auto" precision="double" osx_bundle=
             scons platform=web \
                     arch={{arch}} \
                     werror=no \
+                    optimize=size_extra \
                     compiledb=yes \
                     precision={{precision}} \
                     target={{target}} \
                     test=yes \
                     dlink_enabled=yes \
-                    debug_symbols=yes \
+                    debug_symbols=no \
                     {{extra_options}}
             ;;
         ios)
