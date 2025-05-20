@@ -12,7 +12,7 @@ config_version=5
 
 config/name="Speech Voip Demo"
 run/main_scene="res://vsk_speech/scenes/entry_point.tscn"
-config/features=PackedStringArray("4.3", "Double Precision")
+config/features=PackedStringArray("4.5")
 config/icon="res://icon.png"
 
 [audio]
@@ -24,7 +24,7 @@ mix_rate=48000
 
 [autoload]
 
-network_layer="*res://vsk_speech/scenes/network_layer.gd"
+network_layer="*res://vsk_speech/core/network_layer.gd"
 
 [editor_plugins]
 

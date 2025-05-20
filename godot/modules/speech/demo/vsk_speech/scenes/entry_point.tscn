@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://qb561bq27ksx"]
 
-[ext_resource type="Script" path="res://vsk_speech/scenes/entry_point.gd" id="1_rgc2c"]
+[ext_resource type="Script" uid="uid://dwl5f2udhp4bs" path="res://vsk_speech/core/entry_point.gd" id="1_rgc2c"]
 
 [sub_resource type="AudioStreamMicrophone" id="AudioStreamMicrophone_tmvyd"]
 

@@ -41,36 +41,9 @@
 #include "scene/main/node.h"
 #include "servers/audio_server.h"
 
+#include "playback_stats.h"
 #include "servers/audio/effects/audio_stream_generator.h"
 #include "speech_processor.h"
-
-class PlaybackStats : public RefCounted {
-	GDCLASS(PlaybackStats, RefCounted);
-
-protected:
-	static void _bind_methods();
-
-public:
-	int64_t playback_ring_current_size = 0;
-	int64_t playback_ring_max_size = 0;
-	int64_t playback_ring_size_sum = 0;
-	double playback_get_frames = 0.0;
-	int64_t playback_pushed_calls = 0;
-	int64_t playback_discarded_calls = 0;
-	int64_t playback_push_buffer_calls = 0;
-	int64_t playback_blank_push_calls = 0;
-	double playback_position = 0.0;
-	double playback_skips = 0.0;
-
-	double jitter_buffer_size_sum = 0.0;
-	int64_t jitter_buffer_calls = 0;
-	int64_t jitter_buffer_max_size = 0;
-	int64_t jitter_buffer_current_size = 0;
-
-	int64_t playback_ring_buffer_length = 0;
-	int64_t buffer_frame_count = 0;
-	Dictionary get_playback_stats();
-};
 
 class Speech : public Node {
 	GDCLASS(Speech, Node);
@@ -89,13 +62,12 @@ class Speech : public Node {
 	struct InputPacket {
 		PackedByteArray compressed_byte_array;
 		int buffer_size = 0;
-		float loudness = 0.0;
 	};
 
 	int current_input_size = 0;
 	PackedByteArray compression_output_byte_array;
 	InputPacket input_audio_buffer_array[MAX_AUDIO_BUFFER_ARRAY_SIZE];
-	//
+
 private:
 	// Assigns the memory to the fixed audio buffer arrays
 	void preallocate_buffers();
@@ -131,7 +103,29 @@ private:
 	Dictionary player_audio;
 	int nearest_shift(int p_number);
 
+protected:
+	static void _bind_methods();
+
 public:
+	int get_skipped_audio_packets();
+	void clear_skipped_audio_packets();
+	virtual PackedVector2Array
+	decompress_buffer(Ref<SpeechDecoder> p_speech_decoder,
+			PackedByteArray p_read_byte_array, const int p_read_size,
+			PackedVector2Array p_write_vec2_array);
+	// Copies all the input buffers to the output buffers
+	// Returns the amount of buffers
+	Array copy_and_clear_buffers();
+	bool start_recording();
+	bool end_recording();
+	void _notification(int p_what);
+	void set_streaming_bus(const String &p_name);
+	bool set_audio_input_stream_player(Node *p_audio_stream);
+	Speech();
+	~Speech();
+	Ref<SpeechDecoder> get_speech_decoder();
+	Dictionary get_stats();
+
 	int get_jitter_buffer_speedup() const;
 	void set_jitter_buffer_speedup(int p_jitter_buffer_speedup);
 	int get_jitter_buffer_slowdown() const;
@@ -158,32 +152,6 @@ public:
 	void set_player_audio(Dictionary val);
 	int calc_playback_ring_buffer_length(Ref<AudioStreamGenerator> audio_stream_generator);
 
-protected:
-	static void _bind_methods();
-
-	int get_skipped_audio_packets();
-
-	void clear_skipped_audio_packets();
-
-	virtual PackedVector2Array
-	decompress_buffer(Ref<SpeechDecoder> p_speech_decoder,
-			PackedByteArray p_read_byte_array, const int p_read_size,
-			PackedVector2Array p_write_vec2_array);
-	// Copies all the input buffers to the output buffers
-	// Returns the amount of buffers
-	Array copy_and_clear_buffers();
-	Ref<SpeechDecoder> get_speech_decoder();
-	bool start_recording();
-	bool end_recording();
-	void _notification(int p_what);
-	void set_streaming_bus(const String &p_name);
-	void set_error_cancellation_bus(const String &p_name);
-	bool set_audio_input_stream_player(Node *p_audio_stream);
-	Dictionary get_stats();
-	Speech();
-	~Speech();
-
-public:
 	void add_player_audio(int p_player_id, Node *p_audio_stream_player);
 	void vc_debug_print(String p_str) const;
 	void vc_debug_printerr(String p_str) const;
@@ -191,5 +159,5 @@ public:
 	Dictionary get_playback_stats(Dictionary speech_stat_dict);
 	void remove_player_audio(int p_player_id);
 	void clear_all_player_audio();
-	void attempt_to_feed_stream(int p_skip_count, Ref<SpeechDecoder> p_decoder, Node *p_audio_stream_player, Array p_jitter_buffer, Ref<PlaybackStats> p_playback_stats, Dictionary p_player_dict);
+	void attempt_to_feed_stream(int p_skip_count, Ref<SpeechDecoder> p_decoder, Node *p_audio_stream_player, Array p_jitter_buffer, Ref<PlaybackStats> p_playback_stats, Dictionary p_player_dict, double p_process_delta_time);
 };

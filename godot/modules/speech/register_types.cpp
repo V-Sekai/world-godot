@@ -31,8 +31,8 @@
 #include "register_types.h"
 
 #include "core/object/class_db.h"
-#include "speech.h"
 
+#include "speech.h"
 #include "speech_decoder.h"
 #include "speech_processor.h"
 

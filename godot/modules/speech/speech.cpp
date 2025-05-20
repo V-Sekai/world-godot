@@ -31,8 +31,13 @@
 #include "scene/2d/audio_stream_player_2d.h"
 #include "scene/3d/audio_stream_player_3d.h"
 
+#include "core/math/math_funcs.h" // For Math::absf
+
 #include "speech.h"
 #include "speech_processor.h"
+
+// For MultiplayerAPI access
+#include "scene/main/multiplayer_api.h"
 
 void Speech::preallocate_buffers() {
 	input_byte_array.resize(SpeechProcessor::SPEECH_SETTING_PCM_BUFFER_SIZE);
@@ -68,8 +73,6 @@ Speech::InputPacket *Speech::get_next_valid_input_packet() {
 
 			input_audio_buffer_array[i - 1].buffer_size =
 					input_audio_buffer_array[i].buffer_size;
-			input_audio_buffer_array[i - 1].loudness =
-					input_audio_buffer_array[i].loudness;
 		}
 		skipped_audio_packets++;
 		return &input_audio_buffer_array[MAX_AUDIO_BUFFER_ARRAY_SIZE - 1];
@@ -105,7 +108,6 @@ void Speech::speech_processed(SpeechProcessor::SpeechInput *p_mic_input) {
 				compressed_buffer_input.compressed_byte_array->ptr(), size);
 
 		input_packet->buffer_size = size;
-		input_packet->loudness = p_mic_input->volume;
 	}
 }
 
@@ -302,10 +304,9 @@ void Speech::_bind_methods() {
 			&Speech::remove_player_audio);
 	ClassDB::bind_method(D_METHOD("clear_all_player_audio"),
 			&Speech::clear_all_player_audio);
-	ClassDB::bind_method(D_METHOD("attempt_to_feed_stream", "skip_count", "decoder", "audio_stream_player", "jitter_buffer", "playback_stats", "player_dict"),
+	ClassDB::bind_method(D_METHOD("attempt_to_feed_stream", "skip_count", "decoder", "audio_stream_player", "jitter_buffer", "playback_stats", "player_dict", "process_delta_time"),
 			&Speech::attempt_to_feed_stream);
-	ClassDB::bind_method(D_METHOD("set_error_cancellation_bus", "name"),
-			&Speech::set_error_cancellation_bus);
+
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "BUFFER_DELAY_THRESHOLD"), "set_buffer_delay_threshold",
 			"get_buffer_delay_threshold");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "STREAM_STANDARD_PITCH"), "set_stream_standard_pitch",
@@ -364,9 +365,8 @@ Array Speech::copy_and_clear_buffers() {
 	for (int i = 0; i < current_input_size; i++) {
 		Dictionary dict;
 
-		dict["byte_array"] = input_audio_buffer_array[i].compressed_byte_array;
+		dict["byte_array"] = input_audio_buffer_array[i].compressed_byte_array.slice(0, input_audio_buffer_array[i].buffer_size);
 		dict["buffer_size"] = input_audio_buffer_array[i].buffer_size;
-		dict["loudness"] = input_audio_buffer_array[i].loudness;
 
 		output_array[i] = dict;
 	}
@@ -384,26 +384,29 @@ Ref<SpeechDecoder> Speech::get_speech_decoder() {
 }
 
 bool Speech::start_recording() {
-	if (speech_processor) {
-		speech_processor->start();
-		skipped_audio_packets = 0;
-		return true;
+	if (!speech_processor) {
+		speech_processor = memnew(SpeechProcessor);
+		setup_connections();
+	}
+	// Ensure player is set if speech_processor was just created or not set before
+	if (!speech_processor->set_audio_input_stream_player(get_node_or_null(NodePath("AudioStreamPlayer")))) {
+		// Attempt to find a default AudioStreamPlayer if not explicitly set.
+		// This part might need adjustment based on how AudioStreamPlayer is typically associated.
+		// For now, assuming it might have been set via set_audio_input_stream_player earlier.
 	}
 
+	if (speech_processor) {
+		speech_processor->start();
+		return true;
+	}
 	return false;
 }
 
 bool Speech::end_recording() {
-	bool result = true;
 	if (speech_processor) {
 		speech_processor->stop();
-	} else {
-		result = false;
 	}
-	if (has_method("clear_all_player_audio")) {
-		call("clear_all_player_audio");
-	}
-	return result;
+	return true;
 }
 
 void Speech::_notification(int p_what) {
@@ -435,6 +438,7 @@ void Speech::_notification(int p_what) {
 			break;
 		}
 		case NOTIFICATION_INTERNAL_PROCESS: {
+			double delta = get_process_delta_time();
 			Array keys = player_audio.keys();
 			for (int32_t i = 0; i < keys.size(); i++) {
 				Variant key = keys[i];
@@ -464,7 +468,8 @@ void Speech::_notification(int p_what) {
 						audio_stream_player,
 						jitter_buffer,
 						playback_stats,
-						elem);
+						elem,
+						delta); // Pass delta time
 				Dictionary dict = player_audio[key];
 				dict["packets_received_this_frame"] = 0;
 				player_audio[key] = dict;
@@ -481,12 +486,6 @@ void Speech::_notification(int p_what) {
 void Speech::set_streaming_bus(const String &p_name) {
 	if (speech_processor) {
 		speech_processor->set_streaming_bus(p_name);
-	}
-}
-
-void Speech::set_error_cancellation_bus(const String &p_name) {
-	if (speech_processor) {
-		speech_processor->set_error_cancellation_bus(p_name);
 	}
 }
 
@@ -521,7 +520,9 @@ void Speech::add_player_audio(int p_player_id, Node *p_audio_stream_player) {
 		if (!player_audio.has(p_player_id)) {
 			Ref<AudioStreamGenerator> new_generator;
 			new_generator.instantiate();
-			new_generator->set_mix_rate(SpeechProcessor::SPEECH_SETTING_VOICE_PACKET_SAMPLE_RATE);
+			if (AudioServer::get_singleton()) {
+				new_generator->set_mix_rate(AudioServer::get_singleton()->get_input_mix_rate());
+			}
 			new_generator->set_buffer_length(BUFFER_DELAY_THRESHOLD);
 			playback_ring_buffer_length = calc_playback_ring_buffer_length(new_generator);
 			p_audio_stream_player->call("set_stream", new_generator);
@@ -543,7 +544,8 @@ void Speech::add_player_audio(int p_player_id, Node *p_audio_stream_player) {
 			dict["speech_decoder"] = speech_decoder;
 			dict["playback_stats"] = pstats;
 			dict["playback_start_time"] = 0;
-			dict["playback_prev_time"] = -1;
+			dict["playback_prev_time"] = -1.0; // Ensure this is double
+
 			player_audio[p_player_id] = dict;
 		} else {
 			print_error(vformat("Attempted to duplicate player_audio entry (%s)!", p_player_id));
@@ -566,11 +568,39 @@ void Speech::vc_debug_printerr(String p_str) const {
 }
 
 void Speech::on_received_audio_packet(int p_peer_id, int p_sequence_id, PackedByteArray p_packet) {
-	vc_debug_print(
-			vformat("Received_audio_packet: peer_id: {%s} sequence_id: {%s}", itos(p_peer_id), itos(p_sequence_id)));
-	if (!player_audio.has(p_peer_id)) {
-		return;
+	// Multiplayer checks for echo prevention
+	if (get_tree() && get_tree()->get_multiplayer().is_valid() && get_tree()->get_multiplayer()->has_multiplayer_peer()) {
+		int local_peer_id = get_tree()->get_multiplayer()->get_unique_id();
+		int immediate_sender_id = get_tree()->get_multiplayer()->get_remote_sender_id(); // Who called this RPC on me
+
+		// Standard echo prevention: if a client (not server) receives its own packet relayed by another peer.
+		// Server (peer_id 1) should process all packets.
+		// Clients should not process packets they originally sent.
+		if (local_peer_id != 1 && p_peer_id == local_peer_id) {
+			if (DEBUG) {
+				vc_debug_print("Speech: Client (ID: " + itos(local_peer_id) + ") ignoring its own relayed audio packet (original sender: " + itos(p_peer_id) + ", immediate sender: " + itos(immediate_sender_id) + ").");
+			}
+			return;
+		}
+	} else if (DEBUG && !(get_tree() && get_tree()->get_multiplayer().is_valid() && get_tree()->get_multiplayer()->has_multiplayer_peer())) {
+		// Log if not in a typical multiplayer setup but packet received, for debugging non-standard uses.
+		// vc_debug_print("Speech: on_received_audio_packet called outside of a fully configured multiplayer context. Processing locally.");
+		// Depending on requirements, you might allow local processing or enforce multiplayer.
+		// For now, if not in MP, the checks are skipped and packet is processed.
 	}
+
+	packets_received_this_frame++;
+
+	if (!player_audio.has(p_peer_id)) {
+		if (DEBUG) {
+			vc_debug_printerr("Speech: Received audio packet from unknown player_id: " + itos(p_peer_id) + ". Player audio entry might need to be created.");
+			// TODO: Consider how to handle adding new players dynamically if necessary,
+			// or if this should strictly be an error.
+			// For now, if no entry, we can't process further for that player.
+		}
+		return; // Cannot process if no player audio setup for this ID.
+	}
+
 	Dictionary elem = player_audio[p_peer_id];
 	// Detects if no audio packets have been received from this player yet.
 	if (int64_t(elem["sequence_id"]) == -1) {
@@ -673,18 +703,17 @@ void Speech::clear_all_player_audio() {
 		if (!elem.has("audio_stream_player")) {
 			continue;
 		}
-		Dictionary dict = player_audio[key];
-		Node *node = cast_to<Node>(dict["audio_stream_player"]);
+		Node *node = cast_to<Node>(elem["audio_stream_player"]);
 		if (!node) {
 			continue;
 		}
 		node->queue_free();
 	}
 
-	player_audio = Dictionary();
+	player_audio.clear();
 }
 
-void Speech::attempt_to_feed_stream(int p_skip_count, Ref<SpeechDecoder> p_decoder, Node *p_audio_stream_player, Array p_jitter_buffer, Ref<PlaybackStats> p_playback_stats, Dictionary p_player_dict) {
+void Speech::attempt_to_feed_stream(int p_skip_count, Ref<SpeechDecoder> p_decoder, Node *p_audio_stream_player, Array p_jitter_buffer, Ref<PlaybackStats> p_playback_stats, Dictionary p_player_dict, double p_process_delta_time) {
 	if (!p_audio_stream_player) {
 		return;
 	}
@@ -703,7 +732,7 @@ void Speech::attempt_to_feed_stream(int p_skip_count, Ref<SpeechDecoder> p_decod
 		return;
 	}
 	if (int64_t(p_player_dict["playback_last_skips"]) != playback->get_skips()) {
-		p_player_dict["playback_prev_time"] = double(p_player_dict["playback_prev_time"]) - SpeechProcessor::SPEECH_SETTING_MILLISECONDS_PER_PACKET;
+		p_player_dict["playback_prev_time"] = double(p_player_dict["playback_prev_time"]) - static_cast<double>(SpeechProcessor::SPEECH_SETTING_MILLISECONDS_PER_PACKET);
 		p_player_dict["playback_last_skips"] = playback->get_skips();
 	}
 	int64_t to_fill = playback->get_frames_available();
@@ -727,48 +756,45 @@ void Speech::attempt_to_feed_stream(int p_skip_count, Ref<SpeechDecoder> p_decod
 	}
 
 	for (int32_t _i = 0; _i < required_packets; _i++) {
-		Dictionary packet = p_jitter_buffer.pop_front();
-		bool packet_pushed = false;
-		bool push_result = false;
-		PackedByteArray buffer = packet["packet"];
-		uncompressed_audio = decompress_buffer(p_decoder, buffer, buffer.size(), uncompressed_audio);
-		if (uncompressed_audio.size()) {
-			if (uncompressed_audio.size() == SpeechProcessor::SPEECH_SETTING_BUFFER_FRAME_COUNT) {
-				push_result = playback->push_buffer(uncompressed_audio);
+		Dictionary packet_from_jitter_buffer = p_jitter_buffer.pop_front();
+		bool was_real_audio_pushed = false;
+		bool final_push_result = false;
+
+		if (bool(packet_from_jitter_buffer["valid"])) {
+			PackedByteArray compressed_data = packet_from_jitter_buffer["packet"];
+			if (compressed_data.size() > 0) {
+				uncompressed_audio = decompress_buffer(p_decoder, compressed_data, compressed_data.size(), uncompressed_audio);
+				if (uncompressed_audio.size() == SpeechProcessor::SPEECH_SETTING_BUFFER_FRAME_COUNT) {
+					final_push_result = playback->push_buffer(uncompressed_audio);
+					if (final_push_result) {
+						was_real_audio_pushed = true;
+					}
+				}
 			}
 		}
-		packet_pushed = true;
-		if (!packet_pushed) {
-			push_result = playback->push_buffer(blank_packet);
+
+		if (!was_real_audio_pushed) {
+			final_push_result = playback->push_buffer(blank_packet);
 		}
+
 		if (p_playback_stats.is_null()) {
 			continue;
 		}
 		p_playback_stats->playback_ring_current_size = playback_ring_buffer_length - playback->get_frames_available();
-		p_playback_stats->playback_ring_max_size = p_playback_stats->playback_ring_current_size ? p_playback_stats->playback_ring_current_size > p_playback_stats->playback_ring_max_size : p_playback_stats->playback_ring_max_size;
-		p_playback_stats->playback_ring_size_sum += 1.0 * p_playback_stats->playback_ring_current_size;
+		p_playback_stats->playback_ring_max_size = MAX(p_playback_stats->playback_ring_max_size, p_playback_stats->playback_ring_current_size);
+		p_playback_stats->playback_ring_size_sum += double(p_playback_stats->playback_ring_current_size);
 		p_playback_stats->playback_push_buffer_calls += 1;
-		if (!packet_pushed) {
+
+		if (!was_real_audio_pushed) {
 			p_playback_stats->playback_blank_push_calls += 1;
 		}
-		if (push_result) {
+
+		if (final_push_result) {
 			p_playback_stats->playback_pushed_calls += 1;
 		} else {
 			p_playback_stats->playback_discarded_calls += 1;
 		}
-		p_playback_stats->playback_skips = 1.0 * double(playback->get_skips());
-	}
-	if (p_playback_stats.is_valid()) {
-		p_playback_stats->jitter_buffer_size_sum += p_jitter_buffer.size();
-		p_playback_stats->jitter_buffer_calls += 1;
-		p_playback_stats->jitter_buffer_max_size = p_jitter_buffer.size() ? p_jitter_buffer.size() > p_playback_stats->jitter_buffer_max_size : p_playback_stats->jitter_buffer_max_size;
-		p_playback_stats->jitter_buffer_current_size = p_jitter_buffer.size();
-	}
-	// Speed up or slow down the audio stream to mitigate skipping
-	if (p_jitter_buffer.size() > JITTER_BUFFER_SPEEDUP) {
-		p_audio_stream_player->set_physics_process(STREAM_SPEEDUP_PITCH);
-	} else if (p_jitter_buffer.size() < JITTER_BUFFER_SLOWDOWN) {
-		p_audio_stream_player->call("set_pitch_scale", STREAM_STANDARD_PITCH);
+		p_playback_stats->playback_skips = double(playback->get_skips());
 	}
 }
 
@@ -776,10 +802,15 @@ Dictionary PlaybackStats::get_playback_stats() {
 	double playback_pushed_frames = playback_pushed_calls * (buffer_frame_count * 1.0);
 	double playback_discarded_frames = playback_discarded_calls * (buffer_frame_count * 1.0);
 	Dictionary dict;
+	dict["mixer_sample_rate"] = SpeechProcessor::SPEECH_SETTING_VOICE_PACKET_SAMPLE_RATE;
+	if (AudioServer::get_singleton()) {
+		dict["godot_mixer_input_sample_rate"] = AudioServer::get_singleton()->get_input_mix_rate();
+	} else {
+		dict["godot_mixer_input_sample_rate"] = 0;
+	}
 	dict["playback_ring_limit_s"] = playback_ring_buffer_length / double(SpeechProcessor::SPEECH_SETTING_VOICE_PACKET_SAMPLE_RATE);
 	dict["playback_ring_current_size_s"] = playback_ring_current_size / double(SpeechProcessor::SPEECH_SETTING_VOICE_PACKET_SAMPLE_RATE);
 	dict["playback_ring_max_size_s"] = playback_ring_max_size / double(SpeechProcessor::SPEECH_SETTING_VOICE_PACKET_SAMPLE_RATE);
-	dict["playback_ring_mean_size_s"] = 0;
 	if (playback_push_buffer_calls > 0) {
 		dict["playback_ring_mean_size_s"] = playback_ring_size_sum / playback_push_buffer_calls / double(SpeechProcessor::SPEECH_SETTING_VOICE_PACKET_SAMPLE_RATE);
 	} else {
@@ -793,6 +824,7 @@ Dictionary PlaybackStats::get_playback_stats() {
 	}
 	dict["jitter_buffer_calls"] = jitter_buffer_calls;
 	dict["playback_position_s"] = playback_position;
+
 	dict["playback_get_percent"] = 0;
 	dict["playback_discard_percent"] = 0;
 	if (playback_pushed_frames > 0) {
