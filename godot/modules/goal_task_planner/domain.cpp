@@ -40,23 +40,6 @@ void PlannerDomain::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("add_actions", "actions"), &PlannerDomain::add_actions);
 
 	ClassDB::bind_static_method("PlannerDomain", D_METHOD("method_verify_goal", "state", "method", "state_var", "arguments", "desired_values", "depth", "verbose"), &PlannerDomain::method_verify_goal);
-
-	ClassDB::bind_method(D_METHOD("set_actions", "value"), &PlannerDomain::set_actions);
-	ClassDB::bind_method(D_METHOD("get_actions"), &PlannerDomain::get_actions);
-
-	ClassDB::bind_method(D_METHOD("set_task_methods", "value"), &PlannerDomain::set_task_methods);
-	ClassDB::bind_method(D_METHOD("get_task_methods"), &PlannerDomain::get_task_methods);
-
-	ClassDB::bind_method(D_METHOD("set_unigoal_methods", "value"), &PlannerDomain::set_unigoal_methods);
-	ClassDB::bind_method(D_METHOD("get_unigoal_methods"), &PlannerDomain::get_unigoal_methods);
-
-	ClassDB::bind_method(D_METHOD("set_multigoal_methods", "value"), &PlannerDomain::set_multigoal_methods);
-	ClassDB::bind_method(D_METHOD("get_multigoal_methods"), &PlannerDomain::get_multigoal_methods);
-
-	ADD_PROPERTY(PropertyInfo(Variant::DICTIONARY, "actions"), "set_actions", "get_actions");
-	ADD_PROPERTY(PropertyInfo(Variant::DICTIONARY, "tasks"), "set_task_methods", "get_task_methods");
-	ADD_PROPERTY(PropertyInfo(Variant::DICTIONARY, "unigoal_methods"), "set_unigoal_methods", "get_unigoal_methods");
-	ADD_PROPERTY(PropertyInfo(Variant::ARRAY, "multigoal_methods"), "set_multigoal_methods", "get_multigoal_methods");
 }
 
 Variant PlannerDomain::method_verify_goal(Dictionary p_state, String p_method, String p_state_variable, String p_arguments, Variant p_desired_value, int p_depth, int p_verbose) {
@@ -83,7 +66,10 @@ PlannerDomain::PlannerDomain() {
 
 void PlannerDomain::add_multigoal_methods(TypedArray<Callable> p_methods) {
 	for (int i = 0; i < p_methods.size(); ++i) {
-		Variant m = p_methods[i];
+		Callable m = p_methods[i];
+		if (m.is_null()) {
+			continue;
+		}
 		if (!multigoal_method_list.has(m)) {
 			multigoal_method_list.push_back(m);
 		}
@@ -96,7 +82,10 @@ void PlannerDomain::add_unigoal_methods(String p_task_name, TypedArray<Callable>
 	} else {
 		Array existing_methods = unigoal_method_dictionary[p_task_name];
 		for (int i = 0; i < p_methods.size(); ++i) {
-			Variant m = p_methods[i];
+			Callable m = p_methods[i];
+			if (m.is_null()) {
+				continue;
+			}
 			if (!existing_methods.has(m)) {
 				existing_methods.push_back(m);
 			}
@@ -109,7 +98,10 @@ void PlannerDomain::add_task_methods(String p_task_name, TypedArray<Callable> p_
 	if (task_method_dictionary.has(p_task_name)) {
 		Array existing_methods = task_method_dictionary[p_task_name];
 		for (int i = 0; i < p_methods.size(); ++i) {
-			Variant m = p_methods[i];
+			Callable m = p_methods[i];
+			if (m.is_null()) {
+				continue;
+			}
 			if (existing_methods.find(m) == -1) {
 				existing_methods.push_back(m);
 			}
