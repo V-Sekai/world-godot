@@ -32,11 +32,13 @@
 
 #include "core/config/project_settings.h"
 #include "core/input/input.h"
+#include "core/io/config_file.h"
 #include "core/io/file_access.h"
 #include "core/io/json.h"
 #include "core/io/resource_loader.h"
 #include "core/os/keyboard.h"
 #include "core/os/os.h"
+#include "core/string/fuzzy_search.h"
 #include "core/version.h"
 #include "editor/code_editor.h"
 #include "editor/debugger/editor_debugger_node.h"
@@ -298,6 +300,46 @@ void EditorMarkdownSyntaxHighlighter::_update_cache() {
 
 Ref<EditorSyntaxHighlighter> EditorMarkdownSyntaxHighlighter::_create() const {
 	Ref<EditorMarkdownSyntaxHighlighter> syntax_highlighter;
+	syntax_highlighter.instantiate();
+	return syntax_highlighter;
+}
+
+///
+
+void EditorConfigFileSyntaxHighlighter::_update_cache() {
+	highlighter->set_text_edit(text_edit);
+	highlighter->clear_keyword_colors();
+	highlighter->clear_member_keyword_colors();
+	highlighter->clear_color_regions();
+
+	highlighter->set_symbol_color(EDITOR_GET("text_editor/theme/highlighting/symbol_color"));
+	highlighter->set_number_color(EDITOR_GET("text_editor/theme/highlighting/number_color"));
+	// Assume that all function-style syntax is for types such as `Vector2()` and `PackedStringArray()`.
+	highlighter->set_function_color(EDITOR_GET("text_editor/theme/highlighting/base_type_color"));
+
+	// Disable member variable highlighting as it's not relevant for ConfigFile.
+	highlighter->set_member_variable_color(EDITOR_GET("text_editor/theme/highlighting/text_color"));
+
+	const Color string_color = EDITOR_GET("text_editor/theme/highlighting/string_color");
+	highlighter->add_color_region("\"", "\"", string_color);
+
+	// FIXME: Sections in ConfigFile must be at the beginning of a line. Otherwise, it can be an array within a line.
+	const Color function_color = EDITOR_GET("text_editor/theme/highlighting/function_color");
+	highlighter->add_color_region("[", "]", function_color);
+
+	const Color keyword_color = EDITOR_GET("text_editor/theme/highlighting/keyword_color");
+	highlighter->add_keyword_color("true", keyword_color);
+	highlighter->add_keyword_color("false", keyword_color);
+	highlighter->add_keyword_color("null", keyword_color);
+	highlighter->add_keyword_color("ExtResource", keyword_color);
+	highlighter->add_keyword_color("SubResource", keyword_color);
+
+	const Color comment_color = EDITOR_GET("text_editor/theme/highlighting/comment_color");
+	highlighter->add_color_region(";", "", comment_color);
+}
+
+Ref<EditorSyntaxHighlighter> EditorConfigFileSyntaxHighlighter::_create() const {
+	Ref<EditorConfigFileSyntaxHighlighter> syntax_highlighter;
 	syntax_highlighter.instantiate();
 	return syntax_highlighter;
 }
@@ -2013,12 +2055,29 @@ void ScriptEditor::_update_members_overview() {
 		functions.sort();
 	}
 
-	for (int i = 0; i < functions.size(); i++) {
-		String filter = filter_methods->get_text();
-		String name = functions[i].get_slicec(':', 0);
-		if (filter.is_empty() || filter.is_subsequence_ofn(name)) {
+	String filter = filter_methods->get_text();
+	if (filter.is_empty()) {
+		for (int i = 0; i < functions.size(); i++) {
+			String name = functions[i].get_slicec(':', 0);
 			members_overview->add_item(name);
 			members_overview->set_item_metadata(-1, functions[i].get_slicec(':', 1).to_int() - 1);
+		}
+	} else {
+		PackedStringArray search_names;
+		for (int i = 0; i < functions.size(); i++) {
+			search_names.append(functions[i].get_slicec(':', 0));
+		}
+
+		Vector<FuzzySearchResult> results;
+		FuzzySearch fuzzy;
+		fuzzy.set_query(filter, false);
+		fuzzy.search_all(search_names, results);
+
+		for (const FuzzySearchResult &res : results) {
+			String name = functions[res.original_index].get_slicec(':', 0);
+			int line = functions[res.original_index].get_slicec(':', 1).to_int() - 1;
+			members_overview->add_item(name);
+			members_overview->set_item_metadata(-1, line);
 		}
 	}
 
@@ -2281,10 +2340,24 @@ void ScriptEditor::_update_script_names() {
 	}
 
 	Vector<_ScriptEditorItemData> sedata_filtered;
-	for (int i = 0; i < sedata.size(); i++) {
-		String filter = filter_scripts->get_text();
-		if (filter.is_empty() || filter.is_subsequence_ofn(sedata[i].name)) {
-			sedata_filtered.push_back(sedata[i]);
+
+	String filter = filter_scripts->get_text();
+
+	if (filter.is_empty()) {
+		sedata_filtered = sedata;
+	} else {
+		PackedStringArray search_names;
+		for (int i = 0; i < sedata.size(); i++) {
+			search_names.append(sedata[i].name);
+		}
+
+		Vector<FuzzySearchResult> results;
+		FuzzySearch fuzzy;
+		fuzzy.set_query(filter, false);
+		fuzzy.search_all(search_names, results);
+
+		for (const FuzzySearchResult &res : results) {
+			sedata_filtered.push_back(sedata[res.original_index]);
 		}
 	}
 
@@ -4449,6 +4522,10 @@ ScriptEditor::ScriptEditor(WindowWrapper *p_wrapper) {
 	Ref<EditorMarkdownSyntaxHighlighter> markdown_syntax_highlighter;
 	markdown_syntax_highlighter.instantiate();
 	register_syntax_highlighter(markdown_syntax_highlighter);
+
+	Ref<EditorConfigFileSyntaxHighlighter> config_file_syntax_highlighter;
+	config_file_syntax_highlighter.instantiate();
+	register_syntax_highlighter(config_file_syntax_highlighter);
 
 	_update_online_doc();
 }
