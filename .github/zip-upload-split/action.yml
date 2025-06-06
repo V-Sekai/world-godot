@@ -12,6 +12,10 @@ inputs:
   token:
     description: 'Github Token'
     required: true
+  smart-skip:
+    description: 'Skip zip operation on files smaller than max upload size limit'
+    required: false
+    default: 'false'
   zip-cmd:
     description: 'Select zipping software ( "7zip", "zip" )'
     required: false
@@ -53,7 +57,7 @@ runs:
           
           # Zip directory
           mkdir _temp
-          if [ "${IS_FILE}" == 'true' ] && [ "${SIZE}" -le "${MAX_SIZE}" ]; then
+          if [ "${IS_FILE}" == 'true' ] && [ "${SIZE}" -le "${MAX_SIZE}" ] && [ ${{ inputs.smart-skip }} == 'true' ]; then
             echo "File smaller than max size. Skipping zip operation...";
             cp -v ${INPUT_PATH}/* _temp/;
           elif [ ${{ inputs.zip-cmd }} == '7zip' ]; then
