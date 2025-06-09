@@ -410,8 +410,16 @@ void GDExtension::_register_extension_class_internal(GDExtensionClassLibraryPtr 
 	}
 
 	if (self->reloadable && p_extension_funcs->recreate_instance_func == nullptr) {
-		ERR_PRINT(vformat("Extension marked as reloadable, but attempted to register class '%s' which doesn't support reloading. Perhaps your language binding don't support it? Reloading disabled for this extension.", class_name));
-		self->reloadable = false;
+		bool can_create_class = (bool)p_extension_funcs->create_instance_func;
+#ifndef DISABLE_DEPRECATED
+		if (!can_create_class && p_deprecated_funcs) {
+			can_create_class = (bool)p_deprecated_funcs->create_instance_func;
+		}
+#endif
+		if (can_create_class) {
+			ERR_PRINT(vformat("Extension marked as reloadable, but attempted to register class '%s' which doesn't support reloading. Perhaps your language binding don't support it? Reloading disabled for this extension.", class_name));
+			self->reloadable = false;
+		}
 	}
 
 	extension->gdextension.library = self;
@@ -862,6 +870,19 @@ String GDExtensionResourceLoader::get_resource_type(const String &p_path) const 
 }
 
 #ifdef TOOLS_ENABLED
+void GDExtensionResourceLoader::get_classes_used(const String &p_path, HashSet<StringName> *r_classes) {
+	Ref<GDExtension> gdext = ResourceLoader::load(p_path);
+	if (gdext.is_null()) {
+		return;
+	}
+
+	for (const StringName class_name : gdext->get_classes_used()) {
+		if (ClassDB::class_exists(class_name)) {
+			r_classes->insert(class_name);
+		}
+	}
+}
+
 bool GDExtension::has_library_changed() const {
 	return loader->has_library_changed();
 }

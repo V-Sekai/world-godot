@@ -79,7 +79,7 @@ void GDScriptCompiler::_set_error(const String &p_error, const GDScriptParser::N
 	error = p_error;
 	if (p_node) {
 		err_line = p_node->start_line;
-		err_column = p_node->leftmost_column;
+		err_column = p_node->start_column;
 	} else {
 		err_line = 0;
 		err_column = 0;
@@ -2254,6 +2254,7 @@ GDScriptFunction *GDScriptCompiler::_parse_function(Error &r_error, GDScript *p_
 	codegen.function_node = p_func;
 
 	StringName func_name;
+	bool is_abstract = false;
 	bool is_static = false;
 	Variant rpc_config;
 	GDScriptDataType return_type;
@@ -2267,6 +2268,7 @@ GDScriptFunction *GDScriptCompiler::_parse_function(Error &r_error, GDScript *p_
 		} else {
 			func_name = "<anonymous lambda>";
 		}
+		is_abstract = p_func->is_abstract;
 		is_static = p_func->is_static;
 		rpc_config = p_func->rpc_config;
 		return_type = _gdtype_from_datatype(p_func->get_datatype(), p_script);
@@ -2283,6 +2285,9 @@ GDScriptFunction *GDScriptCompiler::_parse_function(Error &r_error, GDScript *p_
 	codegen.function_name = func_name;
 	method_info.name = func_name;
 	codegen.is_static = is_static;
+	if (is_abstract) {
+		method_info.flags |= METHOD_FLAG_VIRTUAL_REQUIRED;
+	}
 	if (is_static) {
 		method_info.flags |= METHOD_FLAG_STATIC;
 	}
