@@ -852,6 +852,7 @@ Error GDScript::reload(bool p_keep_state) {
 	err = compiler.compile(&parser, this, p_keep_state);
 
 	if (err) {
+		// TODO: Provide the script function as the first argument.
 		_err_print_error("GDScript::reload", path.is_empty() ? "built-in" : (const char *)path.utf8().get_data(), compiler.get_error_line(), ("Compile Error: " + compiler.get_error()).utf8().get_data(), false, ERR_HANDLER_SCRIPT);
 		if (can_run) {
 			if (EngineDebugger::is_active()) {
@@ -875,7 +876,8 @@ Error GDScript::reload(bool p_keep_state) {
 	for (const GDScriptWarning &warning : parser.get_warnings()) {
 		if (EngineDebugger::is_active()) {
 			Vector<ScriptLanguage::StackInfo> si;
-			EngineDebugger::get_script_debugger()->send_error("", get_script_path(), warning.start_line, warning.get_name(), warning.get_message(), false, ERR_HANDLER_WARNING, si);
+			// TODO: Provide the script function as the first argument.
+			EngineDebugger::get_script_debugger()->send_error("GDScript::reload", get_script_path(), warning.start_line, warning.get_name(), warning.get_message(), false, ERR_HANDLER_WARNING, si);
 		}
 	}
 #endif
@@ -2747,7 +2749,6 @@ Vector<String> GDScriptLanguage::get_reserved_words() const {
 		"when",
 		"while",
 		// Declarations.
-		"abstract",
 		"class",
 		"class_name",
 		"const",
@@ -2913,7 +2914,7 @@ String GDScriptLanguage::get_global_class_name(const String &p_path, String *r_b
 		*r_icon_path = c->simplified_icon_path;
 	}
 	if (r_is_abstract) {
-		*r_is_abstract = false;
+		*r_is_abstract = c->is_abstract;
 	}
 	if (r_is_tool) {
 		*r_is_tool = parser.is_tool();
@@ -2962,6 +2963,12 @@ GDScriptLanguage::GDScriptLanguage() {
 		String path = GDScriptWarning::get_settings_path_from_code(code);
 		GLOBAL_DEF(GDScriptWarning::get_property_info(code), default_enabled);
 	}
+
+#ifndef DISABLE_DEPRECATED
+	ProjectSettings::get_singleton()->set_as_internal("debug/gdscript/warnings/property_used_as_function", true);
+	ProjectSettings::get_singleton()->set_as_internal("debug/gdscript/warnings/constant_used_as_function", true);
+	ProjectSettings::get_singleton()->set_as_internal("debug/gdscript/warnings/function_used_as_property", true);
+#endif
 #endif // DEBUG_ENABLED
 }
 

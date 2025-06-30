@@ -201,6 +201,23 @@ class SceneImportSettingsData : public Object {
 	}
 };
 
+bool SceneImportSettingsDialog::_get_current(const StringName &p_name, Variant &r_ret) const {
+	if (scene_import_settings_data->_get(p_name, r_ret)) {
+		return true;
+	}
+	if (defaults.has(p_name)) {
+		r_ret = defaults[p_name];
+		return true;
+	}
+	return false;
+}
+
+void SceneImportSettingsDialog::_set_default(const StringName &p_name, const Variant &p_value) {
+	defaults[p_name] = p_value;
+	scene_import_settings_data->defaults[p_name] = p_value;
+	scene_import_settings_data->_set(p_name, p_value);
+}
+
 void SceneImportSettingsDialog::_fill_material(Tree *p_tree, const Ref<Material> &p_material, TreeItem *p_parent) {
 	String import_id;
 	bool has_import_id = false;
@@ -232,6 +249,24 @@ void SceneImportSettingsDialog::_fill_material(Tree *p_tree, const Ref<Material>
 
 	MaterialData &material_data = material_map[import_id];
 	ERR_FAIL_COND(p_material != material_data.material);
+
+	Variant value;
+	if (_get_current("materials/extract", value) && (int)value != 0) {
+		String spath = base_path.get_base_dir();
+		if (_get_current("materials/extract_path", value)) {
+			String extpath = value;
+			if (!extpath.is_empty()) {
+				spath = extpath;
+			}
+		}
+
+		String ext = ResourceImporterScene::material_extension[_get_current("materials/extract_format", value) ? (int)value : 0];
+		String path = spath.path_join(import_id.validate_filename() + ext);
+		String uid_path = ResourceUID::path_to_uid(path);
+		material_data.settings["use_external/enabled"] = true;
+		material_data.settings["use_external/path"] = uid_path;
+		material_data.settings["use_external/fallback_path"] = path;
+	}
 
 	Ref<Texture2D> icon = get_editor_theme_icon(SNAME("StandardMaterial3D"));
 
@@ -1004,6 +1039,30 @@ void SceneImportSettingsDialog::_inspector_property_edited(const String &p_name)
 			animation_loop_mode = Animation::LoopMode::LOOP_NONE;
 		}
 	}
+	if ((p_name == "use_external/enabled") || (p_name == "use_external/path") || (p_name == "use_external/fallback_path")) {
+		MaterialData &material_data = material_map[selected_id];
+		String spath = base_path.get_base_dir();
+		Variant value;
+		if (_get_current("materials/extract_path", value)) {
+			String extpath = value;
+			if (!extpath.is_empty()) {
+				spath = extpath;
+			}
+		}
+		String opath = material_data.settings.has("use_external/path") ? (String)material_data.settings["use_external/path"] : String();
+		if (opath.begins_with("uid://")) {
+			opath = ResourceUID::uid_to_path(opath);
+		}
+		String ext = ResourceImporterScene::material_extension[_get_current("materials/extract_format", value) ? (int)value : 0];
+		String npath = spath.path_join(selected_id.validate_filename() + ext);
+
+		if (!material_data.settings.has("use_external/enabled") || (bool)material_data.settings["use_external/enabled"] == false || opath != npath) {
+			if (_get_current("materials/extract", value) && (int)value != 0) {
+				print_line("Material settings changed, automatic material extraction disabled.");
+			}
+			_set_default("materials/extract", 0);
+		}
+	}
 }
 
 void SceneImportSettingsDialog::_reset_bone_transforms() {
@@ -1304,9 +1363,7 @@ void SceneImportSettingsDialog::_re_import() {
 		subresources["animations"] = animations;
 	}
 
-	if (subresources.size()) {
-		main_settings["_subresources"] = subresources;
-	}
+	main_settings["_subresources"] = subresources;
 
 	_cleanup(); // Prevent skeletons and other pointers from pointing to dangling references.
 	EditorFileSystem::get_singleton()->reimport_file_with_custom_parameters(base_path, editing_animation ? "animation_library" : "scene", main_settings);
@@ -1723,7 +1780,7 @@ SceneImportSettingsDialog::SceneImportSettingsDialog() {
 	animation_play_button = memnew(Button);
 	animation_hbox->add_child(animation_play_button);
 	animation_play_button->set_flat(true);
-	animation_play_button->set_accessibility_name(TTRC("Play"));
+	animation_play_button->set_accessibility_name(TTRC("Selected Animation Play/Pause"));
 	animation_play_button->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
 	animation_play_button->set_shortcut(ED_SHORTCUT("scene_import_settings/play_selected_animation", TTRC("Selected Animation Play/Pause"), Key::SPACE));
 	animation_play_button->connect(SceneStringName(pressed), callable_mp(this, &SceneImportSettingsDialog::_play_animation));
@@ -1731,7 +1788,6 @@ SceneImportSettingsDialog::SceneImportSettingsDialog() {
 	animation_stop_button = memnew(Button);
 	animation_hbox->add_child(animation_stop_button);
 	animation_stop_button->set_flat(true);
-	animation_stop_button->set_accessibility_name(TTRC("Stop"));
 	animation_stop_button->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
 	animation_stop_button->set_tooltip_text(TTR("Selected Animation Stop"));
 	animation_stop_button->connect(SceneStringName(pressed), callable_mp(this, &SceneImportSettingsDialog::_stop_current_animation));
@@ -1753,7 +1809,6 @@ SceneImportSettingsDialog::SceneImportSettingsDialog() {
 	animation_toggle_skeleton_visibility->set_theme_type_variation("FlatButton");
 	animation_toggle_skeleton_visibility->set_focus_mode(Control::FOCUS_ACCESSIBILITY);
 	animation_toggle_skeleton_visibility->set_tooltip_text(TTR("Toggle Animation Skeleton Visibility"));
-	animation_toggle_skeleton_visibility->set_accessibility_name(TTRC("Skeleton Visibility"));
 
 	animation_toggle_skeleton_visibility->connect(SceneStringName(pressed), callable_mp(this, &SceneImportSettingsDialog::_animation_update_skeleton_visibility));
 
@@ -1774,7 +1829,6 @@ SceneImportSettingsDialog::SceneImportSettingsDialog() {
 	light_rotate_switch->set_toggle_mode(true);
 	light_rotate_switch->set_pressed(true);
 	light_rotate_switch->set_tooltip_text(TTR("Rotate Lights With Model"));
-	light_rotate_switch->set_accessibility_name(TTRC("Rotate Lights With Model"));
 	light_rotate_switch->connect(SceneStringName(pressed), callable_mp(this, &SceneImportSettingsDialog::_on_light_rotate_switch_pressed));
 	vb_light->add_child(light_rotate_switch);
 
@@ -1783,7 +1837,6 @@ SceneImportSettingsDialog::SceneImportSettingsDialog() {
 	light_1_switch->set_toggle_mode(true);
 	light_1_switch->set_pressed(true);
 	light_1_switch->set_tooltip_text(TTR("Primary Light"));
-	light_1_switch->set_accessibility_name(TTRC("Primary Light"));
 	light_1_switch->connect(SceneStringName(pressed), callable_mp(this, &SceneImportSettingsDialog::_on_light_1_switch_pressed));
 	vb_light->add_child(light_1_switch);
 
@@ -1792,7 +1845,6 @@ SceneImportSettingsDialog::SceneImportSettingsDialog() {
 	light_2_switch->set_toggle_mode(true);
 	light_2_switch->set_pressed(true);
 	light_2_switch->set_tooltip_text(TTR("Secondary Light"));
-	light_2_switch->set_accessibility_name(TTRC("Secondary Light"));
 	light_2_switch->connect(SceneStringName(pressed), callable_mp(this, &SceneImportSettingsDialog::_on_light_2_switch_pressed));
 	vb_light->add_child(light_2_switch);
 

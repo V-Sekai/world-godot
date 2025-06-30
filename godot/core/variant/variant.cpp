@@ -1642,7 +1642,7 @@ String Variant::stringify(int recursion_count) const {
 		case STRING_NAME:
 			return operator StringName();
 		case NODE_PATH:
-			return operator NodePath();
+			return String(operator NodePath());
 		case COLOR:
 			return String(operator Color());
 		case DICTIONARY: {
@@ -1725,11 +1725,11 @@ String Variant::stringify(int recursion_count) const {
 		}
 		case CALLABLE: {
 			const Callable &c = *reinterpret_cast<const Callable *>(_data._mem);
-			return c;
+			return String(c);
 		}
 		case SIGNAL: {
 			const Signal &s = *reinterpret_cast<const Signal *>(_data._mem);
-			return s;
+			return String(s);
 		}
 		case RID: {
 			const ::RID &s = *reinterpret_cast<const ::RID *>(_data._mem);
@@ -3501,9 +3501,9 @@ String Variant::get_call_error_text(Object *p_base, const StringName &p_method, 
 			err_text = "Cannot convert argument " + itos(errorarg + 1) + " from [missing argptr, type unknown] to " + Variant::get_type_name(Variant::Type(ce.expected));
 		}
 	} else if (ce.error == Callable::CallError::CALL_ERROR_TOO_MANY_ARGUMENTS) {
-		err_text = "Method expected " + itos(ce.expected) + " arguments, but called with " + itos(p_argcount);
+		err_text = "Method expected " + itos(ce.expected) + " argument(s), but called with " + itos(p_argcount);
 	} else if (ce.error == Callable::CallError::CALL_ERROR_TOO_FEW_ARGUMENTS) {
-		err_text = "Method expected " + itos(ce.expected) + " arguments, but called with " + itos(p_argcount);
+		err_text = "Method expected " + itos(ce.expected) + " argument(s), but called with " + itos(p_argcount);
 	} else if (ce.error == Callable::CallError::CALL_ERROR_INVALID_METHOD) {
 		err_text = "Method not found";
 	} else if (ce.error == Callable::CallError::CALL_ERROR_INSTANCE_IS_NULL) {

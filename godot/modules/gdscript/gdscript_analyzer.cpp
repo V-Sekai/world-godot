@@ -1540,12 +1540,12 @@ void GDScriptAnalyzer::resolve_class_body(GDScriptParser::ClassNode *p_class, co
 					if (member.function->is_abstract) {
 						if (base_class == p_class) {
 							const String class_name = p_class->identifier == nullptr ? p_class->fqcn.get_file() : String(p_class->identifier->name);
-							push_error(vformat(R"*(Class "%s" is not abstract but contains abstract methods. Mark the class as abstract or remove "abstract" from all methods in this class.)*", class_name), p_class);
+							push_error(vformat(R"*(Class "%s" is not abstract but contains abstract methods. Mark the class as "@abstract" or remove "@abstract" from all methods in this class.)*", class_name), p_class);
 							break;
 						} else if (!implemented_funcs.has(member.function->identifier->name)) {
 							const String class_name = p_class->identifier == nullptr ? p_class->fqcn.get_file() : String(p_class->identifier->name);
 							const String base_class_name = base_class->identifier == nullptr ? base_class->fqcn.get_file() : String(base_class->identifier->name);
-							push_error(vformat(R"*(Class "%s" must implement "%s.%s()" and other inherited abstract methods or be marked as abstract.)*", class_name, base_class_name, member.function->identifier->name), p_class);
+							push_error(vformat(R"*(Class "%s" must implement "%s.%s()" and other inherited abstract methods or be marked as "@abstract".)*", class_name, base_class_name, member.function->identifier->name), p_class);
 							break;
 						}
 					} else {
@@ -1798,6 +1798,33 @@ void GDScriptAnalyzer::resolve_function_signature(GDScriptParser::FunctionNode *
 		}
 	}
 
+	if (p_function->is_vararg()) {
+		resolve_parameter(p_function->rest_parameter);
+		if (p_function->rest_parameter->datatype_specifier != nullptr) {
+			GDScriptParser::DataType specified_type = p_function->rest_parameter->get_datatype();
+			if (specified_type.kind != GDScriptParser::DataType::BUILTIN || specified_type.builtin_type != Variant::ARRAY) {
+				push_error(vformat(R"(The rest parameter type must be "Array", but "%s" is specified.)", specified_type.to_string()), p_function->rest_parameter->datatype_specifier);
+			} else if ((specified_type.has_container_element_type(0) && !specified_type.get_container_element_type(0).is_variant())) {
+				push_error(R"(Typed arrays are currently not supported for the rest parameter.)", p_function->rest_parameter->datatype_specifier);
+			}
+		} else {
+			GDScriptParser::DataType inferred_type;
+			inferred_type.type_source = GDScriptParser::DataType::INFERRED;
+			inferred_type.kind = GDScriptParser::DataType::BUILTIN;
+			inferred_type.builtin_type = Variant::ARRAY;
+			p_function->rest_parameter->set_datatype(inferred_type);
+#ifdef DEBUG_ENABLED
+			parser->push_warning(p_function->rest_parameter, GDScriptWarning::UNTYPED_DECLARATION, "Parameter", p_function->rest_parameter->identifier->name);
+#endif
+		}
+#ifdef DEBUG_ENABLED
+		if (p_function->rest_parameter->usages == 0 && !String(p_function->rest_parameter->identifier->name).begins_with("_") && !p_function->is_abstract) {
+			parser->push_warning(p_function->rest_parameter->identifier, GDScriptWarning::UNUSED_PARAMETER, function_visible_name, p_function->rest_parameter->identifier->name);
+		}
+		is_shadowing(p_function->rest_parameter->identifier, "function parameter", true);
+#endif // DEBUG_ENABLED
+	}
+
 	if (!p_is_lambda && function_name == GDScriptLanguage::get_singleton()->strings._init) {
 		// Constructor.
 		GDScriptParser::DataType return_type = parser->current_class->get_datatype();
@@ -1864,15 +1891,23 @@ void GDScriptAnalyzer::resolve_function_signature(GDScriptParser::FunctionNode *
 				}
 			}
 
-			int par_count_diff = p_function->parameters.size() - parameters_types.size();
-			valid = valid && par_count_diff >= 0;
-			valid = valid && default_value_count >= default_par_count + par_count_diff;
+			int parent_min_argc = parameters_types.size() - default_par_count;
+			int parent_max_argc = (method_flags & METHOD_FLAG_VARARG) ? INT_MAX : parameters_types.size();
+			int current_min_argc = p_function->parameters.size() - default_value_count;
+			int current_max_argc = p_function->is_vararg() ? INT_MAX : p_function->parameters.size();
+
+			// `[current_min_argc..current_max_argc]` must include `[parent_min_argc..parent_max_argc]`.
+			valid = valid && current_min_argc <= parent_min_argc && parent_max_argc <= current_max_argc;
 
 			if (valid) {
 				int i = 0;
 				for (const GDScriptParser::DataType &parent_par_type : parameters_types) {
+					if (i >= p_function->parameters.size()) {
+						break;
+					}
+					const GDScriptParser::DataType &current_par_type = p_function->parameters[i]->datatype;
+					i++;
 					// Check parameter type contravariance.
-					GDScriptParser::DataType current_par_type = p_function->parameters[i++]->get_datatype();
 					if (parent_par_type.is_variant() && parent_par_type.is_hard_type()) {
 						// `is_type_compatible()` returns `true` if one of the types is `Variant`.
 						// Don't allow narrowing a hard `Variant`.
@@ -1901,6 +1936,12 @@ void GDScriptAnalyzer::resolve_function_signature(GDScriptParser::FunctionNode *
 					}
 
 					j++;
+				}
+				if (method_flags & METHOD_FLAG_VARARG) {
+					if (!parameters_types.is_empty()) {
+						parent_signature += ", ";
+					}
+					parent_signature += "...";
 				}
 				parent_signature += ") -> ";
 
@@ -1946,6 +1987,20 @@ void GDScriptAnalyzer::resolve_function_body(GDScriptParser::FunctionNode *p_fun
 	}
 	p_function->resolved_body = true;
 
+	if (p_function->is_abstract) {
+		// Abstract functions don't have a body.
+		if (!p_function->body->statements.is_empty()) {
+			push_error(R"(Abstract function cannot have a body.)", p_function->body);
+		}
+		return;
+	} else {
+		// Non-abstract functions must have a body.
+		if (p_function->body->statements.is_empty()) {
+			push_error(R"(A function must either have a ":" followed by a body, or be marked as "@abstract".)", p_function);
+			return;
+		}
+	}
+
 	GDScriptParser::FunctionNode *previous_function = parser->current_function;
 	parser->current_function = p_function;
 
@@ -1958,7 +2013,7 @@ void GDScriptAnalyzer::resolve_function_body(GDScriptParser::FunctionNode *p_fun
 		// Use the suite inferred type if return isn't explicitly set.
 		p_function->set_datatype(p_function->body->get_datatype());
 	} else if (p_function->get_datatype().is_hard_type() && (p_function->get_datatype().kind != GDScriptParser::DataType::BUILTIN || p_function->get_datatype().builtin_type != Variant::NIL)) {
-		if (!p_function->is_abstract && !p_function->body->has_return && (p_is_lambda || p_function->identifier->name != GDScriptLanguage::get_singleton()->strings._init)) {
+		if (!p_function->body->has_return && (p_is_lambda || p_function->identifier->name != GDScriptLanguage::get_singleton()->strings._init)) {
 			push_error(R"(Not all code paths return a value.)", p_function);
 		}
 	}
@@ -2195,101 +2250,39 @@ void GDScriptAnalyzer::resolve_if(GDScriptParser::IfNode *p_if) {
 }
 
 void GDScriptAnalyzer::resolve_for(GDScriptParser::ForNode *p_for) {
-	bool list_resolved = false;
+	GDScriptParser::DataType variable_type;
+	GDScriptParser::DataType list_type;
 
-	// Optimize constant range() call to not allocate an array.
-	// Use int, Vector2i, Vector3i instead, which also can be used as range iterators.
-	if (p_for->list && p_for->list->type == GDScriptParser::Node::CALL) {
-		GDScriptParser::CallNode *call = static_cast<GDScriptParser::CallNode *>(p_for->list);
-		GDScriptParser::Node::Type callee_type = call->get_callee_type();
-		if (callee_type == GDScriptParser::Node::IDENTIFIER) {
-			GDScriptParser::IdentifierNode *callee = static_cast<GDScriptParser::IdentifierNode *>(call->callee);
-			if (callee->name == "range") {
-				list_resolved = true;
-				if (call->arguments.is_empty()) {
-					push_error(R"*(Invalid call for "range()" function. Expected at least 1 argument, none given.)*", call->callee);
-				} else if (call->arguments.size() > 3) {
-					push_error(vformat(R"*(Invalid call for "range()" function. Expected at most 3 arguments, %d given.)*", call->arguments.size()), call->callee);
-				} else {
-					// Now we can optimize it.
-					bool can_reduce = true;
-					Vector<Variant> args;
-					args.resize(call->arguments.size());
-					for (int i = 0; i < call->arguments.size(); i++) {
-						GDScriptParser::ExpressionNode *argument = call->arguments[i];
-						reduce_expression(argument);
+	if (p_for->list) {
+		resolve_node(p_for->list, false);
 
-						if (argument->is_constant) {
-							if (argument->reduced_value.get_type() != Variant::INT && argument->reduced_value.get_type() != Variant::FLOAT) {
-								can_reduce = false;
-								push_error(vformat(R"*(Invalid argument for "range()" call. Argument %d should be int or float but "%s" was given.)*", i + 1, Variant::get_type_name(argument->reduced_value.get_type())), argument);
-							}
-							if (can_reduce) {
-								args.write[i] = argument->reduced_value;
-							}
-						} else {
-							can_reduce = false;
-							GDScriptParser::DataType argument_type = argument->get_datatype();
-							if (argument_type.is_variant() || !argument_type.is_hard_type()) {
-								mark_node_unsafe(argument);
-							}
-							if (!argument_type.is_variant() && (argument_type.builtin_type != Variant::INT && argument_type.builtin_type != Variant::FLOAT)) {
-								if (!argument_type.is_hard_type()) {
-									downgrade_node_type_source(argument);
-								} else {
-									push_error(vformat(R"*(Invalid argument for "range()" call. Argument %d should be int or float but "%s" was given.)*", i + 1, argument_type.to_string()), argument);
-								}
-							}
-						}
+		bool is_range = false;
+		if (p_for->list->type == GDScriptParser::Node::CALL) {
+			GDScriptParser::CallNode *call = static_cast<GDScriptParser::CallNode *>(p_for->list);
+			if (call->get_callee_type() == GDScriptParser::Node::IDENTIFIER) {
+				if (static_cast<GDScriptParser::IdentifierNode *>(call->callee)->name == "range") {
+					if (call->arguments.is_empty()) {
+						push_error(R"*(Invalid call for "range()" function. Expected at least 1 argument, none given.)*", call);
+					} else if (call->arguments.size() > 3) {
+						push_error(vformat(R"*(Invalid call for "range()" function. Expected at most 3 arguments, %d given.)*", call->arguments.size()), call);
 					}
-
-					Variant reduced;
-
-					if (can_reduce) {
-						switch (args.size()) {
-							case 1:
-								reduced = (int32_t)args[0];
-								break;
-							case 2:
-								reduced = Vector2i(args[0], args[1]);
-								break;
-							case 3:
-								reduced = Vector3i(args[0], args[1], args[2]);
-								break;
-						}
-						p_for->list->is_constant = true;
-						p_for->list->reduced_value = reduced;
-					}
-				}
-
-				if (p_for->list->is_constant) {
-					p_for->list->set_datatype(type_from_variant(p_for->list->reduced_value, p_for->list));
-				} else {
-					GDScriptParser::DataType list_type;
-					list_type.type_source = GDScriptParser::DataType::ANNOTATED_EXPLICIT;
-					list_type.kind = GDScriptParser::DataType::BUILTIN;
-					list_type.builtin_type = Variant::ARRAY;
-					p_for->list->set_datatype(list_type);
+					is_range = true;
+					variable_type.type_source = GDScriptParser::DataType::ANNOTATED_INFERRED;
+					variable_type.kind = GDScriptParser::DataType::BUILTIN;
+					variable_type.builtin_type = Variant::INT;
 				}
 			}
 		}
-	}
 
-	GDScriptParser::DataType variable_type;
-	String list_visible_type = "<unresolved type>";
-	if (list_resolved) {
-		variable_type.type_source = GDScriptParser::DataType::ANNOTATED_INFERRED;
-		variable_type.kind = GDScriptParser::DataType::BUILTIN;
-		variable_type.builtin_type = Variant::INT;
-		list_visible_type = "Array[int]"; // NOTE: `range()` has `Array` return type.
-	} else if (p_for->list) {
-		resolve_node(p_for->list, false);
-		GDScriptParser::DataType list_type = p_for->list->get_datatype();
-		list_visible_type = list_type.to_string();
+		list_type = p_for->list->get_datatype();
+
 		if (!list_type.is_hard_type()) {
 			mark_node_unsafe(p_for->list);
 		}
-		if (list_type.is_variant()) {
+
+		if (is_range) {
+			// Already solved.
+		} else if (list_type.is_variant()) {
 			variable_type.kind = GDScriptParser::DataType::VARIANT;
 			mark_node_unsafe(p_for->list);
 		} else if (list_type.has_container_element_type(0)) {
@@ -2342,7 +2335,7 @@ void GDScriptAnalyzer::resolve_for(GDScriptParser::ForNode *p_for) {
 						mark_node_unsafe(p_for->variable);
 						p_for->use_conversion_assign = true;
 					} else {
-						push_error(vformat(R"(Unable to iterate on value of type "%s" with variable of type "%s".)", list_visible_type, specified_type.to_string()), p_for->datatype_specifier);
+						push_error(vformat(R"(Unable to iterate on value of type "%s" with variable of type "%s".)", list_type.to_string(), specified_type.to_string()), p_for->datatype_specifier);
 					}
 				} else if (!is_type_compatible(specified_type, variable_type)) {
 					p_for->use_conversion_assign = true;
@@ -5852,6 +5845,9 @@ bool GDScriptAnalyzer::get_function_signature(GDScriptParser::Node *p_source, bo
 			if (found_function->parameters[i]->initializer != nullptr) {
 				r_default_arg_count++;
 			}
+		}
+		if (found_function->is_vararg()) {
+			r_method_flags.set_flag(METHOD_FLAG_VARARG);
 		}
 		r_return_type = p_is_constructor ? p_base_type : found_function->get_datatype();
 		r_return_type.is_meta_type = false;
