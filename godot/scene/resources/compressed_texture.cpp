@@ -334,6 +334,7 @@ Ref<Image> CompressedTexture2D::load_image_from_file(Ref<FileAccess> f, int p_si
 			} else if (data_format == DATA_FORMAT_WEBP && Image::webp_unpacker) {
 				img = Image::webp_unpacker(pv);
 			}
+
 			if (img.is_null() || img->is_empty()) {
 				ERR_FAIL_COND_V(img.is_null() || img->is_empty(), Ref<Image>());
 			}
@@ -343,7 +344,7 @@ Ref<Image> CompressedTexture2D::load_image_from_file(Ref<FileAccess> f, int p_si
 
 			// The format will actually be the format of the header,
 			// as it may have changed on compression.
-			if (!img->is_compressed() && format != img->get_format()) {
+			if (format != img->get_format()) {
 				// Convert the image to the desired format.
 				// Note: We are not decompressing the image here, just changing its format.
 				// It's important that all images in the texture array share the same format for correct rendering.
