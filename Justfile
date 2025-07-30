@@ -107,8 +107,8 @@ setup-emscripten:
     if [ ! -d "${EMSDK_ROOT}" ]; then
         git clone https://github.com/emscripten-core/emsdk.git $EMSDK_ROOT
         cd $EMSDK_ROOT
-        ./emsdk install 3.1.67
-        ./emsdk activate 3.1.67
+        ./emsdk install 4.0.11
+        ./emsdk activate 4.0.11
     fi
 
 setup-arm64:
