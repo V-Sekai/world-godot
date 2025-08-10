@@ -95,7 +95,7 @@ jobs:
           name: Godot-${{ matrix.platform }}-${{ matrix.target }}-${{ matrix.precision }}
           path: editor
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     permissions:
       pull-requests: write
       actions: write
@@ -137,7 +137,14 @@ jobs:
       cancel-in-progress: true
 
     steps:
-      - uses: extractions/setup-just@v3
+      - name: Set up dependencies
+        run: |
+          if dnf >/dev/null 2>&1; then
+            dnf install -y just git; # Fedora 39
+          else
+            echo "'just' requires ubuntu-24.04 or more";
+            sudo apt install -y just git;
+          fi
 
       - name: Set up Go
         uses: actions/setup-go@v2
@@ -314,7 +321,8 @@ jobs:
           prerelease: true
 
   upload-templates:
-    runs-on: ubuntu-22.04
+    # 'just' is apt package from 24.04+
+    runs-on: ubuntu-24.04
     needs: release
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -323,7 +331,6 @@ jobs:
       matrix:
         type: [templates, templates-symbols]
     steps:
-      - uses: extractions/setup-just@v3
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -410,4 +417,3 @@ jobs:
             -H "Authorization: Bearer ${REPO_TOKEN}" \
             --data '{ "event_type": "build-ready", "client_payload": {} }' \
             https://api.github.com/repos/${{ matrix.repo }}/dispatches
-
