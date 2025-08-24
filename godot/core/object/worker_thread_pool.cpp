@@ -225,7 +225,7 @@ void WorkerThreadPool::_post_tasks(Task **p_tasks, uint32_t p_count, bool p_high
 	// in custom builds.
 
 	// Avoid calling pump tasks or low priority tasks from the calling thread.
-	bool process_on_calling_thread = threads.is_empty() && p_high_priority && !p_pump_task;
+	bool process_on_calling_thread = threads.is_empty() && !p_pump_task;
 	if (process_on_calling_thread) {
 		p_lock.temp_unlock();
 		for (uint32_t i = 0; i < p_count; i++) {
@@ -823,7 +823,7 @@ void WorkerThreadPool::init(int p_thread_count, float p_low_priority_task_ratio)
 
 	runlevel = RUNLEVEL_NORMAL;
 
-	if (p_thread_count < 0) {
+	if (p_thread_count <= 0) {
 		p_thread_count = OS::get_singleton()->get_default_thread_pool_size();
 	}
 

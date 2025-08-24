@@ -2926,6 +2926,9 @@ void EditorNode::_edit_current(bool p_skip_foreign, bool p_skip_inspector_update
 				if (!changing_scene) {
 					main_plugin->edit(current_obj);
 				}
+			} else if (Object::cast_to<Script>(current_obj)) {
+				editor_main_screen->select(plugin_index);
+				main_plugin->edit(current_obj);
 			} else if (main_plugin != editor_plugin_screen) {
 				// Unedit previous plugin.
 				editor_plugin_screen->edit(nullptr);
@@ -4096,6 +4099,7 @@ bool EditorNode::is_addon_plugin_enabled(const String &p_addon) const {
 void EditorNode::_remove_edited_scene(bool p_change_tab) {
 	// When scene gets closed no node is edited anymore, so make sure the editors are notified before nodes are freed.
 	hide_unused_editors(SceneTreeDock::get_singleton());
+	SceneTreeDock::get_singleton()->clear_previous_node_selection();
 
 	int new_index = editor_data.get_edited_scene();
 	int old_index = new_index;
@@ -5353,15 +5357,19 @@ bool EditorNode::is_object_of_custom_type(const Object *p_object, const StringNa
 }
 
 // Used to track the progress of tasks in the CLI output (since we don't have any other frame of reference).
-// All tasks run sequentially, so we can just keep a single counter.
-static int progress_total_steps = 0;
+static HashMap<String, int> progress_total_steps;
+
+static String last_progress_task;
+static String last_progress_state;
+static int last_progress_step = 0;
+static double last_progress_time = 0;
 
 void EditorNode::progress_add_task(const String &p_task, const String &p_label, int p_steps, bool p_can_cancel) {
 	if (!singleton) {
 		return;
 	} else if (singleton->cmdline_mode) {
 		print_line_rich(vformat("[   0%% ] [color=gray][b]%s[/b] | Started %s (%d steps)[/color]", p_task, p_label, p_steps));
-		progress_total_steps = p_steps;
+		progress_total_steps[p_task] = p_steps;
 	} else if (singleton->progress_dialog) {
 		singleton->progress_dialog->add_task(p_task, p_label, p_steps, p_can_cancel);
 	}
@@ -5371,8 +5379,18 @@ bool EditorNode::progress_task_step(const String &p_task, const String &p_state,
 	if (!singleton) {
 		return false;
 	} else if (singleton->cmdline_mode) {
-		const int percent = (p_step / float(progress_total_steps + 1)) * 100;
-		print_line_rich(vformat("[%4d%% ] [color=gray][b]%s[/b] | %s[/color]", percent, p_task, p_state));
+		double current_time = USEC_TO_SEC(OS::get_singleton()->get_ticks_usec());
+		double elapsed_time = current_time - last_progress_time;
+		if (p_task != last_progress_task || p_state != last_progress_state || p_step != last_progress_step || elapsed_time >= 1.0) {
+			// Only print the progress if it's changed since the last print, or if one second has passed.
+			// This prevents multithreaded import from printing the same progress too often, which would bloat the log file.
+			const int percent = (p_step / float(progress_total_steps[p_task] + 1)) * 100;
+			print_line_rich(vformat("[%4d%% ] [color=gray][b]%s[/b] | %s[/color]", percent, p_task, p_state));
+			last_progress_task = p_task;
+			last_progress_state = p_state;
+			last_progress_step = p_step;
+			last_progress_time = current_time;
+		}
 		return false;
 	} else if (singleton->progress_dialog) {
 		return singleton->progress_dialog->task_step(p_task, p_state, p_step, p_force_refresh);
@@ -5385,6 +5403,7 @@ void EditorNode::progress_end_task(const String &p_task) {
 	if (!singleton) {
 		return;
 	} else if (singleton->cmdline_mode) {
+		progress_total_steps.erase(p_task);
 		print_line_rich(vformat("[color=green][ DONE ][/color] [b]%s[/b]\n", p_task));
 	} else if (singleton->progress_dialog) {
 		singleton->progress_dialog->end_task(p_task);
@@ -7385,13 +7404,13 @@ void EditorNode::_update_main_menu_type() {
 		menu_btn_spacer = memnew(Control);
 		menu_btn_spacer->set_custom_minimum_size(Vector2(8, 0) * EDSCALE);
 		title_bar->add_child(menu_btn_spacer);
-		title_bar->move_child(menu_btn_spacer, 0);
+		title_bar->move_child(menu_btn_spacer, left_menu_spacer ? left_menu_spacer->get_index() + 1 : 0);
 #endif
 		title_bar->add_child(main_menu_button);
 		if (menu_btn_spacer == nullptr) {
-			title_bar->move_child(main_menu_button, 0);
+			title_bar->move_child(main_menu_button, left_menu_spacer ? left_menu_spacer->get_index() + 1 : 0);
 		} else {
-			title_bar->move_child(main_menu_button, 1);
+			title_bar->move_child(main_menu_button, menu_btn_spacer->get_index() + 1);
 		}
 		memdelete_notnull(main_menu_bar);
 		main_menu_bar = nullptr;
@@ -7426,7 +7445,7 @@ void EditorNode::_update_main_menu_type() {
 		}
 
 		title_bar->add_child(main_menu_bar);
-		title_bar->move_child(main_menu_bar, 0);
+		title_bar->move_child(main_menu_bar, left_menu_spacer ? left_menu_spacer->get_index() + 1 : 0);
 
 		memdelete_notnull(menu_btn_spacer);
 		memdelete_notnull(main_menu_button);
