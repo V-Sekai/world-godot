@@ -241,6 +241,7 @@ build-platform-target platform target arch="auto" precision="double" osx_bundle=
                     test=yes \
                     dlink_enabled=yes \
                     debug_symbols=no \
+                    disable_exceptions=no \
                     {{extra_options}}
             ;;
         ios)
