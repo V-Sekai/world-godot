@@ -141,7 +141,7 @@ void register_core_types() {
 
 	CoreStringNames::create();
 
-	if (GD_IS_CLASS_ENABLED(Translation)) {
+	if constexpr (GD_IS_CLASS_ENABLED(Translation)) {
 		resource_format_po.instantiate();
 		ResourceLoader::add_resource_format_loader(resource_format_po);
 	}
@@ -157,7 +157,7 @@ void register_core_types() {
 	resource_format_importer_saver.instantiate();
 	ResourceSaver::add_resource_format_saver(resource_format_importer_saver);
 
-	if (GD_IS_CLASS_ENABLED(Image)) {
+	if constexpr (GD_IS_CLASS_ENABLED(Image)) {
 		resource_format_image.instantiate();
 		ResourceLoader::add_resource_format_loader(resource_format_image);
 	}
@@ -227,7 +227,7 @@ void register_core_types() {
 	ClassDB::register_custom_instance_class<PacketPeerDTLS>();
 	ClassDB::register_custom_instance_class<DTLSServer>();
 
-	if (GD_IS_CLASS_ENABLED(Crypto)) {
+	if constexpr (GD_IS_CLASS_ENABLED(Crypto)) {
 		resource_format_saver_crypto.instantiate();
 		ResourceSaver::add_resource_format_saver(resource_format_saver_crypto);
 
@@ -235,7 +235,7 @@ void register_core_types() {
 		ResourceLoader::add_resource_format_loader(resource_format_loader_crypto);
 	}
 
-	if (GD_IS_CLASS_ENABLED(JSON)) {
+	if constexpr (GD_IS_CLASS_ENABLED(JSON)) {
 		resource_saver_json.instantiate();
 		ResourceSaver::add_resource_format_saver(resource_saver_json);
 
@@ -295,7 +295,7 @@ void register_core_types() {
 
 	gdextension_manager = memnew(GDExtensionManager);
 
-	if (GD_IS_CLASS_ENABLED(GDExtension)) {
+	if constexpr (GD_IS_CLASS_ENABLED(GDExtension)) {
 		resource_loader_gdextension.instantiate();
 		ResourceLoader::add_resource_format_loader(resource_loader_gdextension);
 	}
@@ -429,7 +429,7 @@ void unregister_core_types() {
 		memdelete(ip);
 	}
 
-	if (GD_IS_CLASS_ENABLED(Image)) {
+	if constexpr (GD_IS_CLASS_ENABLED(Image)) {
 		ResourceLoader::remove_resource_format_loader(resource_format_image);
 		resource_format_image.unref();
 	}
@@ -446,12 +446,12 @@ void unregister_core_types() {
 	ResourceSaver::remove_resource_format_saver(resource_format_importer_saver);
 	resource_format_importer_saver.unref();
 
-	if (GD_IS_CLASS_ENABLED(Translation)) {
+	if constexpr (GD_IS_CLASS_ENABLED(Translation)) {
 		ResourceLoader::remove_resource_format_loader(resource_format_po);
 		resource_format_po.unref();
 	}
 
-	if (GD_IS_CLASS_ENABLED(Crypto)) {
+	if constexpr (GD_IS_CLASS_ENABLED(Crypto)) {
 		ResourceSaver::remove_resource_format_saver(resource_format_saver_crypto);
 		resource_format_saver_crypto.unref();
 
@@ -459,7 +459,7 @@ void unregister_core_types() {
 		resource_format_loader_crypto.unref();
 	}
 
-	if (GD_IS_CLASS_ENABLED(JSON)) {
+	if constexpr (GD_IS_CLASS_ENABLED(JSON)) {
 		ResourceSaver::remove_resource_format_saver(resource_saver_json);
 		resource_saver_json.unref();
 
@@ -467,7 +467,7 @@ void unregister_core_types() {
 		resource_loader_json.unref();
 	}
 
-	if (GD_IS_CLASS_ENABLED(GDExtension)) {
+	if constexpr (GD_IS_CLASS_ENABLED(GDExtension)) {
 		ResourceLoader::remove_resource_format_loader(resource_loader_gdextension);
 		resource_loader_gdextension.unref();
 	}

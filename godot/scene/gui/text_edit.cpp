@@ -348,7 +348,7 @@ void TextEdit::Text::invalidate_cache(int p_line, bool p_text_changed) {
 	// Apply tab align.
 	if (tab_size > 0) {
 		Vector<float> tabs;
-		tabs.push_back(font->get_char_size(' ', font_size).width * tab_size);
+		tabs.push_back(MAX(1, (font->get_char_size(' ', font_size).width + font->get_spacing(TextServer::SPACING_SPACE)) * tab_size));
 		text_line.data_buf->tab_align(tabs);
 	}
 
@@ -394,7 +394,7 @@ void TextEdit::Text::invalidate_all_lines() {
 		if (tab_size_dirty) {
 			if (tab_size > 0) {
 				Vector<float> tabs;
-				tabs.push_back(font->get_char_size(' ', font_size).width * tab_size);
+				tabs.push_back(MAX(1, (font->get_char_size(' ', font_size).width + font->get_spacing(TextServer::SPACING_SPACE)) * tab_size));
 				text[i].data_buf->tab_align(tabs);
 			}
 		}
@@ -945,7 +945,7 @@ void TextEdit::_notification(int p_what) {
 				theme_cache.style_readonly->draw(ci, Rect2(Point2(), size));
 				draw_caret = is_drawing_caret_when_editable_disabled();
 			}
-			if (has_focus()) {
+			if (has_focus(true)) {
 				theme_cache.style_focus->draw(ci, Rect2(Point2(), size));
 			}
 
@@ -3366,7 +3366,7 @@ void TextEdit::_update_placeholder() {
 
 	if (get_tab_size() > 0) {
 		Vector<float> tabs;
-		tabs.push_back(theme_cache.font->get_char_size(' ', theme_cache.font_size).width * get_tab_size());
+		tabs.push_back(MAX(1, (theme_cache.font->get_char_size(' ', theme_cache.font_size).width + theme_cache.font->get_spacing(TextServer::SPACING_SPACE)) * get_tab_size()));
 		placeholder_data_buf->tab_align(tabs);
 	}
 
