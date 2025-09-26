@@ -12,9 +12,12 @@
 		<link title="3D Physics Tests Demo">https://godotengine.org/asset-library/asset/2747</link>
 	</tutorials>
 	<members>
-		<member name="height" type="float" setter="set_height" getter="get_height" default="1.0">
+		<member name="height" type="float" setter="set_height" getter="get_height" default="2.0">
+			The total height of the tapered capsule, calculated as [member mid_height] + [member radius_top] + [member radius_bottom]. This is the full extent from the bottom of the lower hemisphere to the top of the upper hemisphere. Setting this property adjusts [member mid_height] while keeping the radii unchanged.
+		</member>
+		<member name="mid_height" type="float" setter="set_mid_height" getter="get_mid_height" default="1.0">
 			The height of the cylindrical section of the tapered capsule (excluding the hemispherical ends). This is the distance between the centers of the two hemispheres.
-			[b]Note:[/b] The [member height] must be greater than [code]0.0[/code]. Unlike regular capsules, tapered capsules can have any positive height regardless of the radius values, providing more flexibility in collision shape design.
+			[b]Note:[/b] The [member mid_height] must be greater than [code]0.0[/code]. Unlike regular capsules, tapered capsules can have any positive height regardless of the radius values, providing more flexibility in collision shape design.
 		</member>
 		<member name="radius_bottom" type="float" setter="set_radius_bottom" getter="get_radius_bottom" default="0.5">
 			The radius of the bottom hemisphere of the tapered capsule. This determines the size of the lower hemispherical end of the collision shape. When [member radius_bottom] differs from [member radius_top], the cylindrical section becomes tapered, creating a cone-like transition between the hemispheres for more complex collision detection.

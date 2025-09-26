@@ -31,15 +31,15 @@
 #pragma once
 
 #include "scene/resources/3d/shape_3d.h"
-#include "scene/resources/3d/tapered_capsule_mesh.h"
+#include "servers/physics_server_3d.h"
 
 class ArrayMesh;
 
 class TaperedCapsuleShape3D : public Shape3D {
 	GDCLASS(TaperedCapsuleShape3D, Shape3D);
-	float radius_top = 0.5;
-	float radius_bottom = 0.5;
-	float height = 1.0; // Height of the cylindrical part
+	real_t radius_top = 0.5;
+	real_t radius_bottom = 0.5;
+	real_t mid_height = 1.0; // Height of the cylindrical part
 
 protected:
 	static void _bind_methods();
@@ -47,18 +47,26 @@ protected:
 	virtual void _update_shape() override;
 
 public:
-	void set_radius_top(float p_radius_top);
-	float get_radius_top() const;
+	void set_radius_top(real_t p_radius_top);
+	real_t get_radius_top() const;
 
-	void set_radius_bottom(float p_radius_bottom);
-	float get_radius_bottom() const;
+	void set_radius_bottom(real_t p_radius_bottom);
+	real_t get_radius_bottom() const;
 
-	void set_height(float p_height);
-	float get_height() const;
+	void set_mid_height(real_t p_mid_height);
+	real_t get_mid_height() const;
+
+	void set_height(real_t p_height);
+	real_t get_height() const;
 
 	virtual Vector<Vector3> get_debug_mesh_lines() const override;
 	virtual Ref<ArrayMesh> get_debug_arraymesh_faces(const Color &p_modulate) const override;
 	virtual real_t get_enclosing_radius() const override;
+
+	virtual Variant get_data() const;
+	virtual void set_data(const Variant &p_data);
+
+	virtual PhysicsServer3D::ShapeType get_type() const { return PhysicsServer3D::SHAPE_CAPSULE; } // Use capsule type for physics server compatibility
 
 	TaperedCapsuleShape3D();
 };

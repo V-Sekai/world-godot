@@ -35,14 +35,14 @@
 #include "Jolt/Physics/Collision/Shape/TaperedCapsuleShape.h"
 
 JPH::ShapeRefC JoltTaperedCapsuleShape3D::_build() const {
-	ERR_FAIL_COND_V_MSG(radius1 <= 0.0f, nullptr, vformat("Failed to build Jolt Physics tapered capsule shape with %s. Its radius1 must be greater than 0. This shape belongs to %s.", to_string(), _owners_to_string()));
-	ERR_FAIL_COND_V_MSG(radius2 <= 0.0f, nullptr, vformat("Failed to build Jolt Physics tapered capsule shape with %s. Its radius2 must be greater than 0. This shape belongs to %s.", to_string(), _owners_to_string()));
-	ERR_FAIL_COND_V_MSG(height <= 0.0f, nullptr, vformat("Failed to build Jolt Physics tapered capsule shape with %s. Its height must be greater than 0. This shape belongs to %s.", to_string(), _owners_to_string()));
-	ERR_FAIL_COND_V_MSG(height < radius1 + radius2, nullptr, vformat("Failed to build Jolt Physics tapered capsule shape with %s. Its height must be at least the sum of its radii. This shape belongs to %s.", to_string(), _owners_to_string()));
+	ERR_FAIL_COND_V_MSG(radius_top <= 0.0f, nullptr, vformat("Failed to build Jolt Physics tapered capsule shape with %s. Its radius_top must be greater than 0. This shape belongs to %s.", to_string(), _owners_to_string()));
+	ERR_FAIL_COND_V_MSG(radius_bottom <= 0.0f, nullptr, vformat("Failed to build Jolt Physics tapered capsule shape with %s. Its radius_bottom must be greater than 0. This shape belongs to %s.", to_string(), _owners_to_string()));
+	ERR_FAIL_COND_V_MSG(mid_height <= 0.0f, nullptr, vformat("Failed to build Jolt Physics tapered capsule shape with %s. Its mid_height must be greater than 0. This shape belongs to %s.", to_string(), _owners_to_string()));
+	ERR_FAIL_COND_V_MSG(mid_height < radius_top + radius_bottom, nullptr, vformat("Failed to build Jolt Physics tapered capsule shape with %s. Its mid_height must be at least the sum of its radii. This shape belongs to %s.", to_string(), _owners_to_string()));
 
-	const float half_height = height / 2.0f;
+	const float half_height = mid_height / 2.0f;
 
-	const JPH::TaperedCapsuleShapeSettings shape_settings(half_height, radius1, radius2);
+	const JPH::TaperedCapsuleShapeSettings shape_settings(half_height, radius_top, radius_bottom);
 	const JPH::ShapeSettings::ShapeResult shape_result = shape_settings.Create();
 	ERR_FAIL_COND_V_MSG(shape_result.HasError(), nullptr, vformat("Failed to build Jolt Physics tapered capsule shape with %s. It returned the following error: '%s'. This shape belongs to %s.", to_string(), to_godot(shape_result.GetError()), _owners_to_string()));
 
@@ -50,48 +50,60 @@ JPH::ShapeRefC JoltTaperedCapsuleShape3D::_build() const {
 }
 
 Variant JoltTaperedCapsuleShape3D::get_data() const {
-	Dictionary data;
-	data["radius1"] = radius1;
-	data["radius2"] = radius2;
-	data["height"] = height;
+	Vector<double> data;
+	data.resize(3);
+	data.write[0] = radius_top;
+	data.write[1] = radius_bottom;
+	data.write[2] = mid_height;
 	return data;
 }
 
 void JoltTaperedCapsuleShape3D::set_data(const Variant &p_data) {
-	ERR_FAIL_COND(p_data.get_type() != Variant::DICTIONARY);
-
-	const Dictionary data = p_data;
-
-	const Variant maybe_radius1 = data.get("radius1", Variant());
-	ERR_FAIL_COND(maybe_radius1.get_type() != Variant::FLOAT);
-
-	const Variant maybe_radius2 = data.get("radius2", Variant());
-	ERR_FAIL_COND(maybe_radius2.get_type() != Variant::FLOAT);
-
-	const Variant maybe_height = data.get("height", Variant());
-	ERR_FAIL_COND(maybe_height.get_type() != Variant::FLOAT);
-
-	const float new_radius1 = maybe_radius1;
-	const float new_radius2 = maybe_radius2;
-	const float new_height = maybe_height;
-
-	if (unlikely(new_radius1 == radius1 && new_radius2 == radius2 && new_height == height)) {
-		return;
+	if (p_data.get_type() == Variant::DICTIONARY) {
+		// Handle SHAPE_CAPSULE data
+		const Dictionary data = p_data;
+		const Variant maybe_radius = data.get("radius", Variant());
+		const Variant maybe_height = data.get("height", Variant());
+		if (maybe_radius.get_type() == Variant::FLOAT && maybe_height.get_type() == Variant::FLOAT) {
+			real_t radius = maybe_radius;
+			real_t height = maybe_height;
+			if (radius == radius_top && radius == radius_bottom && height == mid_height) {
+				return;
+			}
+			radius_top = radius;
+			radius_bottom = radius;
+			mid_height = height;
+			destroy();
+			return;
+		}
 	}
 
-	radius1 = new_radius1;
-	radius2 = new_radius2;
-	height = new_height;
+	if (p_data.get_type() == Variant::PACKED_FLOAT32_ARRAY || p_data.get_type() == Variant::PACKED_FLOAT64_ARRAY) {
+		const Vector<real_t> data = p_data;
+		if (data.size() == 3) {
+			real_t new_radius_top = data[0];
+			real_t new_radius_bottom = data[1];
+			real_t new_mid_height = data[2];
+			if (new_radius_top == radius_top && new_radius_bottom == radius_bottom && new_mid_height == mid_height) {
+				return;
+			}
+			radius_top = new_radius_top;
+			radius_bottom = new_radius_bottom;
+			mid_height = new_mid_height;
+			destroy();
+			return;
+		}
+	}
 
-	destroy();
+	ERR_FAIL_MSG("Invalid data for JoltTaperedCapsuleShape3D");
 }
 
 AABB JoltTaperedCapsuleShape3D::get_aabb() const {
-	const float max_radius = MAX(radius1, radius2);
-	const Vector3 half_extents(max_radius, height / 2.0f + max_radius, max_radius);
+	const float max_radius = MAX(radius_top, radius_bottom);
+	const Vector3 half_extents(max_radius, mid_height / 2.0f + max_radius, max_radius);
 	return AABB(-half_extents, half_extents * 2.0f);
 }
 
 String JoltTaperedCapsuleShape3D::to_string() const {
-	return vformat("{radius1=%f radius2=%f height=%f}", radius1, radius2, height);
+	return vformat("{radius_top=%f radius_bottom=%f mid_height=%f}", radius_top, radius_bottom, mid_height);
 }

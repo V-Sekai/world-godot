@@ -37,9 +37,9 @@ class TaperedCapsuleMesh : public PrimitiveMesh {
 	GDCLASS(TaperedCapsuleMesh, PrimitiveMesh);
 
 private:
-	float radius_top = 0.5;
-	float radius_bottom = 0.5;
-	float height = 1.0; // Height of the cylindrical part
+	real_t radius_top = 0.5;
+	real_t radius_bottom = 0.5;
+	real_t mid_height = 1.0;
 	int radial_segments = 64;
 	int rings = 8;
 
@@ -50,16 +50,19 @@ protected:
 	virtual void _update_lightmap_size() override;
 
 public:
-	static void create_mesh_array(Array &p_arr, float p_radius_top, float p_radius_bottom, float p_height, int p_radial_segments = 64, int p_rings = 8, bool p_add_uv2 = false, const float p_uv2_padding = 1.0);
+	static void create_mesh_array(Array &p_arr, real_t p_radius_top, real_t p_radius_bottom, real_t p_mid_height, int p_radial_segments = 64, int p_rings = 8, bool p_add_uv2 = false, const real_t p_uv2_padding = 1.0);
 
-	void set_radius_top(const float p_radius_top);
-	float get_radius_top() const;
+	void set_radius_top(const real_t p_radius_top);
+	real_t get_radius_top() const;
 
-	void set_radius_bottom(const float p_radius_bottom);
-	float get_radius_bottom() const;
+	void set_radius_bottom(const real_t p_radius_bottom);
+	real_t get_radius_bottom() const;
 
-	void set_height(const float p_height);
-	float get_height() const;
+	void set_mid_height(const real_t p_mid_height);
+	real_t get_mid_height() const;
+
+	void set_height(const real_t p_height);
+	real_t get_height() const;
 
 	void set_radial_segments(const int p_segments);
 	int get_radial_segments() const;

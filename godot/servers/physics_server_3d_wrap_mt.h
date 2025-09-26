@@ -55,6 +55,8 @@
 #endif
 
 class PhysicsServer3DWrapMT : public PhysicsServer3D {
+	GDSOFTCLASS(PhysicsServer3DWrapMT, PhysicsServer3D);
+
 	mutable PhysicsServer3D *physics_server_3d = nullptr;
 
 	mutable CommandQueueMT command_queue;
@@ -86,6 +88,7 @@ public:
 	FUNCRID(box_shape)
 	FUNCRID(capsule_shape)
 	FUNCRID(cylinder_shape)
+	FUNCRID(tapered_capsule_shape)
 	FUNCRID(convex_polygon_shape)
 	FUNCRID(concave_polygon_shape)
 	FUNCRID(heightmap_shape)

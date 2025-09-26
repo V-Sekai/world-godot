@@ -41,12 +41,12 @@ void TaperedCapsuleMesh::_update_lightmap_size() {
 	if (get_add_uv2()) {
 		// size must have changed, update lightmap size hint
 		Size2i _lightmap_size_hint;
-		float padding = get_uv2_padding();
+		real_t padding = get_uv2_padding();
 
-		float max_radius = MAX(radius_top, radius_bottom);
+		real_t max_radius = MAX(radius_top, radius_bottom);
 
-		float radial_length = max_radius * Math::PI * 0.5; // circumference of 90 degree bend
-		float vertical_length = radial_length * 2 + height + padding; // total vertical length
+		real_t radial_length = max_radius * Math::PI * 0.5; // circumference of 90 degree bend
+		real_t vertical_length = radial_length * 2 + mid_height + padding; // total vertical length
 
 		_lightmap_size_hint.x = MAX(1.0, 4.0 * radial_length / texel_size) + padding;
 		_lightmap_size_hint.y = MAX(1.0, vertical_length / texel_size) + padding;
@@ -57,14 +57,14 @@ void TaperedCapsuleMesh::_update_lightmap_size() {
 
 void TaperedCapsuleMesh::_create_mesh_array(Array &p_arr) const {
 	bool _add_uv2 = get_add_uv2();
-	float _uv2_padding = get_uv2_padding() * texel_size;
+	real_t _uv2_padding = get_uv2_padding() * texel_size;
 
-	create_mesh_array(p_arr, radius_top, radius_bottom, height, radial_segments, rings, _add_uv2, _uv2_padding);
+	create_mesh_array(p_arr, radius_top, radius_bottom, mid_height, radial_segments, rings, _add_uv2, _uv2_padding);
 }
 
-void TaperedCapsuleMesh::create_mesh_array(Array &p_arr, float p_radius_top, float p_radius_bottom, float p_height, int p_radial_segments, int p_rings, bool p_add_uv2, const float p_uv2_padding) {
+void TaperedCapsuleMesh::create_mesh_array(Array &p_arr, real_t p_radius_top, real_t p_radius_bottom, real_t p_mid_height, int p_radial_segments, int p_rings, bool p_add_uv2, const real_t p_uv2_padding) {
 	int i, j, prevrow, thisrow, point;
-	float x, y, z, u, v, w;
+	real_t x, y, z, u, v, w;
 
 	// Use LocalVector for operations and copy to Vector at the end to save the cost of CoW semantics which aren't
 	// needed here and are very expensive in such a hot loop. Use reserve to avoid repeated memory allocations.
@@ -92,13 +92,15 @@ void TaperedCapsuleMesh::create_mesh_array(Array &p_arr, float p_radius_top, flo
 	tangents.push_back(m_d);
 
 	// Calculate UV2 parameters
-	float total_vertical_length = p_radius_top + p_radius_bottom + p_height + p_uv2_padding;
-	float uv2_v_top_hemisphere = p_radius_top / total_vertical_length;
-	float uv2_v_cylinder = p_height / total_vertical_length;
-	float uv2_v_bottom_hemisphere = p_radius_bottom / total_vertical_length;
+	real_t total_height = p_mid_height + p_radius_top + p_radius_bottom;
+	real_t total_vertical_length = total_height + p_uv2_padding;
 
-	float max_circumference = MAX(p_radius_top, p_radius_bottom) * Math::TAU;
-	float uv2_h_scale = max_circumference / (max_circumference + p_uv2_padding);
+	real_t uv2_v_top = p_radius_top / total_vertical_length;
+	real_t uv2_v_cylinder = p_mid_height / total_vertical_length;
+	real_t uv2_v_bottom = p_radius_bottom / total_vertical_length;
+
+	real_t max_circumference = MAX(p_radius_top, p_radius_bottom) * Math::TAU;
+	real_t uv2_h_scale = max_circumference / (max_circumference + p_uv2_padding);
 
 	/* top hemisphere */
 	thisrow = 0;
@@ -127,12 +129,12 @@ void TaperedCapsuleMesh::create_mesh_array(Array &p_arr, float p_radius_top, flo
 			}
 
 			Vector3 p = Vector3(x * w, y, -z * w);
-			points.push_back(p * p_radius_top + Vector3(0.0, 0.5 * p_height, 0.0));
+			points.push_back(p * p_radius_top + Vector3(0.0, total_height * 0.5 - p_radius_top, 0.0));
 			normals.push_back(p);
 			ADD_TANGENT(-z, 0.0, -x, 1.0)
 			uvs.push_back(Vector2(u, v * 0.5)); // UV for top hemisphere
 			if (p_add_uv2) {
-				uv2s.push_back(Vector2(u * uv2_h_scale, v * uv2_v_top_hemisphere));
+				uv2s.push_back(Vector2(u * uv2_h_scale, v * uv2_v_top));
 			}
 			point++;
 
@@ -158,8 +160,8 @@ void TaperedCapsuleMesh::create_mesh_array(Array &p_arr, float p_radius_top, flo
 		v = j;
 		v /= (p_rings + 1);
 
-		float current_radius = p_radius_top + (p_radius_bottom - p_radius_top) * v;
-		y = (p_height * 0.5) - (p_height * v);
+		real_t current_radius = p_radius_top + (p_radius_bottom - p_radius_top) * v;
+		y = (total_height * 0.5 - p_radius_top) - (p_mid_height * v);
 
 		for (i = 0; i <= p_radial_segments; i++) {
 			u = i;
@@ -179,7 +181,7 @@ void TaperedCapsuleMesh::create_mesh_array(Array &p_arr, float p_radius_top, flo
 			ADD_TANGENT(-z, 0.0, -x, 1.0)
 			uvs.push_back(Vector2(u, 0.5 + v * 0.5)); // UV for cylinder
 			if (p_add_uv2) {
-				uv2s.push_back(Vector2(u * uv2_h_scale, uv2_v_top_hemisphere + v * uv2_v_cylinder));
+				uv2s.push_back(Vector2(u * uv2_h_scale, uv2_v_top + v * uv2_v_cylinder));
 			}
 			point++;
 
@@ -225,12 +227,12 @@ void TaperedCapsuleMesh::create_mesh_array(Array &p_arr, float p_radius_top, flo
 			}
 
 			Vector3 p = Vector3(x * w, y, -z * w);
-			points.push_back(p * p_radius_bottom + Vector3(0.0, -0.5 * p_height, 0.0));
+			points.push_back(p * p_radius_bottom + Vector3(0.0, -total_height * 0.5 + p_radius_bottom, 0.0));
 			normals.push_back(p);
 			ADD_TANGENT(-z, 0.0, -x, 1.0)
 			uvs.push_back(Vector2(u, 0.5 + v * 0.5)); // UV for bottom hemisphere (can reuse cylinder UV space)
 			if (p_add_uv2) {
-				uv2s.push_back(Vector2(u * uv2_h_scale, uv2_v_top_hemisphere + uv2_v_cylinder + v * uv2_v_bottom_hemisphere));
+				uv2s.push_back(Vector2(u * uv2_h_scale, uv2_v_top + uv2_v_cylinder + v * uv2_v_bottom));
 			}
 			point++;
 
@@ -264,6 +266,8 @@ void TaperedCapsuleMesh::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_radius_top"), &TaperedCapsuleMesh::get_radius_top);
 	ClassDB::bind_method(D_METHOD("set_radius_bottom", "radius_bottom"), &TaperedCapsuleMesh::set_radius_bottom);
 	ClassDB::bind_method(D_METHOD("get_radius_bottom"), &TaperedCapsuleMesh::get_radius_bottom);
+	ClassDB::bind_method(D_METHOD("set_mid_height", "mid_height"), &TaperedCapsuleMesh::set_mid_height);
+	ClassDB::bind_method(D_METHOD("get_mid_height"), &TaperedCapsuleMesh::get_mid_height);
 	ClassDB::bind_method(D_METHOD("set_height", "height"), &TaperedCapsuleMesh::set_height);
 	ClassDB::bind_method(D_METHOD("get_height"), &TaperedCapsuleMesh::get_height);
 
@@ -274,12 +278,20 @@ void TaperedCapsuleMesh::_bind_methods() {
 
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "radius_top", PROPERTY_HINT_RANGE, "0.001,100.0,0.001,or_greater,suffix:m"), "set_radius_top", "get_radius_top");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "radius_bottom", PROPERTY_HINT_RANGE, "0.001,100.0,0.001,or_greater,suffix:m"), "set_radius_bottom", "get_radius_bottom");
+	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "mid_height", PROPERTY_HINT_RANGE, "0.001,100.0,0.001,or_greater,suffix:m"), "set_mid_height", "get_mid_height");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "height", PROPERTY_HINT_RANGE, "0.001,100.0,0.001,or_greater,suffix:m"), "set_height", "get_height");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "radial_segments", PROPERTY_HINT_RANGE, "1,100,1,or_greater"), "set_radial_segments", "get_radial_segments");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "rings", PROPERTY_HINT_RANGE, "0,100,1,or_greater"), "set_rings", "get_rings");
+
+	ADD_LINKED_PROPERTY("radius_top", "height");
+	ADD_LINKED_PROPERTY("radius_bottom", "height");
+	ADD_LINKED_PROPERTY("mid_height", "height");
+	ADD_LINKED_PROPERTY("height", "radius_top");
+	ADD_LINKED_PROPERTY("height", "radius_bottom");
+	ADD_LINKED_PROPERTY("height", "mid_height");
 }
 
-void TaperedCapsuleMesh::set_radius_top(const float p_radius_top) {
+void TaperedCapsuleMesh::set_radius_top(const real_t p_radius_top) {
 	if (Math::is_equal_approx(radius_top, p_radius_top)) {
 		return;
 	}
@@ -289,11 +301,11 @@ void TaperedCapsuleMesh::set_radius_top(const float p_radius_top) {
 	request_update();
 }
 
-float TaperedCapsuleMesh::get_radius_top() const {
+real_t TaperedCapsuleMesh::get_radius_top() const {
 	return radius_top;
 }
 
-void TaperedCapsuleMesh::set_radius_bottom(const float p_radius_bottom) {
+void TaperedCapsuleMesh::set_radius_bottom(const real_t p_radius_bottom) {
 	if (Math::is_equal_approx(radius_bottom, p_radius_bottom)) {
 		return;
 	}
@@ -303,23 +315,35 @@ void TaperedCapsuleMesh::set_radius_bottom(const float p_radius_bottom) {
 	request_update();
 }
 
-float TaperedCapsuleMesh::get_radius_bottom() const {
+real_t TaperedCapsuleMesh::get_radius_bottom() const {
 	return radius_bottom;
 }
 
-void TaperedCapsuleMesh::set_height(const float p_height) {
-	ERR_FAIL_COND(p_height <= 0);
-	if (Math::is_equal_approx(height, p_height)) {
+void TaperedCapsuleMesh::set_mid_height(const real_t p_mid_height) {
+	ERR_FAIL_COND(p_mid_height <= 0);
+	if (Math::is_equal_approx(mid_height, p_mid_height)) {
 		return;
 	}
 
-	height = p_height;
+	mid_height = p_mid_height;
 	_update_lightmap_size();
 	request_update();
 }
 
-float TaperedCapsuleMesh::get_height() const {
-	return height;
+real_t TaperedCapsuleMesh::get_mid_height() const {
+	return mid_height;
+}
+
+void TaperedCapsuleMesh::set_height(const real_t p_height) {
+	real_t new_mid_height = p_height - radius_top - radius_bottom;
+	if (new_mid_height <= 0) {
+		new_mid_height = 0.001f; // Minimum to avoid invalid mesh
+	}
+	set_mid_height(new_mid_height);
+}
+
+real_t TaperedCapsuleMesh::get_height() const {
+	return mid_height + radius_top + radius_bottom;
 }
 
 void TaperedCapsuleMesh::set_radial_segments(const int p_segments) {
