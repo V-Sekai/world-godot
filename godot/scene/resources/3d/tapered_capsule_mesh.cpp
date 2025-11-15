@@ -34,7 +34,7 @@
 #include "core/math/math_funcs.h"
 #include "scene/resources/theme.h"
 #include "scene/theme/theme_db.h"
-#include "servers/rendering_server.h"
+#include "servers/rendering/rendering_server.h"
 #include "thirdparty/misc/polypartition.h"
 
 void TaperedCapsuleMesh::_update_lightmap_size() {

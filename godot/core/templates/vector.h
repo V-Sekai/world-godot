@@ -64,14 +64,15 @@ class Vector {
 public:
 	VectorWriteProxy<T> write;
 	typedef typename CowData<T>::Size Size;
+	typedef typename CowData<T>::USize USize;
 
 private:
 	CowData<T> _cowdata;
 
 public:
 	// Must take a copy instead of a reference (see GH-31736).
-	bool push_back(T p_elem);
-	_FORCE_INLINE_ bool append(const T &p_elem) { return push_back(p_elem); } //alias
+	_FORCE_INLINE_ bool push_back(T p_elem) { return _cowdata.push_back(std::move(p_elem)); }
+	_FORCE_INLINE_ bool append(T p_elem) { return _cowdata.push_back(std::move(p_elem)); } //alias
 	void fill(T p_elem);
 
 	void remove_at(Size p_index) { _cowdata.remove_at(p_index); }
@@ -89,6 +90,7 @@ public:
 	_FORCE_INLINE_ T *ptrw() { return _cowdata.ptrw(); }
 	_FORCE_INLINE_ const T *ptr() const { return _cowdata.ptr(); }
 	_FORCE_INLINE_ Size size() const { return _cowdata.size(); }
+	_FORCE_INLINE_ USize capacity() const { return _cowdata.capacity(); }
 
 	_FORCE_INLINE_ operator Span<T>() const { return _cowdata.span(); }
 	_FORCE_INLINE_ Span<T> span() const { return _cowdata.span(); }
@@ -119,9 +121,19 @@ public:
 		return _cowdata.template resize<false>(p_size);
 	}
 
+	Error reserve(Size p_size) {
+		ERR_FAIL_COND_V(p_size < 0, ERR_INVALID_PARAMETER);
+		return _cowdata.reserve(p_size);
+	}
+
+	Error reserve_exact(Size p_size) {
+		ERR_FAIL_COND_V(p_size < 0, ERR_INVALID_PARAMETER);
+		return _cowdata.reserve_exact(p_size);
+	}
+
 	_FORCE_INLINE_ const T &operator[](Size p_index) const { return _cowdata.get(p_index); }
 	// Must take a copy instead of a reference (see GH-31736).
-	Error insert(Size p_pos, T p_val) { return _cowdata.insert(p_pos, p_val); }
+	Error insert(Size p_pos, T p_val) { return _cowdata.insert(p_pos, std::move(p_val)); }
 	Size find(const T &p_val, Size p_from = 0) const {
 		if (p_from < 0) {
 			p_from = size() + p_from;
@@ -172,9 +184,15 @@ public:
 		return span().bisect(p_value, p_before, Comparator{ args... });
 	}
 
-	Vector<T> duplicate() {
+	Vector<T> duplicate() const {
 		return *this;
 	}
+
+#ifndef DISABLE_DEPRECATED
+	Vector<T> _duplicate_bind_compat_112290() {
+		return *this;
+	}
+#endif // DISABLE_DEPRECATED
 
 	void ordered_insert(const T &p_val) {
 		Size i;
@@ -349,15 +367,6 @@ void Vector<T>::append_array(Vector<T> p_other) {
 	for (Size i = 0; i < ds; ++i) {
 		p[bs + i] = p_other[i];
 	}
-}
-
-template <typename T>
-bool Vector<T>::push_back(T p_elem) {
-	Error err = resize(size() + 1);
-	ERR_FAIL_COND_V(err, true);
-	set(size() - 1, p_elem);
-
-	return false;
 }
 
 template <typename T>

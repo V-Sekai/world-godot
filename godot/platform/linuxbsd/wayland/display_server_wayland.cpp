@@ -39,6 +39,7 @@
 #define DEBUG_LOG_WAYLAND(...)
 #endif
 
+#include "core/os/main_loop.h"
 #include "servers/rendering/dummy/rasterizer_dummy.h"
 
 #ifdef VULKAN_ENABLED
@@ -46,6 +47,7 @@
 #endif
 
 #ifdef GLES3_ENABLED
+#include "core/io/file_access.h"
 #include "detect_prime_egl.h"
 #include "drivers/gles3/rasterizer_gles3.h"
 #include "wayland/egl_manager_wayland.h"
@@ -262,7 +264,7 @@ TypedArray<Dictionary> DisplayServerWayland::tts_get_voices() const {
 	return tts->get_voices();
 }
 
-void DisplayServerWayland::tts_speak(const String &p_text, const String &p_voice, int p_volume, float p_pitch, float p_rate, int p_utterance_id, bool p_interrupt) {
+void DisplayServerWayland::tts_speak(const String &p_text, const String &p_voice, int p_volume, float p_pitch, float p_rate, int64_t p_utterance_id, bool p_interrupt) {
 	if (unlikely(!tts)) {
 		initialize_tts();
 	}
@@ -680,6 +682,8 @@ void DisplayServerWayland::screen_set_keep_on(bool p_enable) {
 		return;
 	}
 
+	wayland_thread.window_set_idle_inhibition(MAIN_WINDOW_ID, p_enable);
+
 #ifdef DBUS_ENABLED
 	if (screensaver) {
 		if (p_enable) {
@@ -770,15 +774,11 @@ void DisplayServerWayland::show_window(WindowID p_window_id) {
 			wd.rect.position = Point2i();
 
 			DEBUG_LOG_WAYLAND(vformat("Creating regular window of size %s", wd.rect.size));
-			wayland_thread.window_create(p_window_id, wd.rect.size.width, wd.rect.size.height);
+			wayland_thread.window_create(p_window_id, wd.rect.size, wd.parent_id);
 			wayland_thread.window_set_min_size(p_window_id, wd.min_size);
 			wayland_thread.window_set_max_size(p_window_id, wd.max_size);
 			wayland_thread.window_set_app_id(p_window_id, _get_app_id_from_context(context));
 			wayland_thread.window_set_borderless(p_window_id, window_get_flag(WINDOW_FLAG_BORDERLESS, p_window_id));
-
-			if (wd.parent_id != INVALID_WINDOW_ID) {
-				wayland_thread.window_set_parent(wd.id, wd.parent_id);
-			}
 
 			// Since it can't have a position. Let's tell the window node the news by
 			// the actual rect to it.

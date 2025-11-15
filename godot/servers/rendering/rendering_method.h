@@ -30,8 +30,8 @@
 
 #pragma once
 
+#include "servers/rendering/rendering_server.h"
 #include "servers/rendering/storage/render_scene_buffers.h"
-#include "servers/rendering_server.h"
 
 #ifdef XR_DISABLED
 // RendererSceneCull::render_camera is empty when 3D is disabled, but
@@ -49,7 +49,6 @@ public:
 	virtual void camera_set_perspective(RID p_camera, float p_fovy_degrees, float p_z_near, float p_z_far) = 0;
 	virtual void camera_set_orthogonal(RID p_camera, float p_size, float p_z_near, float p_z_far) = 0;
 	virtual void camera_set_frustum(RID p_camera, float p_size, Vector2 p_offset, float p_z_near, float p_z_far) = 0;
-	virtual void camera_set_override_projection(RID p_camera, const Projection &p_matrix) = 0;
 	virtual void camera_set_transform(RID p_camera, const Transform3D &p_transform) = 0;
 	virtual void camera_set_cull_mask(RID p_camera, uint32_t p_layers) = 0;
 	virtual void camera_set_environment(RID p_camera, RID p_env) = 0;
@@ -261,6 +260,7 @@ public:
 	virtual float environment_get_ssr_fade_out(RID p_env) const = 0;
 	virtual float environment_get_ssr_depth_tolerance(RID p_env) const = 0;
 
+	virtual void environment_set_ssr_half_size(bool p_half_size) = 0;
 	virtual void environment_set_ssr_roughness_quality(RS::EnvironmentSSRRoughnessQuality p_quality) = 0;
 
 	// SSAO
@@ -356,6 +356,7 @@ public:
 	virtual void decals_set_filter(RS::DecalFilter p_filter) = 0;
 	virtual void light_projectors_set_filter(RS::LightProjectorFilter p_filter) = 0;
 	virtual void lightmaps_set_bicubic_filter(bool p_enable) = 0;
+	virtual void material_set_use_debanding(bool p_enable) = 0;
 
 	virtual bool free(RID p_rid) = 0;
 
@@ -369,6 +370,5 @@ public:
 	virtual void tick() = 0;
 	virtual void pre_draw(bool p_will_draw) = 0;
 
-	RenderingMethod();
-	virtual ~RenderingMethod();
+	virtual ~RenderingMethod() {}
 };

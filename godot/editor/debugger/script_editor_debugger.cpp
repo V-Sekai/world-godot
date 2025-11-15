@@ -66,7 +66,7 @@
 #include "scene/gui/tab_container.h"
 #include "scene/gui/tree.h"
 #include "servers/debugger/servers_debugger.h"
-#include "servers/display_server.h"
+#include "servers/display/display_server.h"
 
 using CameraOverride = EditorDebuggerNode::CameraOverride;
 
@@ -109,6 +109,13 @@ void ScriptEditorDebugger::debug_ignore_error_breaks() {
 
 	Array msg = { ignore_error_breaks_value };
 	_put_msg("set_ignore_error_breaks", msg);
+}
+
+void ScriptEditorDebugger::debug_out() {
+	ERR_FAIL_COND(!is_breaked());
+
+	_put_msg("out", Array(), debugging_thread_id);
+	_clear_execution();
 }
 
 void ScriptEditorDebugger::debug_next() {
@@ -288,8 +295,7 @@ void ScriptEditorDebugger::clear_inspector(bool p_send_msg) {
 }
 
 void ScriptEditorDebugger::_remote_object_selected(ObjectID p_id) {
-	Array arr = { p_id };
-	emit_signal(SNAME("remote_objects_requested"), arr);
+	emit_signal(SNAME("remote_objects_requested"), Array{ p_id });
 }
 
 void ScriptEditorDebugger::_remote_objects_edited(const String &p_prop, const TypedDictionary<uint64_t, Variant> &p_values, const String &p_field) {
@@ -913,13 +919,25 @@ void ScriptEditorDebugger::_msg_show_selection_limit_warning(uint64_t p_thread_i
 }
 
 void ScriptEditorDebugger::_msg_performance_profile_names(uint64_t p_thread_id, const Array &p_data) {
+	ERR_FAIL_COND(p_data.size() != 2);
+	Array name_data = p_data[0];
+	Array type_data = p_data[1];
+
 	Vector<StringName> monitors;
-	monitors.resize(p_data.size());
-	for (int i = 0; i < p_data.size(); i++) {
-		ERR_FAIL_COND(p_data[i].get_type() != Variant::STRING_NAME);
-		monitors.set(i, p_data[i]);
+	monitors.resize(name_data.size());
+	for (int i = 0; i < name_data.size(); i++) {
+		ERR_FAIL_COND(name_data[i].get_type() != Variant::STRING_NAME);
+		monitors.set(i, name_data[i]);
 	}
-	performance_profiler->update_monitors(monitors);
+
+	PackedInt32Array types;
+	types.resize(type_data.size());
+	for (int i = 0; i < type_data.size(); i++) {
+		ERR_FAIL_COND(type_data[i].get_type() != Variant::INT);
+		types.set(i, type_data[i]);
+	}
+
+	performance_profiler->update_monitors(monitors, types);
 }
 
 void ScriptEditorDebugger::_msg_filesystem_update_file(uint64_t p_thread_id, const Array &p_data) {
@@ -1073,6 +1091,7 @@ void ScriptEditorDebugger::_notification(int p_what) {
 			copy->set_button_icon(get_editor_theme_icon(SNAME("ActionCopy")));
 			step->set_button_icon(get_editor_theme_icon(SNAME("DebugStep")));
 			next->set_button_icon(get_editor_theme_icon(SNAME("DebugNext")));
+			out->set_button_icon(get_editor_theme_icon(SNAME("DebugOut")));
 			dobreak->set_button_icon(get_editor_theme_icon(SNAME("Pause")));
 			docontinue->set_button_icon(get_editor_theme_icon(SNAME("DebugContinue")));
 			vmem_notice_icon->set_texture(get_editor_theme_icon(SNAME("NodeInfo")));
@@ -1245,6 +1264,7 @@ void ScriptEditorDebugger::_update_buttons_state() {
 	vmem_refresh->set_disabled(!active);
 	step->set_disabled(!active || !is_breaked() || !is_debuggable());
 	next->set_disabled(!active || !is_breaked() || !is_debuggable());
+	out->set_disabled(!active || !is_breaked() || !is_debuggable());
 	copy->set_disabled(!active || !is_breaked());
 	docontinue->set_disabled(!active || !is_breaked());
 	dobreak->set_disabled(!active || is_breaked());
@@ -2079,6 +2099,13 @@ ScriptEditorDebugger::ScriptEditorDebugger() {
 		next->set_shortcut(ED_GET_SHORTCUT("debugger/step_over"));
 		next->connect(SceneStringName(pressed), callable_mp(this, &ScriptEditorDebugger::debug_next));
 
+		out = memnew(Button);
+		out->set_theme_type_variation(SceneStringName(FlatButton));
+		hbc->add_child(out);
+		out->set_tooltip_text(TTRC("Step Out"));
+		out->set_shortcut(ED_GET_SHORTCUT("debugger/step_out"));
+		out->connect(SceneStringName(pressed), callable_mp(this, &ScriptEditorDebugger::debug_out));
+
 		hbc->add_child(memnew(VSeparator));
 
 		dobreak = memnew(Button);
@@ -2221,6 +2248,7 @@ ScriptEditorDebugger::ScriptEditorDebugger() {
 		error_tree->set_v_size_flags(SIZE_EXPAND_FILL);
 		error_tree->set_allow_rmb_select(true);
 		error_tree->set_allow_reselect(true);
+		error_tree->set_theme_type_variation("TreeSecondary");
 		error_tree->connect("item_mouse_selected", callable_mp(this, &ScriptEditorDebugger::_error_tree_item_rmb_selected));
 		errors_tab->add_child(error_tree);
 

@@ -84,7 +84,7 @@
 #endif // LIBDECOR_ENABLED
 
 #include "core/os/thread.h"
-#include "servers/display_server.h"
+#include "servers/display/display_server.h"
 
 class WaylandThread {
 public:
@@ -1032,7 +1032,7 @@ public:
 
 	void set_icon(const Ref<Image> &p_icon);
 
-	void window_create(DisplayServer::WindowID p_window_id, int p_width, int p_height);
+	void window_create(DisplayServer::WindowID p_window_id, const Size2i &p_size, DisplayServer::WindowID p_parent_id = DisplayServer::INVALID_WINDOW_ID);
 	void window_create_popup(DisplayServer::WindowID p_window_id, DisplayServer::WindowID p_parent_id, Rect2i p_rect);
 	void window_destroy(DisplayServer::WindowID p_window_Id);
 

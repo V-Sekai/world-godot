@@ -83,13 +83,11 @@ public:
 		Vector2 offset;
 		uint32_t visible_layers;
 		bool vaspect;
-		bool has_override_projection;
 		RID env;
 		RID attributes;
 		RID compositor;
 
 		Transform3D transform;
-		Projection override_projection;
 
 		Camera() {
 			visible_layers = 0xFFFFFFFF;
@@ -100,8 +98,6 @@ public:
 			size = 1.0;
 			offset = Vector2();
 			vaspect = false;
-			has_override_projection = false;
-			override_projection.set_zero();
 		}
 	};
 
@@ -113,7 +109,6 @@ public:
 	virtual void camera_set_perspective(RID p_camera, float p_fovy_degrees, float p_z_near, float p_z_far);
 	virtual void camera_set_orthogonal(RID p_camera, float p_size, float p_z_near, float p_z_far);
 	virtual void camera_set_frustum(RID p_camera, float p_size, Vector2 p_offset, float p_z_near, float p_z_far);
-	virtual void camera_set_override_projection(RID p_camera, const Projection &p_matrix);
 	virtual void camera_set_transform(RID p_camera, const Transform3D &p_transform);
 	virtual void camera_set_cull_mask(RID p_camera, uint32_t p_layers);
 	virtual void camera_set_environment(RID p_camera, RID p_env);
@@ -1316,6 +1311,7 @@ public:
 	PASS1RC(float, environment_get_ssr_fade_out, RID)
 	PASS1RC(float, environment_get_ssr_depth_tolerance, RID)
 
+	PASS1(environment_set_ssr_half_size, bool)
 	PASS1(environment_set_ssr_roughness_quality, RS::EnvironmentSSRRoughnessQuality)
 
 	// SSAO
@@ -1395,6 +1391,7 @@ public:
 	PASS1(decals_set_filter, RS::DecalFilter)
 	PASS1(light_projectors_set_filter, RS::LightProjectorFilter)
 	PASS1(lightmaps_set_bicubic_filter, bool)
+	PASS1(material_set_use_debanding, bool)
 
 	virtual void update();
 

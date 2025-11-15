@@ -60,8 +60,10 @@
 #include "tests/core/io/test_stream_peer.h"
 #include "tests/core/io/test_stream_peer_buffer.h"
 #include "tests/core/io/test_stream_peer_gzip.h"
+#include "tests/core/io/test_stream_peer_tcp.h"
 #include "tests/core/io/test_tcp_server.h"
 #include "tests/core/io/test_udp_server.h"
+#include "tests/core/io/test_uds_server.h"
 #include "tests/core/io/test_xml_parser.h"
 #include "tests/core/math/test_aabb.h"
 #include "tests/core/math/test_astar.h"
@@ -176,7 +178,6 @@
 #include "tests/scene/test_path_3d.h"
 #include "tests/scene/test_path_follow_3d.h"
 #include "tests/scene/test_primitives.h"
-#include "tests/scene/test_qbo_document.h"
 #include "tests/scene/test_skeleton_3d.h"
 #include "tests/scene/test_sky.h"
 #endif // _3D_DISABLED
@@ -209,19 +210,19 @@
 #include "scene/theme/theme_db.h"
 
 #ifndef NAVIGATION_2D_DISABLED
-#include "servers/navigation_server_2d.h"
+#include "servers/navigation_2d/navigation_server_2d.h"
 #endif // NAVIGATION_2D_DISABLED
 #ifndef NAVIGATION_3D_DISABLED
-#include "servers/navigation_server_3d.h"
+#include "servers/navigation_3d/navigation_server_3d.h"
 #endif // NAVIGATION_3D_DISABLED
 
 #ifndef PHYSICS_2D_DISABLED
-#include "servers/physics_server_2d.h"
-#include "servers/physics_server_2d_dummy.h"
+#include "servers/physics_2d/physics_server_2d.h"
+#include "servers/physics_2d/physics_server_2d_dummy.h"
 #endif // PHYSICS_2D_DISABLED
 #ifndef PHYSICS_3D_DISABLED
-#include "servers/physics_server_3d.h"
-#include "servers/physics_server_3d_dummy.h"
+#include "servers/physics_3d/physics_server_3d.h"
+#include "servers/physics_3d/physics_server_3d_dummy.h"
 #endif // PHYSICS_3D_DISABLED
 
 #include "servers/rendering/rendering_server_default.h"
@@ -367,10 +368,10 @@ struct GodotTestCaseListener : public doctest::IReporter {
 
 			ERR_PRINT_OFF;
 #ifndef NAVIGATION_3D_DISABLED
-			navigation_server_3d = NavigationServer3DManager::new_default_server();
+			navigation_server_3d = NavigationServer3DManager::get_singleton()->new_default_server();
 #endif // NAVIGATION_3D_DISABLED
 #ifndef NAVIGATION_2D_DISABLED
-			navigation_server_2d = NavigationServer2DManager::new_default_server();
+			navigation_server_2d = NavigationServer2DManager::get_singleton()->new_default_server();
 #endif // NAVIGATION_2D_DISABLED
 			ERR_PRINT_ON;
 
@@ -406,7 +407,7 @@ struct GodotTestCaseListener : public doctest::IReporter {
 #ifndef NAVIGATION_3D_DISABLED
 		if (suite_name.contains("[Navigation3D]") && navigation_server_3d == nullptr) {
 			ERR_PRINT_OFF;
-			navigation_server_3d = NavigationServer3DManager::new_default_server();
+			navigation_server_3d = NavigationServer3DManager::get_singleton()->new_default_server();
 			ERR_PRINT_ON;
 			return;
 		}
@@ -415,7 +416,7 @@ struct GodotTestCaseListener : public doctest::IReporter {
 #ifndef NAVIGATION_2D_DISABLED
 		if (suite_name.contains("[Navigation2D]") && navigation_server_2d == nullptr) {
 			ERR_PRINT_OFF;
-			navigation_server_2d = NavigationServer2DManager::new_default_server();
+			navigation_server_2d = NavigationServer2DManager::get_singleton()->new_default_server();
 			ERR_PRINT_ON;
 			return;
 		}

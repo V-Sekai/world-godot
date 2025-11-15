@@ -41,31 +41,25 @@ extern "C" {
 #define LIBGODOT_API __declspec(dllexport)
 #elif defined(__GNUC__) || defined(__clang__)
 #define LIBGODOT_API __attribute__((visibility("default")))
-#endif
-
-typedef struct {
-	const char *key;
-	void *val;
-} LibGodotExtensionParameter;
+#endif // if defined(_MSC_VER)
 
 /**
  * @name libgodot_create_godot_instance
- * @since 4.4
+ * @since 4.6
  *
  * Creates a new Godot instance.
  *
  * @param p_argc The number of command line arguments.
  * @param p_argv The C-style array of command line arguments.
  * @param p_init_func GDExtension initialization function of the host application.
- * @param p_params Optional array of parameters to configure the Godot instance with extra or platform-specific options. If provided, must be terminated with a parameter with a null key.
  *
  * @return A pointer to created \ref GodotInstance GDExtension object or nullptr if there was an error.
  */
-LIBGODOT_API GDExtensionObjectPtr libgodot_create_godot_instance(int p_argc, char *p_argv[], GDExtensionInitializationFunction p_init_func, LibGodotExtensionParameter *p_params);
+LIBGODOT_API GDExtensionObjectPtr libgodot_create_godot_instance(int p_argc, char *p_argv[], GDExtensionInitializationFunction p_init_func);
 
 /**
  * @name libgodot_destroy_godot_instance
- * @since 4.4
+ * @since 4.6
  *
  * Destroys an existing Godot instance.
  *

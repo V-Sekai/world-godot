@@ -29,16 +29,20 @@
 /**************************************************************************/
 
 #include "godot_instance.h"
-#include "core/extension/gdextension_manager.h"
-#include "main/main.h"
-#include "servers/display_server.h"
 
-#define GODOT_INSTANCE_LOG(...) print_line(__VA_ARGS__)
+#include "core/extension/gdextension_manager.h"
+#include "core/os/main_loop.h"
+#include "main/main.h"
+#include "servers/display/display_server.h"
 
 void GodotInstance::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("start"), &GodotInstance::start);
 	ClassDB::bind_method(D_METHOD("is_started"), &GodotInstance::is_started);
 	ClassDB::bind_method(D_METHOD("iteration"), &GodotInstance::iteration);
+	ClassDB::bind_method(D_METHOD("focus_in"), &GodotInstance::focus_in);
+	ClassDB::bind_method(D_METHOD("focus_out"), &GodotInstance::focus_out);
+	ClassDB::bind_method(D_METHOD("pause"), &GodotInstance::pause);
+	ClassDB::bind_method(D_METHOD("resume"), &GodotInstance::resume);
 }
 
 GodotInstance::GodotInstance() {
@@ -48,15 +52,15 @@ GodotInstance::~GodotInstance() {
 }
 
 bool GodotInstance::initialize(GDExtensionInitializationFunction p_init_func) {
-	GODOT_INSTANCE_LOG("Godot Instance initialization");
+	print_verbose("Godot Instance initialization");
 	GDExtensionManager *gdextension_manager = GDExtensionManager::get_singleton();
 	GDExtensionConstPtr<const GDExtensionInitializationFunction> ptr((const GDExtensionInitializationFunction *)&p_init_func);
-	GDExtensionManager::LoadStatus status = gdextension_manager->load_function_extension("libgodot://main", ptr);
+	GDExtensionManager::LoadStatus status = gdextension_manager->load_extension_from_function("libgodot://main", ptr);
 	return status == GDExtensionManager::LoadStatus::LOAD_STATUS_OK;
 }
 
 bool GodotInstance::start() {
-	GODOT_INSTANCE_LOG("GodotInstance::start()");
+	print_verbose("GodotInstance::start()");
 	Error err = Main::setup2();
 	if (err != OK) {
 		return false;
@@ -78,9 +82,45 @@ bool GodotInstance::iteration() {
 }
 
 void GodotInstance::stop() {
-	GODOT_INSTANCE_LOG("GodotInstance::stop()");
+	print_verbose("GodotInstance::stop()");
 	if (started) {
 		OS::get_singleton()->get_main_loop()->finalize();
 	}
 	started = false;
+}
+
+void GodotInstance::focus_out() {
+	print_verbose("GodotInstance::focus_out()");
+	if (started) {
+		if (OS::get_singleton()->get_main_loop()) {
+			OS::get_singleton()->get_main_loop()->notification(MainLoop::NOTIFICATION_APPLICATION_FOCUS_OUT);
+		}
+	}
+}
+
+void GodotInstance::focus_in() {
+	print_verbose("GodotInstance::focus_in()");
+	if (started) {
+		if (OS::get_singleton()->get_main_loop()) {
+			OS::get_singleton()->get_main_loop()->notification(MainLoop::NOTIFICATION_APPLICATION_FOCUS_IN);
+		}
+	}
+}
+
+void GodotInstance::pause() {
+	print_verbose("GodotInstance::pause()");
+	if (started) {
+		if (OS::get_singleton()->get_main_loop()) {
+			OS::get_singleton()->get_main_loop()->notification(MainLoop::NOTIFICATION_APPLICATION_PAUSED);
+		}
+	}
+}
+
+void GodotInstance::resume() {
+	print_verbose("GodotInstance::resume()");
+	if (started) {
+		if (OS::get_singleton()->get_main_loop()) {
+			OS::get_singleton()->get_main_loop()->notification(MainLoop::NOTIFICATION_APPLICATION_RESUMED);
+		}
+	}
 }

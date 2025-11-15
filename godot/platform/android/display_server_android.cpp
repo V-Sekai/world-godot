@@ -109,7 +109,7 @@ TypedArray<Dictionary> DisplayServerAndroid::tts_get_voices() const {
 	return TTS_Android::get_voices();
 }
 
-void DisplayServerAndroid::tts_speak(const String &p_text, const String &p_voice, int p_volume, float p_pitch, float p_rate, int p_utterance_id, bool p_interrupt) {
+void DisplayServerAndroid::tts_speak(const String &p_text, const String &p_voice, int p_volume, float p_pitch, float p_rate, int64_t p_utterance_id, bool p_interrupt) {
 	TTS_Android::speak(p_text, p_voice, p_volume, p_pitch, p_rate, p_utterance_id, p_interrupt);
 }
 
@@ -624,6 +624,12 @@ bool DisplayServerAndroid::window_can_draw(DisplayServer::WindowID p_window) con
 
 bool DisplayServerAndroid::can_any_window_draw() const {
 	return true;
+}
+
+void DisplayServerAndroid::window_set_color(const Color &p_color) {
+	GodotJavaWrapper *godot_java = OS_Android::get_singleton()->get_godot_java();
+	ERR_FAIL_NULL(godot_java);
+	godot_java->set_window_color(p_color);
 }
 
 void DisplayServerAndroid::process_events() {

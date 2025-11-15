@@ -32,7 +32,7 @@
 
 #include "scene/resources/3d/primitive_meshes.h"
 #include "scene/resources/3d/tapered_capsule_mesh.h" // Include the header for TaperedCapsuleMesh
-#include "servers/physics_server_3d.h"
+#include "servers/physics_3d/physics_server_3d.h"
 
 Vector<Vector3> TaperedCapsuleShape3D::get_debug_mesh_lines() const {
 	Vector<Vector3> points;

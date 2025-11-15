@@ -32,16 +32,14 @@
 
 #include "core/extension/gdextension_interface.h"
 #include "core/object/class_db.h"
-#include "core/object/object.h"
-
-#include <functional>
 
 class GodotInstance : public Object {
 	GDCLASS(GodotInstance, Object);
 
-	static void _bind_methods();
-
 	bool started = false;
+
+protected:
+	static void _bind_methods();
 
 public:
 	GodotInstance();
@@ -52,5 +50,10 @@ public:
 	bool start();
 	bool is_started();
 	bool iteration();
-	void stop(); // not yet exposed as part of the GDExtension
+	void stop();
+
+	void focus_out();
+	void focus_in();
+	void pause();
+	void resume();
 };

@@ -42,8 +42,8 @@ def add_source_files_orig(self, sources, files, allow_gen=False):
             files = [f for f in files if not str(f).endswith(".gen.cpp")]
 
     # Add each path as compiled Object following environment (self) configuration
-    for path in files:
-        obj = self.Object(path)
+    for file in files:
+        obj = self.Object(file)
         if obj in sources:
             print_warning('Object "{}" already included in environment sources.'.format(obj))
             continue
@@ -88,8 +88,8 @@ def redirect_emitter(target, source, env):
     Emitter to automatically redirect object/library build files to the `bin/obj` directory,
     retaining subfolder structure. External build files will attempt to retain subfolder
     structure relative to their environment's parent directory, sorted under `bin/obj/external`.
-    If `redirect_build_objects` is `False`, or an external build file isn't relative to the
-    passed environment, or a file is being written directly into `bin`, this emitter does nothing.
+    If `redirect_build_objects` is `False`, an external build file isn't relative to the passed
+    environment, or a file is being written directly into `bin`, this emitter does nothing.
     """
     if not env["redirect_build_objects"]:
         return target, source
@@ -441,6 +441,7 @@ def no_verbose(env):
 
     env["CXXCOMSTR"] = compile_source_message
     env["CCCOMSTR"] = compile_source_message
+    env["SWIFTCOMSTR"] = compile_source_message
     env["SHCCCOMSTR"] = compile_shared_source_message
     env["SHCXXCOMSTR"] = compile_shared_source_message
     env["ARCOMSTR"] = link_library_message
@@ -634,19 +635,19 @@ def detect_darwin_sdk_path(platform, env):
 
     elif platform == "ios":
         sdk_name = "iphoneos"
-        var_name = "IOS_SDK_PATH"
+        var_name = "APPLE_SDK_PATH"
 
     elif platform == "iossimulator":
         sdk_name = "iphonesimulator"
-        var_name = "IOS_SDK_PATH"
+        var_name = "APPLE_SDK_PATH"
 
     elif platform == "visionos":
         sdk_name = "xros"
-        var_name = "VISIONOS_SDK_PATH"
+        var_name = "APPLE_SDK_PATH"
 
     elif platform == "visionossimulator":
         sdk_name = "xrsimulator"
-        var_name = "VISIONOS_SDK_PATH"
+        var_name = "APPLE_SDK_PATH"
 
     else:
         raise Exception("Invalid platform argument passed to detect_darwin_sdk_path")
@@ -728,11 +729,14 @@ def get_compiler_version(env):
             version = subprocess.check_output(args, encoding="utf-8").strip()
             for line in version.splitlines():
                 split = line.split(":", 1)
-                if split[0] == "catalog_productDisplayVersion":
-                    sem_ver = split[1].split(".")
-                    ret["major"] = int(sem_ver[0])
-                    ret["minor"] = int(sem_ver[1])
-                    ret["patch"] = int(sem_ver[2].split()[0])
+                if split[0] == "catalog_productSemanticVersion":
+                    match = re.match(r" ([0-9]*).([0-9]*).([0-9]*)-?([a-z0-9.+]*)", split[1])
+                    if match is not None:
+                        ret["major"] = int(match.group(1))
+                        ret["minor"] = int(match.group(2))
+                        ret["patch"] = int(match.group(3))
+                        # Semantic suffix (i.e. insiders+11116.177)
+                        ret["metadata2"] = match.group(4)
                 # Could potentially add section for determining preview version, but
                 # that can wait until metadata is actually used for something.
                 if split[0] == "catalog_buildVersion":

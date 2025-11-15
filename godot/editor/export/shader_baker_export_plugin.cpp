@@ -31,12 +31,14 @@
 #include "shader_baker_export_plugin.h"
 
 #include "core/config/project_settings.h"
+#include "core/io/dir_access.h"
 #include "core/version.h"
 #include "editor/editor_node.h"
 #include "scene/3d/label_3d.h"
 #include "scene/3d/sprite_3d.h"
 #include "servers/rendering/renderer_rd/renderer_scene_render_rd.h"
 #include "servers/rendering/renderer_rd/storage_rd/material_storage.h"
+#include "servers/rendering/rendering_shader_container.h"
 
 // Ensure that AlphaCut is the same between the two classes so we can share the code to detect transparency.
 static_assert(ENUM_MEMBERS_EQUAL(SpriteBase3D::ALPHA_CUT_DISABLED, Label3D::ALPHA_CUT_DISABLED));
@@ -124,11 +126,13 @@ bool ShaderBakerExportPlugin::_begin_customize_resources(const Ref<EditorExportP
 	customization_configuration_hash = to_hash.as_string().hash64();
 
 	BitField<RenderingShaderLibrary::FeatureBits> renderer_features = {};
+#ifndef XR_DISABLED
 	bool xr_enabled = GLOBAL_GET("xr/shaders/enabled");
 	renderer_features.set_flag(RenderingShaderLibrary::FEATURE_ADVANCED_BIT);
 	if (xr_enabled) {
 		renderer_features.set_flag(RenderingShaderLibrary::FEATURE_MULTIVIEW_BIT);
 	}
+#endif // XR_DISABLED
 
 	int vrs_mode = GLOBAL_GET("rendering/vrs/mode");
 	if (vrs_mode != 0) {
@@ -410,6 +414,7 @@ void ShaderBakerExportPlugin::_customize_shader_version(ShaderRD *p_shader, RID 
 		work_item.cache_path = group_items[group].cache_path;
 		work_item.shader_name = p_shader->get_name();
 		work_item.stage_sources = p_shader->version_build_variant_stage_sources(p_version, i);
+		work_item.dynamic_buffers = p_shader->get_dynamic_buffers();
 		work_item.variant = i;
 
 		WorkerThreadPool::TaskID task_id = WorkerThreadPool::get_singleton()->add_template_task(this, &ShaderBakerExportPlugin::_process_work_item, work_item);
@@ -425,18 +430,13 @@ void ShaderBakerExportPlugin::_customize_shader_version(ShaderRD *p_shader, RID 
 void ShaderBakerExportPlugin::_process_work_item(WorkItem p_work_item) {
 	if (!tasks_cancelled) {
 		// Only process the item if the tasks haven't been cancelled by the user yet.
-		Vector<RD::ShaderStageSPIRVData> spirv_data = ShaderRD::compile_stages(p_work_item.stage_sources);
+		Vector<RD::ShaderStageSPIRVData> spirv_data = ShaderRD::compile_stages(p_work_item.stage_sources, p_work_item.dynamic_buffers);
 		ERR_FAIL_COND_MSG(spirv_data.is_empty(), "Unable to retrieve SPIR-V data for shader");
 
-		RD::ShaderReflection shader_refl;
-		Error err = RenderingDeviceCommons::reflect_spirv(spirv_data, shader_refl);
-		ERR_FAIL_COND_MSG(err != OK, "Unable to reflect SPIR-V data that was compiled");
-
 		Ref<RenderingShaderContainer> shader_container = shader_container_format->create_container();
-		shader_container->set_from_shader_reflection(p_work_item.shader_name, shader_refl);
 
 		// Compile shader binary from SPIR-V.
-		bool code_compiled = shader_container->set_code_from_spirv(spirv_data);
+		bool code_compiled = shader_container->set_code_from_spirv(p_work_item.shader_name, spirv_data);
 		ERR_FAIL_COND_MSG(!code_compiled, vformat("Failed to compile code to native for SPIR-V."));
 
 		PackedByteArray shader_bytes = shader_container->to_bytes();

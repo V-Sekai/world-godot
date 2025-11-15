@@ -566,6 +566,8 @@ class AnimationTrackEditGroup : public Control {
 	AnimationTimelineEdit *timeline = nullptr;
 	AnimationTrackEditor *editor = nullptr;
 
+	bool hovered = false;
+
 	void _zoom_changed();
 
 protected:
@@ -603,7 +605,10 @@ class AnimationTrackEditor : public VBoxContainer {
 	AnimationBezierTrackEdit *bezier_edit = nullptr;
 	VBoxContainer *timeline_vbox = nullptr;
 
+	VBoxContainer *info_message_vbox = nullptr;
 	Label *info_message = nullptr;
+	Button *add_animation_player = nullptr;
+	void _add_animation_player();
 
 	AnimationTimelineEdit *timeline = nullptr;
 	AnimationMarkerEdit *marker_edit = nullptr;
@@ -827,6 +832,8 @@ class AnimationTrackEditor : public VBoxContainer {
 	void _auto_fit();
 	void _auto_fit_bezier();
 
+	void _root_node_changed(Node *p_node, bool p_removed);
+	void _scene_changed();
 	void _selection_changed();
 
 	ConfirmationDialog *track_copy_dialog = nullptr;
@@ -918,7 +925,9 @@ public:
 		EDIT_OPTIMIZE_ANIMATION,
 		EDIT_OPTIMIZE_ANIMATION_CONFIRM,
 		EDIT_CLEAN_UP_ANIMATION,
-		EDIT_CLEAN_UP_ANIMATION_CONFIRM
+		EDIT_CLEAN_UP_ANIMATION_CONFIRM,
+		EDIT_GOTO_NEXT_KEYFRAME,
+		EDIT_GOTO_PREV_KEYFRAME,
 	};
 
 	void add_track_edit_plugin(const Ref<AnimationTrackEditPlugin> &p_plugin);

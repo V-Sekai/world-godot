@@ -47,6 +47,7 @@
 
 class TileMapLayer;
 class TileMapLayerEditor;
+class TileSetSourceItemList;
 
 class TileMapLayerSubEditorPlugin : public Object {
 	GDSOFTCLASS(TileMapLayerSubEditorPlugin, Object);
@@ -54,6 +55,7 @@ class TileMapLayerSubEditorPlugin : public Object {
 protected:
 	ObjectID edited_tile_map_layer_id;
 	TileMapLayer *_get_edited_layer() const;
+	static void _add_to_output_if_tile_changed(HashMap<Vector2i, TileMapCell> &p_output, const TileMapLayer *p_layer, Vector2i p_coords, const TileMapCell &p_cell);
 
 public:
 	struct TabData {
@@ -178,7 +180,7 @@ private:
 	Label *missing_source_label = nullptr;
 	Label *invalid_source_label = nullptr;
 
-	ItemList *sources_list = nullptr;
+	TileSetSourceItemList *sources_list = nullptr;
 	MenuButton *source_sort_button = nullptr;
 
 	Ref<Texture2D> missing_atlas_texture_icon;

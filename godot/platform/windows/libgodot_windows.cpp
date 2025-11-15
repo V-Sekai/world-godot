@@ -38,12 +38,9 @@
 static OS_Windows *os = nullptr;
 
 static GodotInstance *instance = nullptr;
-static bool everInitialized = false;
 
-GDExtensionObjectPtr libgodot_create_godot_instance(int p_argc, char *p_argv[], GDExtensionInitializationFunction p_init_func, LibGodotExtensionParameter *p_params) {
+GDExtensionObjectPtr libgodot_create_godot_instance(int p_argc, char *p_argv[], GDExtensionInitializationFunction p_init_func) {
 	ERR_FAIL_COND_V_MSG(instance != nullptr, nullptr, "Only one Godot Instance may be created at a time.");
-
-	ERR_FAIL_COND_V_MSG(everInitialized, nullptr, "Only one Godot Instance may be created per process.");
 
 	os = new OS_Windows(GetModuleHandle(nullptr));
 
@@ -59,8 +56,6 @@ GDExtensionObjectPtr libgodot_create_godot_instance(int p_argc, char *p_argv[], 
 		return nullptr;
 	}
 
-	everInitialized = true;
-
 	return (GDExtensionObjectPtr)instance;
 }
 
@@ -69,7 +64,8 @@ void libgodot_destroy_godot_instance(GDExtensionObjectPtr p_godot_instance) {
 	if (instance == godot_instance) {
 		godot_instance->stop();
 		memdelete(godot_instance);
-		instance = nullptr;
+		// Note: When Godot Engine supports reinitialization, clear the instance pointer here.
+		//instance = nullptr;
 		Main::cleanup();
 	}
 }

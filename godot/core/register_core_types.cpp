@@ -64,6 +64,7 @@
 #include "core/io/tcp_server.h"
 #include "core/io/translation_loader_po.h"
 #include "core/io/udp_server.h"
+#include "core/io/uds_server.h"
 #include "core/io/xml_parser.h"
 #include "core/math/a_star.h"
 #include "core/math/a_star_grid_2d.h"
@@ -130,16 +131,23 @@ void register_core_types() {
 	static_assert(sizeof(Callable) <= 16);
 
 	ObjectDB::setup();
-
 	StringName::setup();
+	register_global_constants();
+	CoreStringNames::create();
+
+	GDREGISTER_CLASS(Object);
+	GDREGISTER_CLASS(RefCounted);
+	GDREGISTER_CLASS(WeakRef);
+	GDREGISTER_CLASS(Resource);
+
+	GDREGISTER_CLASS(Time);
 	_time = memnew(Time);
 	ResourceLoader::initialize();
 
-	register_global_constants();
-
 	Variant::register_types();
 
-	CoreStringNames::create();
+	GDREGISTER_CLASS(ResourceFormatLoader);
+	GDREGISTER_CLASS(ResourceFormatSaver);
 
 	if constexpr (GD_IS_CLASS_ENABLED(Translation)) {
 		resource_format_po.instantiate();
@@ -162,24 +170,19 @@ void register_core_types() {
 		ResourceLoader::add_resource_format_loader(resource_format_image);
 	}
 
-	GDREGISTER_CLASS(Object);
-
 	GDREGISTER_ABSTRACT_CLASS(Script);
 	GDREGISTER_ABSTRACT_CLASS(ScriptLanguage);
 	GDREGISTER_CLASS(ScriptBacktrace);
 	GDREGISTER_VIRTUAL_CLASS(ScriptExtension);
 	GDREGISTER_VIRTUAL_CLASS(ScriptLanguageExtension);
 
-	GDREGISTER_CLASS(RefCounted);
-	GDREGISTER_CLASS(WeakRef);
-	GDREGISTER_CLASS(Resource);
-	GDREGISTER_VIRTUAL_CLASS(MissingResource);
+	GDREGISTER_CLASS(MissingResource);
 	GDREGISTER_CLASS(Image);
 
 	GDREGISTER_CLASS(Shortcut);
 	GDREGISTER_ABSTRACT_CLASS(InputEvent);
-	GDREGISTER_ABSTRACT_CLASS(InputEventWithModifiers);
 	GDREGISTER_ABSTRACT_CLASS(InputEventFromWindow);
+	GDREGISTER_ABSTRACT_CLASS(InputEventWithModifiers);
 	GDREGISTER_CLASS(InputEventKey);
 	GDREGISTER_CLASS(InputEventShortcut);
 	GDREGISTER_ABSTRACT_CLASS(InputEventMouse);
@@ -196,14 +199,18 @@ void register_core_types() {
 	GDREGISTER_CLASS(InputEventMIDI);
 
 	// Network
-	GDREGISTER_ABSTRACT_CLASS(IP);
-
 	GDREGISTER_ABSTRACT_CLASS(StreamPeer);
+	GDREGISTER_ABSTRACT_CLASS(StreamPeerSocket);
+	GDREGISTER_ABSTRACT_CLASS(SocketServer);
 	GDREGISTER_CLASS(StreamPeerExtension);
 	GDREGISTER_CLASS(StreamPeerBuffer);
 	GDREGISTER_CLASS(StreamPeerGZIP);
 	GDREGISTER_CLASS(StreamPeerTCP);
 	GDREGISTER_CLASS(TCPServer);
+
+	// IPC using UNIX domain sockets.
+	GDREGISTER_CLASS(StreamPeerUDS);
+	GDREGISTER_CLASS(UDSServer);
 
 	GDREGISTER_ABSTRACT_CLASS(PacketPeer);
 	GDREGISTER_CLASS(PacketPeerExtension);
@@ -249,9 +256,6 @@ void register_core_types() {
 	GDREGISTER_CLASS(OptimizedTranslation);
 	GDREGISTER_CLASS(UndoRedo);
 	GDREGISTER_CLASS(TriangleMesh);
-
-	GDREGISTER_CLASS(ResourceFormatLoader);
-	GDREGISTER_CLASS(ResourceFormatSaver);
 
 	GDREGISTER_ABSTRACT_CLASS(FileAccess);
 	GDREGISTER_ABSTRACT_CLASS(DirAccess);
@@ -300,6 +304,23 @@ void register_core_types() {
 		ResourceLoader::add_resource_format_loader(resource_loader_gdextension);
 	}
 
+	GDREGISTER_ABSTRACT_CLASS(IP);
+	GDREGISTER_CLASS(CoreBind::Geometry2D);
+	GDREGISTER_CLASS(CoreBind::Geometry3D);
+	GDREGISTER_CLASS(CoreBind::ResourceLoader);
+	GDREGISTER_CLASS(CoreBind::ResourceSaver);
+	GDREGISTER_CLASS(CoreBind::OS);
+	GDREGISTER_CLASS(CoreBind::Engine);
+	GDREGISTER_CLASS(CoreBind::Special::ClassDB);
+	GDREGISTER_CLASS(CoreBind::Marshalls);
+	GDREGISTER_CLASS(CoreBind::EngineDebugger);
+
+	GDREGISTER_CLASS(TranslationServer);
+	GDREGISTER_ABSTRACT_CLASS(Input);
+	GDREGISTER_CLASS(InputMap);
+	GDREGISTER_CLASS(Expression);
+	GDREGISTER_CLASS(ProjectSettings);
+
 	ip = IP::create();
 
 	_geometry_2d = memnew(CoreBind::Geometry2D);
@@ -325,6 +346,7 @@ void register_core_types() {
 void register_core_settings() {
 	// Since in register core types, globals may not be present.
 	GLOBAL_DEF(PropertyInfo(Variant::INT, "network/limits/tcp/connect_timeout_seconds", PROPERTY_HINT_RANGE, "1,1800,1"), (30));
+	GLOBAL_DEF(PropertyInfo(Variant::INT, "network/limits/unix/connect_timeout_seconds", PROPERTY_HINT_RANGE, "1,1800,1"), (30));
 	GLOBAL_DEF_RST(PropertyInfo(Variant::INT, "network/limits/packet_peer_stream/max_buffer_po2", PROPERTY_HINT_RANGE, "8,64,1,or_greater"), (16));
 	GLOBAL_DEF(PropertyInfo(Variant::STRING, "network/tls/certificate_bundle_override", PROPERTY_HINT_FILE, "*.crt"), "");
 
@@ -333,34 +355,14 @@ void register_core_settings() {
 }
 
 void register_early_core_singletons() {
-	GDREGISTER_CLASS(CoreBind::Engine);
 	Engine::get_singleton()->add_singleton(Engine::Singleton("Engine", CoreBind::Engine::get_singleton()));
-
-	GDREGISTER_CLASS(ProjectSettings);
 	Engine::get_singleton()->add_singleton(Engine::Singleton("ProjectSettings", ProjectSettings::get_singleton()));
-
-	GDREGISTER_CLASS(CoreBind::OS);
 	Engine::get_singleton()->add_singleton(Engine::Singleton("OS", CoreBind::OS::get_singleton()));
-
-	GDREGISTER_CLASS(Time);
 	Engine::get_singleton()->add_singleton(Engine::Singleton("Time", Time::get_singleton()));
 }
 
 void register_core_singletons() {
 	OS::get_singleton()->benchmark_begin_measure("Core", "Register Singletons");
-
-	GDREGISTER_ABSTRACT_CLASS(IP);
-	GDREGISTER_CLASS(CoreBind::Geometry2D);
-	GDREGISTER_CLASS(CoreBind::Geometry3D);
-	GDREGISTER_CLASS(CoreBind::ResourceLoader);
-	GDREGISTER_CLASS(CoreBind::ResourceSaver);
-	GDREGISTER_CLASS(CoreBind::Special::ClassDB);
-	GDREGISTER_CLASS(CoreBind::Marshalls);
-	GDREGISTER_CLASS(TranslationServer);
-	GDREGISTER_ABSTRACT_CLASS(Input);
-	GDREGISTER_CLASS(InputMap);
-	GDREGISTER_CLASS(Expression);
-	GDREGISTER_CLASS(CoreBind::EngineDebugger);
 
 	Engine::get_singleton()->add_singleton(Engine::Singleton("IP", IP::get_singleton(), "IP"));
 	Engine::get_singleton()->add_singleton(Engine::Singleton("Geometry2D", CoreBind::Geometry2D::get_singleton()));

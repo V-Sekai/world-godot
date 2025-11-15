@@ -73,7 +73,7 @@ public:
 	// You should return the pointer to the last struct you define as your result.
 	// If you are not adding any structs, just return `p_next_pointer`.
 	// See existing extensions for examples of this implementation.
-	virtual void *set_system_properties_and_get_next_pointer(void *p_next_pointer); // Add additional data structures when we interrogate OpenXRS system abilities.
+	virtual void *set_system_properties_and_get_next_pointer(void *p_next_pointer); // Add additional data structures when we interrogate OpenXR's system abilities.
 	virtual void *set_instance_create_info_and_get_next_pointer(void *p_next_pointer); // Add additional data structures when we create our OpenXR instance.
 	virtual void *set_session_create_and_get_next_pointer(void *p_next_pointer); // Add additional data structures when we create our OpenXR session.
 	virtual void *set_swapchain_create_info_and_get_next_pointer(void *p_next_pointer); // Add additional data structures when creating OpenXR swap chains.
@@ -84,6 +84,10 @@ public:
 	virtual void *set_frame_wait_info_and_get_next_pointer(void *p_next_pointer); // Add additional data structures when calling xrWaitFrame
 	virtual void *set_view_locate_info_and_get_next_pointer(void *p_next_pointer); // Add additional data structures when calling xrLocateViews
 	virtual void *set_frame_end_info_and_get_next_pointer(void *p_next_pointer); // Add additional data structures when calling xrEndFrame
+
+	virtual void prepare_view_configuration(uint32_t p_view_count);
+	virtual void *set_view_configuration_and_get_next_pointer(uint32_t p_view, void *p_next_pointer); // Add additional data structures when calling xrEnumerateViewConfiguration
+	virtual void print_view_configuration_info(uint32_t p_view) const;
 
 	//TODO workaround as GDExtensionPtr<void> return type results in build error in godot-cpp
 	GDVIRTUAL1R(uint64_t, _set_system_properties_and_get_next_pointer, GDExtensionPtr<void>);
@@ -99,6 +103,9 @@ public:
 	GDVIRTUAL0R(int, _get_composition_layer_count);
 	GDVIRTUAL1R(uint64_t, _get_composition_layer, int);
 	GDVIRTUAL1R(int, _get_composition_layer_order, int);
+	GDVIRTUAL1(_prepare_view_configuration, int);
+	GDVIRTUAL2R(uint64_t, _set_view_configuration_and_get_next_pointer, uint32_t, GDExtensionPtr<void>);
+	GDVIRTUAL1C(_print_view_configuration_info, int);
 
 	virtual PackedStringArray get_suggested_tracker_names();
 

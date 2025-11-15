@@ -44,6 +44,7 @@
 #include "scene/gui/scroll_bar.h"
 #include "scene/gui/spin_box.h"
 #include "scene/gui/view_panner.h"
+#include "scene/resources/material.h"
 #include "scene/resources/style_box_flat.h"
 #include "scene/theme/theme_db.h"
 
@@ -1615,7 +1616,7 @@ void GraphEdit::_draw_minimap_connection_line(const Vector2 &p_from_graph_positi
 		colors.push_back(p_from_color.lerp(p_to_color, normalized_curve_position));
 	}
 
-	minimap->draw_polyline_colors(points, colors, 0.5, lines_antialiased);
+	minimap->draw_polyline_colors(points, Vector<Color>(colors), 0.5, lines_antialiased);
 }
 
 void GraphEdit::_update_connections() {

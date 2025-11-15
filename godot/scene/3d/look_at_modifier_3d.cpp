@@ -34,7 +34,7 @@ void LookAtModifier3D::_validate_property(PropertyInfo &p_property) const {
 	if (Engine::get_singleton()->is_editor_hint() && (p_property.name == "bone_name" || p_property.name == "origin_bone_name")) {
 		Skeleton3D *skeleton = get_skeleton();
 		if (skeleton) {
-			p_property.hint = PROPERTY_HINT_ENUM;
+			p_property.hint = PROPERTY_HINT_ENUM_SUGGESTION;
 			p_property.hint_string = skeleton->get_concatenated_bone_names();
 		} else {
 			p_property.hint = PROPERTY_HINT_NONE;
@@ -457,7 +457,7 @@ void LookAtModifier3D::_bind_methods() {
 
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "bone_name", PROPERTY_HINT_ENUM_SUGGESTION, ""), "set_bone_name", "get_bone_name");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "bone", PROPERTY_HINT_NONE, "", PROPERTY_USAGE_NO_EDITOR), "set_bone", "get_bone");
-	ADD_PROPERTY(PropertyInfo(Variant::INT, "forward_axis", PROPERTY_HINT_ENUM, "+X,-X,+Y,-Y,+Z,-Z"), "set_forward_axis", "get_forward_axis");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "forward_axis", PROPERTY_HINT_ENUM, SkeletonModifier3D::get_hint_bone_axis()), "set_forward_axis", "get_forward_axis");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "primary_rotation_axis", PROPERTY_HINT_ENUM, "X,Y,Z"), "set_primary_rotation_axis", "get_primary_rotation_axis");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "use_secondary_rotation"), "set_use_secondary_rotation", "is_using_secondary_rotation");
 
@@ -500,10 +500,6 @@ void LookAtModifier3D::_bind_methods() {
 }
 
 void LookAtModifier3D::_process_modification(double p_delta) {
-	if (!is_inside_tree()) {
-		return;
-	}
-
 	Skeleton3D *skeleton = get_skeleton();
 	if (!skeleton || bone < 0 || bone >= skeleton->get_bone_count()) {
 		return;
@@ -513,10 +509,10 @@ void LookAtModifier3D::_process_modification(double p_delta) {
 	Transform3D bone_rest_space;
 	int parent_bone = skeleton->get_bone_parent(bone);
 	if (parent_bone < 0) {
-		bone_rest_space = skeleton->get_global_transform();
+		bone_rest_space = skeleton->get_global_transform_interpolated();
 		bone_rest_space.translate_local(skeleton->get_bone_rest(bone).origin);
 	} else {
-		bone_rest_space = skeleton->get_global_transform() * skeleton->get_bone_global_pose(parent_bone);
+		bone_rest_space = skeleton->get_global_transform_interpolated() * skeleton->get_bone_global_pose(parent_bone);
 		bone_rest_space.translate_local(skeleton->get_bone_rest(bone).origin);
 	}
 
@@ -530,18 +526,18 @@ void LookAtModifier3D::_process_modification(double p_delta) {
 	} else {
 		Transform3D origin_tr;
 		if (origin_from == ORIGIN_FROM_SPECIFIC_BONE && origin_bone >= 0 && origin_bone < skeleton->get_bone_count()) {
-			origin_tr = skeleton->get_global_transform() * skeleton->get_bone_global_pose(origin_bone);
+			origin_tr = skeleton->get_global_transform_interpolated() * skeleton->get_bone_global_pose(origin_bone);
 		} else if (origin_from == ORIGIN_FROM_EXTERNAL_NODE) {
 			Node3D *origin_src = Object::cast_to<Node3D>(get_node_or_null(origin_external_node));
 			if (origin_src) {
-				origin_tr = origin_src->get_global_transform();
+				origin_tr = origin_src->get_global_transform_interpolated();
 			} else {
 				origin_tr = bone_rest_space;
 			}
 		} else {
 			origin_tr = bone_rest_space;
 		}
-		forward_vector = bone_rest_space.orthonormalized().basis.xform_inv(target->get_global_position() - origin_tr.translated_local(origin_offset).origin);
+		forward_vector = bone_rest_space.orthonormalized().basis.xform_inv(target->get_global_transform_interpolated().origin - origin_tr.translated_local(origin_offset).origin);
 		forward_vector_nrm = forward_vector.normalized();
 		if (forward_vector_nrm.abs().is_equal_approx(get_vector_from_axis(primary_rotation_axis))) {
 			destination = skeleton->get_bone_pose_rotation(bone);

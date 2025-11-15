@@ -32,6 +32,7 @@
 
 #include "../gltf_defines.h"
 #include "../gltf_document.h"
+#include "editor_blender_utils.h"
 #include "editor_import_blend_runner.h"
 
 #include "core/config/project_settings.h"
@@ -47,54 +48,6 @@
 #include <shlwapi.h>
 #endif
 
-static bool _get_blender_version(const String &p_path, int &r_major, int &r_minor, String *r_err = nullptr) {
-	if (!FileAccess::exists(p_path)) {
-		if (r_err) {
-			*r_err = TTR("Path does not point to a valid executable.");
-		}
-		return false;
-	}
-	List<String> args;
-	args.push_back("--version");
-	String pipe;
-	Error err = OS::get_singleton()->execute(p_path, args, &pipe);
-	if (err != OK) {
-		if (r_err) {
-			*r_err = TTR("Couldn't run Blender executable.");
-		}
-		return false;
-	}
-	int bl = pipe.find("Blender ");
-	if (bl == -1) {
-		if (r_err) {
-			*r_err = vformat(TTR("Unexpected --version output from Blender executable at: %s."), p_path);
-		}
-		return false;
-	}
-	pipe = pipe.substr(bl);
-	pipe = pipe.replace_first("Blender ", "");
-	int pp = pipe.find_char('.');
-	if (pp == -1) {
-		if (r_err) {
-			*r_err = vformat(TTR("Couldn't extract version information from Blender executable at: %s."), p_path);
-		}
-		return false;
-	}
-	String v = pipe.substr(0, pp);
-	r_major = v.to_int();
-	if (r_major < 3) {
-		if (r_err) {
-			*r_err = vformat(TTR("Found Blender version %d.x, which is too old for this importer (3.0+ is required)."), r_major);
-		}
-		return false;
-	}
-
-	int pp2 = pipe.find_char('.', pp + 1);
-	r_minor = pp2 > pp ? pipe.substr(pp + 1, pp2 - pp - 1).to_int() : 0;
-
-	return true;
-}
-
 void EditorSceneFormatImporterBlend::get_extensions(List<String> *r_extensions) const {
 	r_extensions->push_back("blend");
 }
@@ -109,7 +62,7 @@ Node *EditorSceneFormatImporterBlend::import_scene(const String &p_path, uint32_
 
 	if (blender_major_version == -1 || blender_minor_version == -1 || last_tested_blender_path != blender_path) {
 		String error;
-		if (!_get_blender_version(blender_path, blender_major_version, blender_minor_version, &error)) {
+		if (!EditorBlenderUtils::get_blender_version(blender_path, blender_major_version, blender_minor_version, &error)) {
 			ERR_FAIL_V_MSG(nullptr, error);
 		}
 		last_tested_blender_path = blender_path;
@@ -118,15 +71,7 @@ Node *EditorSceneFormatImporterBlend::import_scene(const String &p_path, uint32_
 	// Get global paths for source and sink.
 	// Escape paths to be valid Python strings to embed in the script.
 	String source_global = ProjectSettings::get_singleton()->globalize_path(p_path);
-
-#ifdef WINDOWS_ENABLED
-	// On Windows, when using a network share path, the above will return a path starting with "//"
-	// which once handed to Blender will be treated like a relative path. So we need to replace the
-	// first two characters with "\\" to make it absolute again.
-	if (source_global.is_network_share_path()) {
-		source_global = "\\\\" + source_global.substr(2);
-	}
-#endif
+	source_global = EditorBlenderUtils::fix_windows_network_share_path(source_global);
 
 	const String blend_basename = p_path.get_file().get_basename();
 	const String sink = ProjectSettings::get_singleton()->get_imported_files_path().path_join(
@@ -247,6 +192,14 @@ Node *EditorSceneFormatImporterBlend::import_scene(const String &p_path, uint32_
 			parameters_map["export_gn_mesh"] = false;
 		}
 	}
+	if (blender_major_version >= 4) {
+		if (p_options.has(SNAME("blender/meshes/gpu_instances")) && p_options[SNAME("blender/meshes/gpu_instances")]) {
+			parameters_map["export_gpu_instances"] = true;
+		} else {
+			parameters_map["export_gpu_instances"] = false;
+		}
+	}
+
 	if (p_options.has(SNAME("blender/meshes/tangents")) && p_options[SNAME("blender/meshes/tangents")]) {
 		parameters_map["export_tangents"] = true;
 	} else {
@@ -336,7 +289,7 @@ Node *EditorSceneFormatImporterBlend::import_scene(const String &p_path, uint32_
 
 Variant EditorSceneFormatImporterBlend::get_option_visibility(const String &p_path, const String &p_scene_import_type, const String &p_option,
 		const HashMap<StringName, Variant> &p_options) {
-	if (p_path.get_extension().to_lower() != "blend") {
+	if (!p_path.has_extension("blend")) {
 		return true;
 	}
 
@@ -350,7 +303,7 @@ Variant EditorSceneFormatImporterBlend::get_option_visibility(const String &p_pa
 
 void EditorSceneFormatImporterBlend::get_import_options(const String &p_path, List<ResourceImporter::ImportOption> *r_options) {
 	// Returns all the options when path is empty because that means it's for the Project Settings.
-	if (!p_path.is_empty() && p_path.get_extension().to_lower() != "blend") {
+	if (!p_path.is_empty() && !p_path.has_extension("blend")) {
 		return;
 	}
 #define ADD_OPTION_BOOL(PATH, VALUE) \
@@ -368,6 +321,7 @@ void EditorSceneFormatImporterBlend::get_import_options(const String &p_path, Li
 	ADD_OPTION_BOOL("blender/meshes/uvs", true);
 	ADD_OPTION_BOOL("blender/meshes/normals", true);
 	ADD_OPTION_BOOL("blender/meshes/export_geometry_nodes_instances", false);
+	ADD_OPTION_BOOL("blender/meshes/gpu_instances", false);
 	ADD_OPTION_BOOL("blender/meshes/tangents", true);
 	ADD_OPTION_ENUM("blender/meshes/skins", "None,4 Influences (Compatible),All Influences", BLEND_BONE_INFLUENCES_ALL);
 	ADD_OPTION_BOOL("blender/meshes/export_bones_deforming_mesh_only", false);
@@ -393,7 +347,7 @@ void EditorSceneFormatImporterBlend::handle_compatibility_options(HashMap<String
 
 static bool _test_blender_path(const String &p_path, String *r_err = nullptr) {
 	int major, minor;
-	return _get_blender_version(p_path, major, minor, r_err);
+	return EditorBlenderUtils::get_blender_version(p_path, major, minor, r_err);
 }
 
 bool EditorFileSystemImportFormatSupportQueryBlend::is_active() const {
