@@ -614,8 +614,6 @@ void FileSystemDock::_notification(int p_what) {
 			file_list_search_box->set_right_icon(get_editor_theme_icon(SNAME("Search")));
 			file_list_button_sort->set_button_icon(get_editor_theme_icon(SNAME("Sort")));
 
-			button_dock_placement->set_button_icon(get_editor_theme_icon(SNAME("GuiTabMenuHl")));
-
 			if (is_layout_rtl()) {
 				button_hist_next->set_button_icon(get_editor_theme_icon(SNAME("Back")));
 				button_hist_prev->set_button_icon(get_editor_theme_icon(SNAME("Forward")));
@@ -2697,7 +2695,7 @@ int FileSystemDock::_get_menu_option_from_key(const Ref<InputEventKey> &p_key) {
 		return FILE_MENU_OPEN_EXTERNAL;
 	} else if (ED_IS_SHORTCUT("filesystem_dock/open_in_terminal", p_key)) {
 		return FILE_MENU_OPEN_IN_TERMINAL;
-	} else if (ED_IS_SHORTCUT("file_dialog/focus_path", p_key)) {
+	} else if (ED_IS_SHORTCUT("filesystem_dock/focus_path", p_key)) {
 		return EXTRA_FOCUS_PATH;
 	} else if (ED_IS_SHORTCUT("editor/open_search", p_key)) {
 		return EXTRA_FOCUS_FILTER;
@@ -2711,18 +2709,22 @@ void FileSystemDock::_resource_created() {
 		fpath = fpath.get_base_dir();
 	}
 
-	String type_name = new_resource_dialog->get_selected_type();
+	const String type_name = new_resource_dialog->get_selected_type();
 	if (type_name == "Shader") {
-		make_shader_dialog->config(fpath.path_join("new_shader"), false, false, 0);
-		make_shader_dialog->popup_centered();
-		return;
-	} else if (type_name == "VisualShader") {
-		make_shader_dialog->config(fpath.path_join("new_shader"), false, false, 1);
+		make_shader_dialog->config(fpath.path_join("new_shader"), false, false, type_name);
 		make_shader_dialog->popup_centered();
 		return;
 	} else if (type_name == "ShaderInclude") {
-		make_shader_dialog->config(fpath.path_join("new_shader_include"), false, false, 2);
+		make_shader_dialog->config(fpath.path_join("new_shader_include"), false, false, type_name);
 		make_shader_dialog->popup_centered();
+		return;
+	} else if (type_name == "VisualShader") {
+		make_shader_dialog->config(fpath.path_join("new_shader"), false, false, type_name);
+		make_shader_dialog->popup_centered();
+		return;
+	} else if (ClassDB::is_parent_class(type_name, "Script")) {
+		make_script_dialog->config("Node", fpath.path_join("new_script"), false, false);
+		make_script_dialog->popup_centered();
 		return;
 	}
 
@@ -2794,10 +2796,6 @@ void FileSystemDock::_rescan() {
 
 	_set_scanning_mode();
 	EditorFileSystem::get_singleton()->scan();
-}
-
-void FileSystemDock::_change_bottom_dock_placement() {
-	EditorDockManager::get_singleton()->bottom_dock_show_placement_popup(button_dock_placement->get_screen_rect(), this);
 }
 
 void FileSystemDock::_change_split_mode() {
@@ -4086,10 +4084,11 @@ MenuButton *FileSystemDock::_create_file_menu_button() {
 }
 
 void FileSystemDock::update_layout(EditorDock::DockLayout p_layout) {
-	horizontal = p_layout == EditorDock::DOCK_LAYOUT_HORIZONTAL;
-	if (button_dock_placement->is_visible() == horizontal) {
+	bool new_horizontal = (p_layout == EditorDock::DOCK_LAYOUT_HORIZONTAL);
+	if (horizontal == new_horizontal) {
 		return;
 	}
+	horizontal = new_horizontal;
 
 	if (horizontal) {
 		path_hb->reparent(toolbar_hbc, false);
@@ -4119,7 +4118,6 @@ void FileSystemDock::update_layout(EditorDock::DockLayout p_layout) {
 		set_file_list_display_mode(new_file_display_mode);
 		set_custom_minimum_size(Size2(0, 0));
 	}
-	button_dock_placement->set_visible(horizontal);
 }
 
 void FileSystemDock::save_layout_to_config(Ref<ConfigFile> &p_layout, const String &p_section) const {
@@ -4211,8 +4209,8 @@ FileSystemDock::FileSystemDock() {
 	set_name(TTRC("FileSystem"));
 	set_icon_name("Folder");
 	set_dock_shortcut(ED_SHORTCUT_AND_COMMAND("docks/open_filesystem", TTRC("Open FileSystem Dock"), KeyModifierMask::ALT | Key::F));
-	set_default_slot(EditorDockManager::DOCK_SLOT_LEFT_BR);
-	set_available_layouts(DOCK_LAYOUT_VERTICAL | DOCK_LAYOUT_HORIZONTAL);
+	set_default_slot(DockConstants::DOCK_SLOT_LEFT_BR);
+	set_available_layouts(DOCK_LAYOUT_ALL);
 
 	ProjectSettings::get_singleton()->add_hidden_prefix("file_customization/");
 
@@ -4235,6 +4233,11 @@ FileSystemDock::FileSystemDock() {
 	ED_SHORTCUT("filesystem_dock/open_in_external_program", TTRC("Open in External Program"), KeyModifierMask::CMD_OR_CTRL | KeyModifierMask::ALT | Key::E);
 	ED_SHORTCUT("filesystem_dock/open_in_terminal", TTRC("Open in Terminal"), KeyModifierMask::CMD_OR_CTRL | KeyModifierMask::ALT | Key::T);
 #endif
+
+	ED_SHORTCUT("filesystem_dock/focus_path", TTRC("Focus Path"), KeyModifierMask::CMD_OR_CTRL | Key::L);
+	// Allow both Cmd + L and Cmd + Shift + G to match Safari's and Finder's shortcuts respectively.
+	ED_SHORTCUT_OVERRIDE_ARRAY("filesystem_dock/focus_path", "macos",
+			{ int32_t(KeyModifierMask::META | Key::L), int32_t(KeyModifierMask::META | KeyModifierMask::SHIFT | Key::G) });
 
 	// Properly translating color names would require a separate HashMap, so for simplicity they are provided as comments.
 	folder_colors["red"] = Color(1.0, 0.271, 0.271); // TTR("Red")
@@ -4291,13 +4294,6 @@ FileSystemDock::FileSystemDock() {
 	button_toggle_display_mode->set_tooltip_text(TTRC("Change Split Mode"));
 	button_toggle_display_mode->set_theme_type_variation("FlatMenuButton");
 	toolbar_hbc->add_child(button_toggle_display_mode);
-
-	button_dock_placement = memnew(Button);
-	button_dock_placement->set_theme_type_variation("FlatMenuButton");
-	button_dock_placement->set_accessibility_name(TTRC("Dock Placement"));
-	button_dock_placement->connect(SceneStringName(pressed), callable_mp(this, &FileSystemDock::_change_bottom_dock_placement));
-	button_dock_placement->hide();
-	toolbar_hbc->add_child(button_dock_placement);
 
 	toolbar2_hbc = memnew(HBoxContainer);
 	top_vbc->add_child(toolbar2_hbc);

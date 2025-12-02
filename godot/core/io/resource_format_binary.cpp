@@ -431,8 +431,13 @@ Error ResourceLoaderBinary::parse_variant(Variant &r_v) {
 					}
 
 					Ref<Resource> res;
-					if (!using_whitelist || external_path_whitelist.has(path)) {
-						res = ResourceLoader::load(path, exttype, cache_mode_for_external);
+					if (!using_whitelist || ResourceLoader::_is_path_whitelisted(path, external_path_whitelist)) {
+						// For legacy format, use load_whitelisted when whitelist is enabled to ensure recursive enforcement
+						if (using_whitelist) {
+							res = ResourceLoader::load_whitelisted(path, external_path_whitelist, type_whitelist, exttype, cache_mode_for_external);
+						} else {
+							res = ResourceLoader::load(path, exttype, cache_mode_for_external);
+						}
 					}
 					if (res.is_null()) {
 						WARN_PRINT(vformat("Couldn't load resource: %s.", path));
@@ -685,6 +690,8 @@ Error ResourceLoaderBinary::load() {
 		return error;
 	}
 
+	bool has_missing_dependencies = false;
+
 	for (int i = 0; i < external_resources.size(); i++) {
 		String path = external_resources[i].path;
 
@@ -699,20 +706,34 @@ Error ResourceLoaderBinary::load() {
 
 		external_resources.write[i].path = path; //remap happens here, not on load because on load it can actually be used for filesystem dock resource remap
 
-		if (using_whitelist && !external_path_whitelist.has(path)) {
-			error = ERR_FILE_MISSING_DEPENDENCIES;
-			ERR_FAIL_V_MSG(error, "External dependency not in whitelist: " + path + ".");
+		// Check external dependencies against whitelist
+		// Empty whitelist means "deny all external dependencies (consistent with main resource behavior)"
+		// Non-empty whitelist means "only allow external dependencies in the whitelist"
+		if (using_whitelist) {
+			// Empty whitelist denies all external dependencies
+			if (external_path_whitelist.is_empty() || !ResourceLoader::_is_path_whitelisted(path, external_path_whitelist)) {
+				error = ERR_FILE_MISSING_DEPENDENCIES;
+				resource = Ref<Resource>(); // Clear resource before returning error
+				ERR_FAIL_V_MSG(error, "External dependency not in whitelist: " + path + ".");
+			}
 		}
 
-		// Once the external resource has passed the whitelist, we consider the external resource to be safe.
-		// The external resource can always be loaded without whitelist.
-		external_resources.write[i].load_token = ResourceLoader::_load_start(path, external_resources[i].type, use_sub_threads ? ResourceLoader::LOAD_THREAD_DISTRIBUTE : ResourceLoader::LOAD_THREAD_FROM_CURRENT, cache_mode_for_external, false, false, Dictionary(), Dictionary());
+		// Once the external resource has passed the whitelist, recursively enforce whitelist for its dependencies.
+		// This ensures all nested dependencies are also validated against the whitelist.
+		// Only pass whitelist parameters if we're actually using a whitelist.
+		if (using_whitelist) {
+			external_resources.write[i].load_token = ResourceLoader::_load_start(path, external_resources[i].type, use_sub_threads ? ResourceLoader::LOAD_THREAD_DISTRIBUTE : ResourceLoader::LOAD_THREAD_FROM_CURRENT, cache_mode_for_external, false, true, external_path_whitelist, type_whitelist);
+		} else {
+			external_resources.write[i].load_token = ResourceLoader::_load_start(path, external_resources[i].type, use_sub_threads ? ResourceLoader::LOAD_THREAD_DISTRIBUTE : ResourceLoader::LOAD_THREAD_FROM_CURRENT, cache_mode_for_external, false, false, Dictionary(), Dictionary());
+		}
 
 		if (external_resources[i].load_token.is_null()) {
+			has_missing_dependencies = true;
 			if (!ResourceLoader::get_abort_on_missing_resources()) {
 				ResourceLoader::notify_dependency_error(local_path, path, external_resources[i].type);
 			} else {
 				error = ERR_FILE_MISSING_DEPENDENCIES;
+				resource = Ref<Resource>(); // Clear resource before returning error
 				ERR_FAIL_V_MSG(error, vformat("Can't load dependency: '%s'.", path));
 			}
 		}
@@ -780,7 +801,8 @@ Error ResourceLoaderBinary::load() {
 				//did not replace
 
 				Object *obj = nullptr;
-				if (!using_whitelist || type_whitelist.has(t)) {
+				// Empty type whitelist denies all types (consistent with path whitelist behavior)
+				if (!using_whitelist || (!type_whitelist.is_empty() && type_whitelist.has(t))) {
 					obj = ClassDB::instantiate(t);
 				}
 				if (!obj) {
@@ -834,6 +856,7 @@ Error ResourceLoaderBinary::load() {
 
 			if (name == StringName()) {
 				error = ERR_FILE_CORRUPT;
+				resource = Ref<Resource>(); // Clear resource before returning error
 				ERR_FAIL_V(ERR_FILE_CORRUPT);
 			}
 
@@ -841,6 +864,7 @@ Error ResourceLoaderBinary::load() {
 
 			error = parse_variant(value);
 			if (error) {
+				resource = Ref<Resource>(); // Clear resource before returning error
 				return error;
 			}
 
@@ -907,6 +931,13 @@ Error ResourceLoaderBinary::load() {
 
 		if (main) {
 			f.unref();
+			if (has_missing_dependencies) {
+				// Even if abort_on_missing_resources is false, we should not return OK
+				// when dependencies are missing, as the resource is invalid
+				error = ERR_FILE_MISSING_DEPENDENCIES;
+				resource = Ref<Resource>(); // Clear resource before returning error
+				return error;
+			}
 			resource = res;
 			resource->set_as_translation_remapped(translation_remapped);
 			error = OK;

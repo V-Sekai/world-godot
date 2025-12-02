@@ -129,6 +129,7 @@ static void _terminate(JNIEnv *env, bool p_restart = false) {
 	NetSocketAndroid::terminate();
 
 	cleanup_android_class_loader();
+	godot_cleanup_profiler();
 
 	if (godot_java) {
 		godot_java->on_godot_terminating(env);
@@ -536,7 +537,7 @@ JNIEXPORT jobject JNICALL Java_org_godotengine_godot_GodotLib_getEditorProjectMe
 		String key = jstring_to_string(p_key, env);
 		Variant default_value = _jobject_to_variant(env, p_default_value);
 		Variant data = EditorSettings::get_singleton()->get_project_metadata(section, key, default_value);
-		result = _variant_to_jvalue(env, data.get_type(), &data, true);
+		result.l = _variant_to_jobject(env, data.get_type(), &data);
 	}
 #else
 	WARN_PRINT("Access to the Editor Settings Project Metadata is only available on Editor builds");
@@ -671,6 +672,15 @@ JNIEXPORT jboolean JNICALL Java_org_godotengine_godot_GodotLib_isProjectManagerH
 	Engine *engine = Engine::get_singleton();
 	if (engine) {
 		return engine->is_project_manager_hint();
+	}
+	return false;
+}
+
+JNIEXPORT jboolean JNICALL Java_org_godotengine_godot_GodotLib_hasFeature(JNIEnv *env, jclass clazz, jstring p_feature) {
+	OS *os = OS::get_singleton();
+	if (os) {
+		String feature = jstring_to_string(p_feature, env);
+		return os->has_feature(feature);
 	}
 	return false;
 }

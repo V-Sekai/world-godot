@@ -188,12 +188,6 @@ Error GLTFDocument::_serialize(Ref<GLTFState> p_state) {
 		return Error::FAILED;
 	}
 
-	/* STEP SERIALIZE ACCESSORS */
-	err = _encode_accessors(p_state);
-	if (err != OK) {
-		return Error::FAILED;
-	}
-
 	/* STEP SERIALIZE IMAGES */
 	err = _serialize_images(p_state);
 	if (err != OK) {
@@ -202,12 +196,6 @@ Error GLTFDocument::_serialize(Ref<GLTFState> p_state) {
 
 	/* STEP SERIALIZE TEXTURES */
 	err = _serialize_textures(p_state);
-	if (err != OK) {
-		return Error::FAILED;
-	}
-
-	/* STEP SERIALIZE BUFFER VIEWS */
-	err = _encode_buffer_views(p_state);
 	if (err != OK) {
 		return Error::FAILED;
 	}
@@ -238,6 +226,18 @@ Error GLTFDocument::_serialize(Ref<GLTFState> p_state) {
 
 	/* STEP SERIALIZE VERSION */
 	err = _serialize_asset_header(p_state);
+	if (err != OK) {
+		return Error::FAILED;
+	}
+
+	/* STEP SERIALIZE ACCESSORS */
+	err = _encode_accessors(p_state);
+	if (err != OK) {
+		return Error::FAILED;
+	}
+
+	/* STEP SERIALIZE BUFFER VIEWS */
+	err = _encode_buffer_views(p_state);
 	if (err != OK) {
 		return Error::FAILED;
 	}
@@ -2143,10 +2143,6 @@ Dictionary GLTFDocument::_serialize_image(Ref<GLTFState> p_state, Ref<Image> p_i
 		bv->byte_offset = p_state->buffers[bi].size();
 
 		Vector<uint8_t> buffer;
-		Ref<ImageTexture> img_tex = p_image;
-		if (img_tex.is_valid()) {
-			p_image = img_tex->get_image();
-		}
 		// Save in various image formats. Note that if the format is "None",
 		// the state's images will be empty, so this code will not be reached.
 		if (_image_save_extension.is_valid()) {
@@ -2755,10 +2751,6 @@ Error GLTFDocument::_serialize_materials(Ref<GLTFState> p_state) {
 					height = ao_texture->get_height();
 					width = ao_texture->get_width();
 					ao_image = ao_texture->get_image();
-					Ref<ImageTexture> img_tex = ao_image;
-					if (img_tex.is_valid()) {
-						ao_image = img_tex->get_image();
-					}
 					if (ao_image->is_compressed()) {
 						ao_image->decompress();
 					}
@@ -2771,10 +2763,6 @@ Error GLTFDocument::_serialize_materials(Ref<GLTFState> p_state) {
 					height = roughness_texture->get_height();
 					width = roughness_texture->get_width();
 					roughness_image = roughness_texture->get_image();
-					Ref<ImageTexture> img_tex = roughness_image;
-					if (img_tex.is_valid()) {
-						roughness_image = img_tex->get_image();
-					}
 					if (roughness_image->is_compressed()) {
 						roughness_image->decompress();
 					}
@@ -2787,10 +2775,6 @@ Error GLTFDocument::_serialize_materials(Ref<GLTFState> p_state) {
 					height = metallic_texture->get_height();
 					width = metallic_texture->get_width();
 					metallness_image = metallic_texture->get_image();
-					Ref<ImageTexture> img_tex = metallness_image;
-					if (img_tex.is_valid()) {
-						metallness_image = img_tex->get_image();
-					}
 					if (metallness_image->is_compressed()) {
 						metallness_image->decompress();
 					}
@@ -2903,10 +2887,6 @@ Error GLTFDocument::_serialize_materials(Ref<GLTFState> p_state) {
 					// Code for uncompressing RG normal maps
 					Ref<Image> img = normal_texture->get_image();
 					if (img.is_valid()) {
-						Ref<ImageTexture> img_tex = normal_texture;
-						if (img_tex.is_valid()) {
-							img = img_tex->get_image();
-						}
 						img->decompress();
 						img->convert(Image::FORMAT_RGBA8);
 						for (int32_t y = 0; y < img->get_height(); y++) {
@@ -3209,16 +3189,20 @@ void GLTFDocument::_set_texture_transform_uv1(const Dictionary &p_dict, Ref<Base
 		if (extensions.has("KHR_texture_transform")) {
 			if (p_material.is_valid()) {
 				const Dictionary &texture_transform = extensions["KHR_texture_transform"];
-				const Array &offset_arr = texture_transform["offset"];
-				if (offset_arr.size() == 2) {
-					const Vector3 offset_vector3 = Vector3(offset_arr[0], offset_arr[1], 0.0f);
-					p_material->set_uv1_offset(offset_vector3);
+				if (texture_transform.has("offset")) {
+					const Array offset_arr = texture_transform["offset"];
+					if (offset_arr.size() == 2) {
+						const Vector3 offset_vector3 = Vector3(offset_arr[0], offset_arr[1], 0.0f);
+						p_material->set_uv1_offset(offset_vector3);
+					}
 				}
 
-				const Array &scale_arr = texture_transform["scale"];
-				if (scale_arr.size() == 2) {
-					const Vector3 scale_vector3 = Vector3(scale_arr[0], scale_arr[1], 1.0f);
-					p_material->set_uv1_scale(scale_vector3);
+				if (texture_transform.has("scale")) {
+					const Array scale_arr = texture_transform["scale"];
+					if (scale_arr.size() == 2) {
+						const Vector3 scale_vector3 = Vector3(scale_arr[0], scale_arr[1], 1.0f);
+						p_material->set_uv1_scale(scale_vector3);
+					}
 				}
 			}
 		}
@@ -3764,9 +3748,10 @@ Error GLTFDocument::_serialize_animations(Ref<GLTFState> p_state) {
 				Dictionary sampler;
 				sampler["input"] = GLTFAccessor::encode_new_accessor_from_float64s(p_state, pointer_track.times);
 				sampler["interpolation"] = interpolation_to_string(pointer_track.interpolation);
+				GLTFAccessor::GLTFComponentType component_type = obj_model_prop->get_component_type(pointer_track.values);
 				// TODO: This can be made faster after this pull request is merged: https://github.com/godotengine/godot/pull/109003
 				Array values_arr = GLTFTemplateConvert::to_array(pointer_track.values);
-				sampler["output"] = GLTFAccessor::encode_new_accessor_from_variants(p_state, values_arr, obj_model_prop->get_variant_type(), obj_model_prop->get_accessor_type());
+				sampler["output"] = GLTFAccessor::encode_new_accessor_from_variants(p_state, values_arr, obj_model_prop->get_variant_type(), obj_model_prop->get_accessor_type(), component_type);
 				samplers.push_back(sampler);
 			}
 		}
@@ -7007,6 +6992,18 @@ Error GLTFDocument::_parse_asset_header(Ref<GLTFState> p_state) {
 Error GLTFDocument::_parse_gltf_state(Ref<GLTFState> p_state, const String &p_search_path) {
 	Error err;
 
+	/* PARSE BUFFERS */
+	err = _parse_buffers(p_state, p_search_path);
+	ERR_FAIL_COND_V(err != OK, ERR_PARSE_ERROR);
+
+	/* PARSE BUFFER VIEWS */
+	err = _parse_buffer_views(p_state);
+	ERR_FAIL_COND_V(err != OK, ERR_PARSE_ERROR);
+
+	/* PARSE ACCESSORS */
+	err = _parse_accessors(p_state);
+	ERR_FAIL_COND_V(err != OK, ERR_PARSE_ERROR);
+
 	/* PARSE EXTENSIONS */
 	err = _parse_gltf_extensions(p_state);
 	ERR_FAIL_COND_V(err != OK, ERR_PARSE_ERROR);
@@ -7017,21 +7014,6 @@ Error GLTFDocument::_parse_gltf_state(Ref<GLTFState> p_state, const String &p_se
 
 	/* PARSE NODES */
 	err = _parse_nodes(p_state);
-	ERR_FAIL_COND_V(err != OK, ERR_PARSE_ERROR);
-
-	/* PARSE BUFFERS */
-	err = _parse_buffers(p_state, p_search_path);
-
-	ERR_FAIL_COND_V(err != OK, ERR_PARSE_ERROR);
-
-	/* PARSE BUFFER VIEWS */
-	err = _parse_buffer_views(p_state);
-
-	ERR_FAIL_COND_V(err != OK, ERR_PARSE_ERROR);
-
-	/* PARSE ACCESSORS */
-	err = _parse_accessors(p_state);
-
 	ERR_FAIL_COND_V(err != OK, ERR_PARSE_ERROR);
 
 	if (!p_state->discard_meshes_and_materials) {
