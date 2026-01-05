@@ -77,7 +77,7 @@ Control *FileSystemTree::make_custom_tooltip(const String &p_text) const {
 }
 
 Control *FileSystemList::make_custom_tooltip(const String &p_text) const {
-	int idx = get_item_at_position(get_local_mouse_position());
+	int idx = get_item_at_position(get_local_mouse_position(), true);
 	if (idx == -1) {
 		return nullptr;
 	}
@@ -484,23 +484,30 @@ void FileSystemDock::_update_display_mode(bool p_force) {
 	// Compute the new display mode.
 	if (p_force || old_display_mode != display_mode) {
 		switch (display_mode) {
-			case DISPLAY_MODE_TREE_ONLY:
+			case DISPLAY_MODE_TREE_ONLY: {
 				button_toggle_display_mode->set_button_icon(get_editor_theme_icon(SNAME("Panels1")));
 				tree->show();
 				tree->set_v_size_flags(SIZE_EXPAND_FILL);
+				tree->set_theme_type_variation("");
 				if (horizontal) {
 					toolbar2_hbc->hide();
+
+					tree->set_scroll_hint_mode(Tree::SCROLL_HINT_MODE_BOTH);
+					tree_mc->set_theme_type_variation("NoBorderBottomPanel");
 				} else {
 					toolbar2_hbc->show();
+
+					tree->set_scroll_hint_mode(Tree::SCROLL_HINT_MODE_TOP);
+					tree_mc->set_theme_type_variation("NoBorderHorizontalBottom");
 				}
 				button_file_list_display_mode->hide();
 
 				_update_tree(get_uncollapsed_paths());
 				file_list_vb->hide();
-				break;
+			} break;
 
 			case DISPLAY_MODE_HSPLIT:
-			case DISPLAY_MODE_VSPLIT:
+			case DISPLAY_MODE_VSPLIT: {
 				const bool is_vertical = display_mode == DISPLAY_MODE_VSPLIT;
 				split_box->set_vertical(is_vertical);
 
@@ -511,15 +518,34 @@ void FileSystemDock::_update_display_mode(bool p_force) {
 
 				tree->show();
 				tree->set_v_size_flags(SIZE_EXPAND_FILL);
+				if (is_vertical) {
+					tree->set_theme_type_variation("");
+					tree->set_scroll_hint_mode(Tree::SCROLL_HINT_MODE_BOTH);
+					tree_mc->set_theme_type_variation("NoBorderBottomPanel");
+
+					files->set_theme_type_variation("");
+					files->set_scroll_hint_mode(horizontal ? ItemList::SCROLL_HINT_MODE_BOTH : ItemList::SCROLL_HINT_MODE_TOP);
+					files_mc->set_theme_type_variation(horizontal ? "NoBorderBottomPanel" : "NoBorderHorizontalBottom");
+				} else {
+					tree->set_theme_type_variation("TreeSecondary");
+					tree->set_scroll_hint_mode(Tree::SCROLL_HINT_MODE_DISABLED);
+					tree_mc->set_theme_type_variation("");
+
+					files->set_theme_type_variation("ItemListSecondary");
+					files->set_scroll_hint_mode(ItemList::SCROLL_HINT_MODE_DISABLED);
+					files_mc->set_theme_type_variation("");
+				}
 				tree->ensure_cursor_is_visible();
+
 				toolbar2_hbc->hide();
 				button_file_list_display_mode->show();
 				_update_tree(get_uncollapsed_paths());
 
 				file_list_vb->show();
 				_update_file_list(true);
-				break;
+			} break;
 		}
+
 		old_display_mode = display_mode;
 	}
 }
@@ -1550,12 +1576,12 @@ void FileSystemDock::_try_duplicate_item(const FileOrFolder &p_item, const Strin
 
 		Error err = EditorFileSystem::get_singleton()->copy_file(old_path, new_path);
 		if (err != OK) {
-			EditorNode::get_singleton()->add_io_error(TTR("Error duplicating:") + "\n" + old_path + ": " + error_names[err] + "\n");
+			EditorNode::get_singleton()->add_io_error(TTR("Error duplicating:") + "\n" + old_path + U" → " + new_path + ": " + TTR(error_names[err]) + "\n");
 		}
 	} else {
 		Error err = EditorFileSystem::get_singleton()->copy_directory(old_path, new_path);
 		if (err != OK) {
-			EditorNode::get_singleton()->add_io_error(TTR("Error duplicating directory:") + "\n" + old_path + "\n");
+			EditorNode::get_singleton()->add_io_error(TTR("Error duplicating directory:") + "\n" + old_path + U" → " + new_path + ": " + TTR(error_names[err]) + "\n");
 		}
 	}
 }
@@ -1868,7 +1894,7 @@ void FileSystemDock::_duplicate_operation_confirm(const String &p_path) {
 	if (!DirAccess::dir_exists_absolute(base_dir)) {
 		Error err = EditorFileSystem::get_singleton()->make_dir_recursive(base_dir);
 		if (err != OK) {
-			EditorNode::get_singleton()->show_warning(vformat(TTR("Could not create base directory: %s"), error_names[err]));
+			EditorNode::get_singleton()->show_warning(vformat(TTR("Could not create base directory: %s"), TTR(error_names[err])));
 			return;
 		}
 	}
@@ -2008,6 +2034,18 @@ void FileSystemDock::_move_operation_confirm(const String &p_to_path, bool p_cop
 		}
 
 		if (is_moved) {
+			Vector<String> files_to_update;
+			for (KeyValue<String, String> &E : file_renames) {
+				if (!files_to_update.has(E.key)) {
+					files_to_update.push_back(E.key);
+				}
+				if (!files_to_update.has(E.value)) {
+					files_to_update.push_back(E.value);
+				}
+			}
+			print_verbose("FileSystem: updating file infos.");
+			EditorFileSystem::get_singleton()->update_files(files_to_update);
+
 			int current_tab = EditorSceneTabs::get_singleton()->get_current_tab();
 			_update_resource_paths_after_move(file_renames, uids);
 			_update_dependencies_after_move(file_renames, file_owners);
@@ -2757,6 +2795,14 @@ void FileSystemDock::_search_changed(const String &p_text, const Control *p_from
 	}
 
 	const String searched_string = p_text.to_lower();
+	if (searched_string.begins_with("uid://")) {
+		ResourceUID::ID id = ResourceUID::get_singleton()->text_to_id(searched_string);
+		if (id != ResourceUID::INVALID_ID && ResourceUID::get_singleton()->has_id(id)) {
+			navigate_to_path(ResourceUID::get_singleton()->get_id_path(id));
+			return;
+		}
+	}
+
 	searched_tokens = searched_string.split(" ", false);
 
 	if (p_from == tree_search_box) {
@@ -2860,7 +2906,7 @@ void FileSystemDock::create_directory(const String &p_path, const String &p_base
 	}
 	Error err = EditorFileSystem::get_singleton()->make_dir_recursive(trimmed_path, p_base_dir);
 	if (err != OK) {
-		EditorNode::get_singleton()->show_warning(vformat(TTR("Could not create folder: %s"), error_names[err]));
+		EditorNode::get_singleton()->show_warning(vformat(TTR("Could not create folder: %s"), TTR(error_names[err])));
 	}
 }
 
@@ -4322,18 +4368,22 @@ FileSystemDock::FileSystemDock() {
 	split_box_offset_h = 240 * EDSCALE;
 	main_vb->add_child(split_box);
 
+	tree_mc = memnew(MarginContainer);
+	split_box->add_child(tree_mc);
+	tree_mc->set_theme_type_variation("NoBorderHorizontalBottom");
+	tree_mc->set_v_size_flags(Control::SIZE_EXPAND_FILL);
+
 	tree = memnew(FileSystemTree);
 	tree->set_accessibility_name(TTRC("Directories"));
 	tree->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
-
-	tree->set_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
 	tree->set_hide_root(true);
+	tree->set_scroll_hint_mode(Tree::SCROLL_HINT_MODE_TOP);
 	SET_DRAG_FORWARDING_GCD(tree, FileSystemDock);
 	tree->set_allow_rmb_select(true);
 	tree->set_select_mode(Tree::SELECT_MULTI);
 	tree->set_custom_minimum_size(Size2(40 * EDSCALE, 15 * EDSCALE));
 	tree->set_column_clip_content(0, true);
-	split_box->add_child(tree);
+	tree_mc->add_child(tree);
 
 	tree->connect("item_activated", callable_mp(this, &FileSystemDock::_tree_activate_file));
 	tree->connect("multi_selected", callable_mp(this, &FileSystemDock::_tree_multi_selected));
@@ -4368,11 +4418,15 @@ FileSystemDock::FileSystemDock() {
 	button_file_list_display_mode->set_theme_type_variation("FlatMenuButton");
 	path_hb->add_child(button_file_list_display_mode);
 
+	files_mc = memnew(MarginContainer);
+	file_list_vb->add_child(files_mc);
+	files_mc->set_theme_type_variation("NoBorderHorizontalBottom");
+	files_mc->set_v_size_flags(Control::SIZE_EXPAND_FILL);
+
 	files = memnew(FileSystemList);
-	files->set_v_size_flags(SIZE_EXPAND_FILL);
 	files->set_accessibility_name(TTRC("Files"));
 	files->set_select_mode(ItemList::SELECT_MULTI);
-	files->set_theme_type_variation("ItemListSecondary");
+	files->set_scroll_hint_mode(ItemList::SCROLL_HINT_MODE_TOP);
 	SET_DRAG_FORWARDING_GCD(files, FileSystemDock);
 	files->connect("item_clicked", callable_mp(this, &FileSystemDock::_file_list_item_clicked));
 	files->connect(SceneStringName(gui_input), callable_mp(this, &FileSystemDock::_file_list_gui_input));
@@ -4381,7 +4435,7 @@ FileSystemDock::FileSystemDock() {
 	files->connect("item_edited", callable_mp(this, &FileSystemDock::_rename_operation_confirm));
 	files->set_custom_minimum_size(Size2(0, 15 * EDSCALE));
 	files->set_allow_rmb_select(true);
-	file_list_vb->add_child(files);
+	files_mc->add_child(files);
 
 	scanning_vb = memnew(VBoxContainer);
 	scanning_vb->hide();

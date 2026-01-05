@@ -243,7 +243,8 @@ void TextEdit::Text::update_accessibility(int p_line, RID p_root) {
 	Line &l = text.write[p_line];
 	if (l.accessibility_text_root_element.is_empty()) {
 		for (int i = 0; i < l.data_buf->get_line_count(); i++) {
-			RID rid = DisplayServer::get_singleton()->accessibility_create_sub_text_edit_elements(p_root, l.data_buf->get_line_rid(i), max_line_height, p_line);
+			bool is_last_line = (p_line == text.size() - 1) && (i == l.data_buf->get_line_count() - 1);
+			RID rid = DisplayServer::get_singleton()->accessibility_create_sub_text_edit_elements(p_root, l.data_buf->get_line_rid(i), max_line_height, p_line, is_last_line);
 			l.accessibility_text_root_element.push_back(rid);
 		}
 	}
@@ -738,7 +739,6 @@ void TextEdit::_notification(int p_what) {
 		case NOTIFICATION_EXIT_TREE:
 		case NOTIFICATION_ACCESSIBILITY_INVALIDATE: {
 			text.clear_accessibility();
-			accessibility_text_root_element_nl = RID();
 		} break;
 
 		case NOTIFICATION_ACCESSIBILITY_UPDATE: {
@@ -806,9 +806,6 @@ void TextEdit::_notification(int p_what) {
 					DisplayServer::get_singleton()->accessibility_update_add_action(text_aes[j], DisplayServer::AccessibilityAction::ACTION_SCROLL_INTO_VIEW, callable_mp(this, &TextEdit::_accessibility_action_scroll_into_view).bind(i, j));
 				}
 				lines_drawn += ac_buf->get_line_count();
-			}
-			if (accessibility_text_root_element_nl.is_null()) {
-				accessibility_text_root_element_nl = DisplayServer::get_singleton()->accessibility_create_sub_text_edit_elements(ae, RID(), get_line_height());
 			}
 
 			// Selection.
@@ -2920,41 +2917,34 @@ void TextEdit::_move_caret_left(bool p_select, bool p_move_by_word) {
 			deselect(i);
 		}
 
-		if (p_move_by_word) {
-			int cc = get_caret_column(i);
+		if (get_caret_column(i) == 0) {
+			if (get_caret_line(i) == 0) {
+				continue;
+			}
 			// If the caret is at the start of the line, and not on the first line, move it up to the end of the previous line.
-			if (cc == 0 && get_caret_line(i) > 0) {
-				set_caret_line(get_caret_line(i) - 1, false, true, -1, i);
-				set_caret_column(text[get_caret_line(i)].length(), i == 0, i);
+			int new_caret_line = get_caret_line(i) - get_next_visible_line_offset_from(get_caret_line(i) - 1, -1);
+			set_caret_line(new_caret_line, false, true, -1, i);
+			set_caret_column(text[get_caret_line(i)].length(), i == 0, i);
+		} else if (p_move_by_word) {
+			int caret_column = get_caret_column(i);
+			const PackedInt32Array words = TS->shaped_text_get_word_breaks(text.get_line_data(get_caret_line(i))->get_rid());
+			if (words.is_empty() || caret_column <= words[0]) {
+				// Move to the start when there are no more words.
+				caret_column = 0;
 			} else {
-				PackedInt32Array words = TS->shaped_text_get_word_breaks(text.get_line_data(get_caret_line(i))->get_rid());
-				if (words.is_empty() || cc <= words[0]) {
-					// Move to the start when there are no more words.
-					cc = 0;
-				} else {
-					for (int j = words.size() - 2; j >= 0; j = j - 2) {
-						if (words[j] < cc) {
-							cc = words[j];
-							break;
-						}
+				for (int j = words.size() - 2; j >= 0; j = j - 2) {
+					if (words[j] < caret_column) {
+						caret_column = words[j];
+						break;
 					}
 				}
-				set_caret_column(cc, i == 0, i);
 			}
+			set_caret_column(caret_column, i == 0, i);
 		} else {
-			// If the caret is at the start of the line, and not on the first line, move it up to the end of the previous line.
-			if (get_caret_column(i) == 0) {
-				if (get_caret_line(i) > 0) {
-					int new_caret_line = get_caret_line(i) - get_next_visible_line_offset_from(CLAMP(get_caret_line(i) - 1, 0, text.size() - 1), -1);
-					set_caret_line(new_caret_line, false, true, -1, i);
-					set_caret_column(text[get_caret_line(i)].length(), i == 0, i);
-				}
+			if (caret_mid_grapheme_enabled) {
+				set_caret_column(get_caret_column(i) - 1, i == 0, i);
 			} else {
-				if (caret_mid_grapheme_enabled) {
-					set_caret_column(get_caret_column(i) - 1, i == 0, i);
-				} else {
-					set_caret_column(TS->shaped_text_prev_character_pos(text.get_line_data(get_caret_line(i))->get_rid(), get_caret_column(i)), i == 0, i);
-				}
+				set_caret_column(TS->shaped_text_prev_character_pos(text.get_line_data(get_caret_line(i))->get_rid(), get_caret_column(i)), i == 0, i);
 			}
 		}
 	}
@@ -2977,41 +2967,34 @@ void TextEdit::_move_caret_right(bool p_select, bool p_move_by_word) {
 			deselect(i);
 		}
 
-		if (p_move_by_word) {
-			int cc = get_caret_column(i);
+		if (get_caret_column(i) == text[get_caret_line(i)].length()) {
+			if (get_caret_line(i) >= text.size() - 1 || get_caret_line(i) == get_last_unhidden_line()) {
+				continue;
+			}
 			// If the caret is at the end of the line, and not on the last line, move it down to the beginning of the next line.
-			if (cc == text[get_caret_line(i)].length() && get_caret_line(i) < text.size() - 1) {
-				set_caret_line(get_caret_line(i) + 1, false, true, -1, i);
-				set_caret_column(0, i == 0, i);
+			int new_caret_line = get_caret_line(i) + get_next_visible_line_offset_from(get_caret_line(i) + 1, 1);
+			set_caret_line(new_caret_line, false, true, -1, i);
+			set_caret_column(0, i == 0, i);
+		} else if (p_move_by_word) {
+			int caret_column = get_caret_column(i);
+			const PackedInt32Array words = TS->shaped_text_get_word_breaks(text.get_line_data(get_caret_line(i))->get_rid());
+			if (words.is_empty() || caret_column >= words[words.size() - 1]) {
+				// Move to the end when there are no more words.
+				caret_column = text[get_caret_line(i)].length();
 			} else {
-				PackedInt32Array words = TS->shaped_text_get_word_breaks(text.get_line_data(get_caret_line(i))->get_rid());
-				if (words.is_empty() || cc >= words[words.size() - 1]) {
-					// Move to the end when there are no more words.
-					cc = text[get_caret_line(i)].length();
-				} else {
-					for (int j = 1; j < words.size(); j = j + 2) {
-						if (words[j] > cc) {
-							cc = words[j];
-							break;
-						}
+				for (int j = 1; j < words.size(); j = j + 2) {
+					if (words[j] > caret_column) {
+						caret_column = words[j];
+						break;
 					}
 				}
-				set_caret_column(cc, i == 0, i);
 			}
+			set_caret_column(caret_column, i == 0, i);
 		} else {
-			// If we are at the end of the line, move the caret to the next line down.
-			if (get_caret_column(i) == text[get_caret_line(i)].length()) {
-				if (get_caret_line(i) < text.size() - 1) {
-					int new_caret_line = get_caret_line(i) + get_next_visible_line_offset_from(CLAMP(get_caret_line(i) + 1, 0, text.size() - 1), 1);
-					set_caret_line(new_caret_line, false, false, -1, i);
-					set_caret_column(0, i == 0, i);
-				}
+			if (caret_mid_grapheme_enabled) {
+				set_caret_column(get_caret_column(i) + 1, i == 0, i);
 			} else {
-				if (caret_mid_grapheme_enabled) {
-					set_caret_column(get_caret_column(i) + 1, i == 0, i);
-				} else {
-					set_caret_column(TS->shaped_text_next_character_pos(text.get_line_data(get_caret_line(i))->get_rid(), get_caret_column(i)), i == 0, i);
-				}
+				set_caret_column(TS->shaped_text_next_character_pos(text.get_line_data(get_caret_line(i))->get_rid(), get_caret_column(i)), i == 0, i);
 			}
 		}
 	}
@@ -3985,12 +3968,8 @@ void TextEdit::_clear() {
 	emit_signal(SNAME("lines_edited_from"), old_text_size, 0);
 }
 
-void TextEdit::set_text(const String &p_text) {
+void TextEdit::_set_text(const String &p_text, bool p_emit_signal) {
 	setting_text = true;
-	if (!undo_enabled) {
-		_clear();
-		insert_text_at_caret(p_text);
-	}
 
 	if (undo_enabled) {
 		remove_secondary_carets();
@@ -4000,7 +3979,22 @@ void TextEdit::set_text(const String &p_text) {
 		begin_complex_operation();
 		deselect();
 		_remove_text(0, 0, MAX(0, get_line_count() - 1), MAX(get_line(MAX(get_line_count() - 1, 0)).size() - 1, 0));
-		insert_text_at_caret(p_text);
+	} else {
+		_clear();
+	}
+
+	String previous_text;
+	if (p_emit_signal) {
+		previous_text = get_text();
+	}
+
+	insert_text_at_caret(p_text);
+
+	if (p_emit_signal && get_text() != previous_text) {
+		_text_changed();
+	}
+
+	if (undo_enabled) {
 		end_complex_operation();
 	}
 
@@ -4010,6 +4004,10 @@ void TextEdit::set_text(const String &p_text) {
 	queue_redraw();
 	setting_text = false;
 	emit_signal(SNAME("text_set"));
+}
+
+void TextEdit::set_text(const String &p_text) {
+	_set_text(p_text, false);
 }
 
 String TextEdit::get_text() const {
@@ -6587,7 +6585,7 @@ void TextEdit::set_line_as_last_visible(int p_line, int p_wrap_index) {
 		set_v_scroll(0);
 		return;
 	}
-	set_v_scroll(Math::round(get_scroll_pos_for_line(first_line, next_line.y) + _get_visible_lines_offset()));
+	set_v_scroll(get_scroll_pos_for_line(first_line, next_line.y) + _get_visible_lines_offset());
 }
 
 int TextEdit::get_last_full_visible_line() const {
@@ -7094,6 +7092,11 @@ Color TextEdit::get_font_color() const {
 }
 
 void TextEdit::_bind_methods() {
+	// Private API.
+	ClassDB::bind_method(D_METHOD("_set_text", "text", "emit_signal"), &TextEdit::_set_text, DEFVAL(false));
+
+	// Public API.
+
 	/* Text */
 	// Text properties
 	ClassDB::bind_method(D_METHOD("has_ime_text"), &TextEdit::has_ime_text);
@@ -8616,9 +8619,12 @@ void TextEdit::_update_scrollbars() {
 	updating_scrolls = true;
 
 	if (!fit_content_height && total_rows > visible_rows) {
+		double visible_rows_exact = (double)_get_control_height() / (double)get_line_height();
+		double fractional_visible_rows = visible_rows_exact - (double)visible_rows;
+		fractional_visible_rows = CLAMP(fractional_visible_rows, 0.0, 1.0);
 		v_scroll->show();
-		v_scroll->set_max(total_rows + _get_visible_lines_offset());
-		v_scroll->set_page(visible_rows + _get_visible_lines_offset());
+		v_scroll->set_max(total_rows);
+		v_scroll->set_page(visible_rows + fractional_visible_rows);
 		set_v_scroll(get_v_scroll());
 	} else {
 		first_visible_line = 0;

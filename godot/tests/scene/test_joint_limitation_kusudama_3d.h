@@ -395,7 +395,7 @@ TEST_CASE("[Scene][JointLimitationKusudama3D] Test point inside single cone") {
 	limitation.instantiate();
 
 	Vector3 control_point = Vector3(0, 0, 1).normalized();
-	real_t radius = Math::deg_to_rad(30.0f); // 30 degrees
+	real_t radius = Math::deg_to_rad(30.0); // 30 degrees
 
 	Vector<Vector4> cones;
 	cones.push_back(Vector4(control_point.x, control_point.y, control_point.z, radius));
@@ -417,7 +417,7 @@ TEST_CASE("[Scene][JointLimitationKusudama3D] Test point outside single cone") {
 	limitation.instantiate();
 
 	Vector3 control_point = Vector3(0, 0, 1).normalized();
-	real_t radius = Math::deg_to_rad(30.0f); // 30 degrees
+	real_t radius = Math::deg_to_rad(30.0); // 30 degrees
 
 	Vector<Vector4> cones;
 	cones.push_back(Vector4(control_point.x, control_point.y, control_point.z, radius));
@@ -464,7 +464,7 @@ TEST_CASE("[Scene][JointLimitationKusudama3D] Test multiple cones - point betwee
 	// Create two cones
 	Vector3 control_point1 = Vector3(1, 0, 0).normalized();
 	Vector3 control_point2 = Vector3(0, 1, 0).normalized();
-	real_t radius = Math::deg_to_rad(45.0f); // 45 degrees
+	real_t radius = Math::deg_to_rad(45.0); // 45 degrees
 
 	Vector<Vector4> cones;
 	cones.push_back(Vector4(control_point1.x, control_point1.y, control_point1.z, radius));
@@ -487,7 +487,7 @@ TEST_CASE("[Scene][JointLimitationKusudama3D] Test point on path between two adj
 	// Create two cones with overlapping paths
 	Vector3 cp1 = Vector3(1, 0, 0).normalized();
 	Vector3 cp2 = Vector3(0, 1, 0).normalized();
-	real_t radius = Math::deg_to_rad(60.0f); // Large enough to create paths
+	real_t radius = Math::deg_to_rad(60.0); // Large enough to create paths
 
 	Vector<Vector4> cones;
 	cones.push_back(Vector4(cp1.x, cp1.y, cp1.z, radius));
@@ -515,7 +515,7 @@ TEST_CASE("[Scene][JointLimitationKusudama3D] Test point outside both cones but 
 
 	Vector3 cp1 = Vector3(1, 0, 0).normalized();
 	Vector3 cp2 = Vector3(0, 1, 0).normalized();
-	real_t radius = Math::deg_to_rad(30.0f); // Smaller radius
+	real_t radius = Math::deg_to_rad(30.0); // Smaller radius
 
 	Vector<Vector4> cones;
 	cones.push_back(Vector4(cp1.x, cp1.y, cp1.z, radius));
@@ -545,8 +545,8 @@ TEST_CASE("[Scene][JointLimitationKusudama3D] Test path between cones with diffe
 
 	Vector3 cp1 = Vector3(1, 0, 0).normalized();
 	Vector3 cp2 = Vector3(0, 1, 0).normalized();
-	real_t radius1 = Math::deg_to_rad(45.0f);
-	real_t radius2 = Math::deg_to_rad(30.0f);
+	real_t radius1 = Math::deg_to_rad(45.0);
+	real_t radius2 = Math::deg_to_rad(30.0);
 
 	Vector<Vector4> cones;
 	cones.push_back(Vector4(cp1.x, cp1.y, cp1.z, radius1));
@@ -570,7 +570,7 @@ TEST_CASE("[Scene][JointLimitationKusudama3D] Test no wrap-around from last to f
 	Vector3 cp1 = Vector3(1, 0, 0).normalized();
 	Vector3 cp2 = Vector3(0, 1, 0).normalized();
 	Vector3 cp3 = Vector3(0, 0, 1).normalized();
-	real_t radius = Math::deg_to_rad(10.0f); // Very small radius to create clear forbidden zones
+	real_t radius = Math::deg_to_rad(10.0); // Very small radius to create clear forbidden zones
 
 	Vector<Vector4> cones;
 	cones.push_back(Vector4(cp1.x, cp1.y, cp1.z, radius));
@@ -609,7 +609,7 @@ TEST_CASE("[Scene][JointLimitationKusudama3D] Test point in tangent circle regio
 
 	Vector3 cp1 = Vector3(1, 0, 0).normalized();
 	Vector3 cp2 = Vector3(0, 1, 0).normalized();
-	real_t radius = Math::deg_to_rad(45.0f);
+	real_t radius = Math::deg_to_rad(45.0);
 
 	Vector<Vector4> cones;
 	cones.push_back(Vector4(cp1.x, cp1.y, cp1.z, radius));
@@ -639,7 +639,7 @@ TEST_CASE("[Scene][JointLimitationKusudama3D] Test multiple paths - point closes
 	Vector3 cp1 = Vector3(1, 0, 0).normalized();
 	Vector3 cp2 = Vector3(0, 1, 0).normalized();
 	Vector3 cp3 = Vector3(0, 0, 1).normalized();
-	real_t radius = Math::deg_to_rad(40.0f);
+	real_t radius = Math::deg_to_rad(40.0);
 
 	Vector<Vector4> cones;
 	cones.push_back(Vector4(cp1.x, cp1.y, cp1.z, radius));
@@ -666,7 +666,7 @@ TEST_CASE("[Scene][JointLimitationKusudama3D] Test path with very close cones") 
 	// Two cones very close together
 	Vector3 cp1 = Vector3(1, 0, 0).normalized();
 	Vector3 cp2 = Vector3(0.99, 0.1, 0).normalized();
-	real_t radius = Math::deg_to_rad(30.0f);
+	real_t radius = Math::deg_to_rad(30.0);
 
 	Vector<Vector4> cones;
 	cones.push_back(Vector4(cp1.x, cp1.y, cp1.z, radius));
@@ -688,7 +688,7 @@ TEST_CASE("[Scene][JointLimitationKusudama3D] Test path with nearly opposite con
 	// Two cones nearly opposite each other
 	Vector3 cp1 = Vector3(1, 0, 0).normalized();
 	Vector3 cp2 = Vector3(-0.9, 0.1, 0).normalized();
-	real_t radius = Math::deg_to_rad(45.0f);
+	real_t radius = Math::deg_to_rad(45.0);
 
 	Vector<Vector4> cones;
 	cones.push_back(Vector4(cp1.x, cp1.y, cp1.z, radius));
@@ -709,7 +709,7 @@ TEST_CASE("[Scene][JointLimitationKusudama3D] Test multiple cones - point in fir
 
 	Vector3 control_point1 = Vector3(1, 0, 0).normalized();
 	Vector3 control_point2 = Vector3(0, 1, 0).normalized();
-	real_t radius = Math::deg_to_rad(45.0f);
+	real_t radius = Math::deg_to_rad(45.0);
 
 	Vector<Vector4> cones;
 	cones.push_back(Vector4(control_point1.x, control_point1.y, control_point1.z, radius));
@@ -755,16 +755,16 @@ TEST_CASE("[Scene][JointLimitationKusudama3D] Test cones getters and setters") {
 	limitation.instantiate();
 
 	Vector<Vector4> cones;
-	cones.push_back(Vector4(1, 0, 0, Math::deg_to_rad(30.0f)));
-	cones.push_back(Vector4(0, 1, 0, Math::deg_to_rad(45.0f)));
-	cones.push_back(Vector4(0, 0, 1, Math::deg_to_rad(60.0f)));
+	cones.push_back(Vector4(1, 0, 0, Math::deg_to_rad(30.0)));
+	cones.push_back(Vector4(0, 1, 0, Math::deg_to_rad(45.0)));
+	cones.push_back(Vector4(0, 0, 1, Math::deg_to_rad(60.0)));
 
 	set_cones_from_vector4(limitation, cones);
 
 	CHECK(limitation->get_cone_count() == 3);
-	CHECK(Math::is_equal_approx(limitation->get_cone_radius(0), Math::deg_to_rad(30.0f)));
-	CHECK(Math::is_equal_approx(limitation->get_cone_radius(1), Math::deg_to_rad(45.0f)));
-	CHECK(Math::is_equal_approx(limitation->get_cone_radius(2), Math::deg_to_rad(60.0f)));
+	CHECK(Math::is_equal_approx((double)limitation->get_cone_radius(0), Math::deg_to_rad(30.0)));
+	CHECK(Math::is_equal_approx((double)limitation->get_cone_radius(1), Math::deg_to_rad(45.0)));
+	CHECK(Math::is_equal_approx((double)limitation->get_cone_radius(2), Math::deg_to_rad(60.0)));
 }
 
 TEST_CASE("[Scene][JointLimitationKusudama3D] Test large radius cone") {
@@ -772,7 +772,7 @@ TEST_CASE("[Scene][JointLimitationKusudama3D] Test large radius cone") {
 	limitation.instantiate();
 
 	Vector3 control_point = Vector3(0, 0, 1).normalized();
-	real_t radius = Math::deg_to_rad(170.0f); // Very large cone
+	real_t radius = Math::deg_to_rad(170.0); // Very large cone
 
 	Vector<Vector4> cones;
 	cones.push_back(Vector4(control_point.x, control_point.y, control_point.z, radius));
@@ -795,7 +795,7 @@ TEST_CASE("[Scene][JointLimitationKusudama3D] Test three cones in sequence") {
 	Vector3 cp1 = Vector3(1, 0, 0).normalized();
 	Vector3 cp2 = Vector3(0, 1, 0).normalized();
 	Vector3 cp3 = Vector3(0, 0, 1).normalized();
-	real_t radius = Math::deg_to_rad(45.0f);
+	real_t radius = Math::deg_to_rad(45.0);
 
 	Vector<Vector4> cones;
 	cones.push_back(Vector4(cp1.x, cp1.y, cp1.z, radius));
@@ -833,7 +833,7 @@ TEST_CASE("[Scene][JointLimitationKusudama3D] Test edge case - parallel vectors"
 	limitation.instantiate();
 
 	Vector3 control_point = Vector3(1, 0, 0).normalized();
-	real_t radius = Math::deg_to_rad(30.0f);
+	real_t radius = Math::deg_to_rad(30.0);
 
 	Vector<Vector4> cones;
 	cones.push_back(Vector4(control_point.x, control_point.y, control_point.z, radius));
@@ -853,7 +853,7 @@ TEST_CASE("[Scene][JointLimitationKusudama3D] Test edge case - opposite directio
 	limitation.instantiate();
 
 	Vector3 control_point = Vector3(0, 0, 1).normalized();
-	real_t radius = Math::deg_to_rad(30.0f);
+	real_t radius = Math::deg_to_rad(30.0);
 
 	Vector<Vector4> cones;
 	cones.push_back(Vector4(control_point.x, control_point.y, control_point.z, radius));
@@ -926,8 +926,8 @@ TEST_CASE("[Scene][JointLimitationKusudama3D] Test individual cone property sett
 	CHECK(retrieved2.is_equal_approx(center2));
 
 	// Test set/get cone radius
-	real_t radius1 = Math::deg_to_rad(30.0f);
-	real_t radius2 = Math::deg_to_rad(45.0f);
+	real_t radius1 = Math::deg_to_rad(30.0);
+	real_t radius2 = Math::deg_to_rad(45.0);
 	limitation->set_cone_radius(0, radius1);
 	limitation->set_cone_radius(1, radius2);
 
@@ -935,8 +935,8 @@ TEST_CASE("[Scene][JointLimitationKusudama3D] Test individual cone property sett
 	CHECK(Math::is_equal_approx(limitation->get_cone_radius(1), radius2));
 
 	// Test set/get cone center quaternion (using inlined logic)
-	Quaternion quat1 = Quaternion(Vector3(0, 1, 0), Math::deg_to_rad(45.0f));
-	Quaternion quat2 = Quaternion(Vector3(1, 0, 0), Math::deg_to_rad(30.0f));
+	Quaternion quat1 = Quaternion(Vector3(0, 1, 0), Math::deg_to_rad(45.0));
+	Quaternion quat2 = Quaternion(Vector3(1, 0, 0), Math::deg_to_rad(30.0));
 	// Convert quaternion to direction vector by rotating the default direction (0, 1, 0)
 	Vector3 default_dir = Vector3(0, 1, 0);
 	Vector3 quat_center1 = quat1.normalized().xform(default_dir);
@@ -965,7 +965,7 @@ TEST_CASE("[Scene][JointLimitationKusudama3D] Test point exactly on cone boundar
 	limitation.instantiate();
 
 	Vector3 control_point = Vector3(0, 0, 1).normalized();
-	real_t radius = Math::deg_to_rad(30.0f);
+	real_t radius = Math::deg_to_rad(30.0);
 
 	Vector<Vector4> cones;
 	cones.push_back(Vector4(control_point.x, control_point.y, control_point.z, radius));
@@ -1035,7 +1035,7 @@ TEST_CASE("[Scene][JointLimitationKusudama3D] Test four cones in sequence") {
 	Vector3 cp2 = Vector3(0, 1, 0).normalized();
 	Vector3 cp3 = Vector3(-1, 0, 0).normalized();
 	Vector3 cp4 = Vector3(0, -1, 0).normalized();
-	real_t radius = Math::deg_to_rad(40.0f);
+	real_t radius = Math::deg_to_rad(40.0);
 
 	Vector<Vector4> cones;
 	cones.push_back(Vector4(cp1.x, cp1.y, cp1.z, radius));
@@ -1061,7 +1061,7 @@ TEST_CASE("[Scene][JointLimitationKusudama3D] Test solve without rotation parame
 	limitation.instantiate();
 
 	Vector3 control_point = Vector3(0, 0, 1).normalized();
-	real_t radius = Math::deg_to_rad(30.0f);
+	real_t radius = Math::deg_to_rad(30.0);
 	Vector<Vector4> cones;
 	cones.push_back(Vector4(control_point.x, control_point.y, control_point.z, radius));
 	set_cones_from_vector4(limitation, cones);
@@ -1093,7 +1093,7 @@ TEST_CASE("[Scene][JointLimitationKusudama3D] Test tangent path - point in allow
 	// Two cones with moderate separation
 	Vector3 cp1 = Vector3(1, 0, 0).normalized();
 	Vector3 cp2 = Vector3(0, 1, 0).normalized();
-	real_t radius = Math::deg_to_rad(45.0f);
+	real_t radius = Math::deg_to_rad(45.0);
 
 	Vector<Vector4> cones;
 	cones.push_back(Vector4(cp1.x, cp1.y, cp1.z, radius));
@@ -1117,7 +1117,7 @@ TEST_CASE("[Scene][JointLimitationKusudama3D] Test tangent path - point inside f
 	// Two cones with moderate separation
 	Vector3 cp1 = Vector3(1, 0, 0).normalized();
 	Vector3 cp2 = Vector3(0, 1, 0).normalized();
-	real_t radius = Math::deg_to_rad(30.0f); // Smaller radius for clearer tangent circles
+	real_t radius = Math::deg_to_rad(30.0); // Smaller radius for clearer tangent circles
 
 	Vector<Vector4> cones;
 	cones.push_back(Vector4(cp1.x, cp1.y, cp1.z, radius));
@@ -1140,7 +1140,7 @@ TEST_CASE("[Scene][JointLimitationKusudama3D] Test tangent path - point on tange
 
 	Vector3 cp1 = Vector3(1, 0, 0).normalized();
 	Vector3 cp2 = Vector3(0, 1, 0).normalized();
-	real_t radius = Math::deg_to_rad(45.0f);
+	real_t radius = Math::deg_to_rad(45.0);
 
 	Vector<Vector4> cones;
 	cones.push_back(Vector4(cp1.x, cp1.y, cp1.z, radius));
@@ -1166,7 +1166,7 @@ TEST_CASE("[Scene][JointLimitationKusudama3D] Test tangent path - three cones wi
 	Vector3 cp1 = Vector3(1, 0, 0).normalized();
 	Vector3 cp2 = Vector3(0, 1, 0).normalized();
 	Vector3 cp3 = Vector3(0, 0, 1).normalized();
-	real_t radius = Math::deg_to_rad(50.0f);
+	real_t radius = Math::deg_to_rad(50.0);
 
 	Vector<Vector4> cones;
 	cones.push_back(Vector4(cp1.x, cp1.y, cp1.z, radius));
@@ -1200,7 +1200,7 @@ TEST_CASE("[Scene][JointLimitationKusudama3D] Test tangent path - large cone rad
 	// Two cones with large radii (should create small tangent paths)
 	Vector3 cp1 = Vector3(1, 0, 0).normalized();
 	Vector3 cp2 = Vector3(0, 1, 0).normalized();
-	real_t radius = Math::deg_to_rad(80.0f); // Large radius
+	real_t radius = Math::deg_to_rad(80.0); // Large radius
 
 	Vector<Vector4> cones;
 	cones.push_back(Vector4(cp1.x, cp1.y, cp1.z, radius));
@@ -1223,7 +1223,7 @@ TEST_CASE("[Scene][JointLimitationKusudama3D] Test tangent path - small cone rad
 	// Two cones with small radii (should create larger tangent paths)
 	Vector3 cp1 = Vector3(1, 0, 0).normalized();
 	Vector3 cp2 = Vector3(0, 1, 0).normalized();
-	real_t radius = Math::deg_to_rad(15.0f); // Small radius
+	real_t radius = Math::deg_to_rad(15.0); // Small radius
 
 	Vector<Vector4> cones;
 	cones.push_back(Vector4(cp1.x, cp1.y, cp1.z, radius));
@@ -1244,7 +1244,7 @@ TEST_CASE("[Scene][JointLimitationKusudama3D] Test tangent path - point outside 
 
 	Vector3 cp1 = Vector3(1, 0, 0).normalized();
 	Vector3 cp2 = Vector3(0, 1, 0).normalized();
-	real_t radius = Math::deg_to_rad(30.0f);
+	real_t radius = Math::deg_to_rad(30.0);
 
 	Vector<Vector4> cones;
 	cones.push_back(Vector4(cp1.x, cp1.y, cp1.z, radius));
@@ -1279,7 +1279,7 @@ TEST_CASE("[Scene][JointLimitationKusudama3D] Exhaustive test of all regions - t
 	Vector3 top = Vector3(0, 1, 0).normalized();
 	Vector3 equator = Vector3(1, 0, 0).normalized();
 	Vector3 bottom = Vector3(0, -1, 0).normalized();
-	real_t radius = Math::deg_to_rad(30.0f); // 30-degree cones to create meaningful paths
+	real_t radius = Math::deg_to_rad(30.0); // 30-degree cones to create meaningful paths
 
 	Vector<Vector4> cones;
 	cones.push_back(Vector4(top.x, top.y, top.z, radius));
@@ -1338,7 +1338,7 @@ TEST_CASE("[Scene][JointLimitationKusudama3D] Exhaustive test of all regions - t
 	Vector3 cp1 = Vector3(1, 0, 0).normalized();
 	Vector3 cp2 = Vector3(0, 1, 0).normalized();
 	Vector3 cp3 = Vector3(0, 0, 1).normalized();
-	real_t radius = Math::deg_to_rad(25.0f); // 25-degree cones
+	real_t radius = Math::deg_to_rad(25.0); // 25-degree cones
 
 	Vector<Vector4> cones;
 	cones.push_back(Vector4(cp1.x, cp1.y, cp1.z, radius));

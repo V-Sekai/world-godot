@@ -1057,7 +1057,9 @@ void VisualShaderGraphPlugin::add_node(VisualShader::Type p_type, int p_id, bool
 		}
 
 		if (vsnode->is_port_separator(i)) {
-			node->add_child(memnew(HSeparator));
+			HSeparator *separator = memnew(HSeparator);
+			separator->add_theme_style_override("separator", editor->get_theme_stylebox("separator", "GraphNode"));
+			node->add_child(separator);
 			port_offset++;
 		}
 
@@ -1564,11 +1566,10 @@ void VisualShaderEditor::edit_shader(const Ref<Shader> &p_shader) {
 	}
 }
 
-void VisualShaderEditor::use_menu_bar_items(MenuButton *p_file_menu, Button *p_make_floating) {
+void VisualShaderEditor::use_menu_bar(MenuButton *p_file_menu) {
 	p_file_menu->set_switch_on_hover(false);
 	toolbar_hflow->add_child(p_file_menu);
 	toolbar_hflow->move_child(p_file_menu, 2); // Toggle Files Panel button + separator.
-	toolbar_hflow->add_child(p_make_floating);
 }
 
 void VisualShaderEditor::apply_shaders() {
@@ -3767,6 +3768,17 @@ void VisualShaderEditor::_setup_node(VisualShaderNode *p_node, const Vector<Vari
 			remap_func->set_op_type((VisualShaderNodeRemap::OpType)(int)p_ops[0]);
 		}
 	}
+
+	// REFRACT
+	{
+		VisualShaderNodeVectorRefract *refract = Object::cast_to<VisualShaderNodeVectorRefract>(p_node);
+
+		if (refract) {
+			ERR_FAIL_COND(p_ops[0].get_type() != Variant::INT);
+			refract->set_op_type((VisualShaderNodeVectorRefract::OpType)(int)p_ops[0]);
+			return;
+		}
+	}
 }
 
 void VisualShaderEditor::_add_node(int p_idx, const Vector<Variant> &p_ops, const String &p_resource_path, int p_node_idx) {
@@ -3848,6 +3860,7 @@ void VisualShaderEditor::_add_node(int p_idx, const Vector<Variant> &p_ops, cons
 		position /= EDSCALE;
 	}
 	position /= graph->get_zoom();
+	position /= cached_theme_base_scale;
 	saved_node_pos_dirty = false;
 
 	int id_to_use = visual_shader->get_valid_node_id(type);
@@ -5248,10 +5261,6 @@ void VisualShaderEditor::_help_open() {
 
 void VisualShaderEditor::_notification(int p_what) {
 	switch (p_what) {
-		case NOTIFICATION_POSTINITIALIZE: {
-			_update_options_menu();
-		} break;
-
 		case EditorSettings::NOTIFICATION_EDITOR_SETTINGS_CHANGED: {
 			if (EditorSettings::get_singleton()->check_changed_settings_in_group("editors/panning")) {
 				graph->get_panner()->setup((ViewPanner::ControlScheme)EDITOR_GET("editors/panning/sub_editors_panning_scheme").operator int(), ED_GET_SHORTCUT("canvas_item_editor/pan_view"), bool(EDITOR_GET("editors/panning/simple_panning")));
@@ -5354,6 +5363,7 @@ void VisualShaderEditor::_notification(int p_what) {
 				theme_dirty = true;
 			}
 			update_toggle_files_button();
+			_update_options_menu();
 		} break;
 
 		case NOTIFICATION_VISIBILITY_CHANGED: {
@@ -6735,7 +6745,6 @@ VisualShaderEditor::VisualShaderEditor() {
 	site_search->set_text(TTR("Online Docs"));
 	site_search->set_tooltip_text(TTR("Open Godot online documentation."));
 	toolbar_hflow->add_child(site_search);
-	toolbar_hflow->add_child(memnew(VSeparator));
 
 	VSeparator *separator = memnew(VSeparator);
 	toolbar_hflow->add_child(separator);
@@ -7662,9 +7671,9 @@ VisualShaderEditor::VisualShaderEditor() {
 	add_options.push_back(AddOption("Reflect", "Vector/Functions", "VisualShaderNodeVectorOp", TTR("Returns the vector that points in the direction of reflection ( a : incident vector, b : normal vector )."), { VisualShaderNodeVectorOp::OP_REFLECT, VisualShaderNodeVectorFunc::OP_TYPE_VECTOR_2D }, VisualShaderNode::PORT_TYPE_VECTOR_2D));
 	add_options.push_back(AddOption("Reflect", "Vector/Functions", "VisualShaderNodeVectorOp", TTR("Returns the vector that points in the direction of reflection ( a : incident vector, b : normal vector )."), { VisualShaderNodeVectorOp::OP_REFLECT, VisualShaderNodeVectorFunc::OP_TYPE_VECTOR_3D }, VisualShaderNode::PORT_TYPE_VECTOR_3D));
 	add_options.push_back(AddOption("Reflect", "Vector/Functions", "VisualShaderNodeVectorOp", TTR("Returns the vector that points in the direction of reflection ( a : incident vector, b : normal vector )."), { VisualShaderNodeVectorOp::OP_REFLECT, VisualShaderNodeVectorFunc::OP_TYPE_VECTOR_4D }, VisualShaderNode::PORT_TYPE_VECTOR_4D));
-	add_options.push_back(AddOption("Refract", "Vector/Functions", "VisualShaderNodeVectorRefract", TTR("Returns the vector that points in the direction of refraction."), {}, VisualShaderNode::PORT_TYPE_VECTOR_2D));
-	add_options.push_back(AddOption("Refract", "Vector/Functions", "VisualShaderNodeVectorRefract", TTR("Returns the vector that points in the direction of refraction."), {}, VisualShaderNode::PORT_TYPE_VECTOR_3D));
-	add_options.push_back(AddOption("Refract", "Vector/Functions", "VisualShaderNodeVectorRefract", TTR("Returns the vector that points in the direction of refraction."), {}, VisualShaderNode::PORT_TYPE_VECTOR_4D));
+	add_options.push_back(AddOption("Refract", "Vector/Functions", "VisualShaderNodeVectorRefract", TTR("Returns the vector that points in the direction of refraction."), { VisualShaderNodeVectorRefract::OP_TYPE_VECTOR_2D }, VisualShaderNode::PORT_TYPE_VECTOR_2D));
+	add_options.push_back(AddOption("Refract", "Vector/Functions", "VisualShaderNodeVectorRefract", TTR("Returns the vector that points in the direction of refraction."), { VisualShaderNodeVectorRefract::OP_TYPE_VECTOR_3D }, VisualShaderNode::PORT_TYPE_VECTOR_3D));
+	add_options.push_back(AddOption("Refract", "Vector/Functions", "VisualShaderNodeVectorRefract", TTR("Returns the vector that points in the direction of refraction."), { VisualShaderNodeVectorRefract::OP_TYPE_VECTOR_4D }, VisualShaderNode::PORT_TYPE_VECTOR_4D));
 	add_options.push_back(AddOption("Remap", "Vector/Functions", "VisualShaderNodeRemap", TTR("Remaps a vector from the input range to the output range."), { VisualShaderNodeRemap::OP_TYPE_VECTOR_2D }, VisualShaderNode::PORT_TYPE_VECTOR_2D));
 	add_options.push_back(AddOption("Remap", "Vector/Functions", "VisualShaderNodeRemap", TTR("Remaps a vector from the input range to the output range."), { VisualShaderNodeRemap::OP_TYPE_VECTOR_3D }, VisualShaderNode::PORT_TYPE_VECTOR_3D));
 	add_options.push_back(AddOption("Remap", "Vector/Functions", "VisualShaderNodeRemap", TTR("Remaps a vector from the input range to the output range."), { VisualShaderNodeRemap::OP_TYPE_VECTOR_4D }, VisualShaderNode::PORT_TYPE_VECTOR_4D));

@@ -433,7 +433,7 @@ void ProjectExportDialog::_edit_preset(int p_index) {
 		script_key_error->hide();
 	}
 
-	int script_export_mode = current->get_script_export_mode();
+	int script_export_mode = int(current->get_script_export_mode());
 	script_mode->select(script_export_mode);
 
 	updating = false;
@@ -703,7 +703,7 @@ bool ProjectExportDialog::_validate_script_encryption_key(const String &p_key) {
 	return is_valid;
 }
 
-void ProjectExportDialog::_script_export_mode_changed(int p_mode) {
+void ProjectExportDialog::_script_export_mode_changed(EditorExportPreset::ScriptExportMode p_mode) {
 	if (updating) {
 		return;
 	}
@@ -756,6 +756,8 @@ void ProjectExportDialog::_duplicate_preset() {
 	preset->set_export_filter(current->get_export_filter());
 	preset->set_include_filter(current->get_include_filter());
 	preset->set_exclude_filter(current->get_exclude_filter());
+	preset->set_customized_files(current->get_customized_files());
+	preset->set_selected_files(current->get_selected_files());
 	preset->set_patches(current->get_patches());
 	preset->set_patch_delta_encoding_enabled(current->is_patch_delta_encoding_enabled());
 	preset->set_patch_delta_zstd_level(current->get_patch_delta_zstd_level());
@@ -1106,7 +1108,14 @@ bool ProjectExportDialog::_fill_tree(EditorFileSystemDirectory *p_dir, TreeItem 
 
 		String path = p_dir->get_file_path(i);
 
-		file->set_icon(0, EditorNode::get_singleton()->get_class_icon(type));
+		Ref<Texture2D> icon;
+		if (!type.is_empty()) {
+			icon = EditorNode::get_singleton()->get_class_icon(type);
+		}
+		if (icon.is_null()) {
+			icon = get_editor_theme_icon(SNAME("File"));
+		}
+		file->set_icon(0, icon);
 		file->set_editable(0, true);
 		file->set_metadata(0, path);
 
@@ -1416,8 +1425,12 @@ void ProjectExportDialog::_export_project() {
 		export_project->add_filter("*." + extension, vformat(TTR("%s Export"), platform->get_name()));
 	}
 
-	if (!current->get_export_path().is_empty()) {
-		export_project->set_current_path(current->get_export_path());
+	String path = current->get_export_path();
+	if (!path.is_empty()) {
+		if (extension_list.find(path.get_extension()) == nullptr && extension_list.size() >= 1) {
+			path = path.get_basename() + "." + extension_list.front()->get();
+		}
+		export_project->set_current_path(path);
 	} else {
 		if (extension_list.size() >= 1) {
 			export_project->set_current_file(default_filename + "." + extension_list.front()->get());
@@ -1592,10 +1605,18 @@ ProjectExportDialog::ProjectExportDialog() {
 	top_settings->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	panel->add_child(top_settings);
 
+	HBoxContainer *name_hbox = memnew(HBoxContainer);
+	Label *name_label = memnew(Label);
+	name_label->set_theme_type_variation("HeaderSmall");
+	name_label->set_text(TTR("Name:"));
+	name_hbox->add_child(name_label);
 	name = memnew(LineEdit);
-	top_settings->add_margin_child(TTR("Name:"), name);
+	name->set_h_size_flags(Control::SIZE_EXPAND_FILL);
 	name->connect(SceneStringName(text_submitted), callable_mp(this, &ProjectExportDialog::_name_changed));
 	name->connect(SceneStringName(focus_exited), callable_mp(this, &ProjectExportDialog::_name_editing_finished));
+	name_hbox->add_child(name);
+
+	top_settings->add_child(name_hbox);
 
 	runnable = memnew(CheckButton);
 	runnable->set_text(TTR("Runnable"));
@@ -1724,9 +1745,15 @@ ProjectExportDialog::ProjectExportDialog() {
 
 	// Patching.
 
+	ScrollContainer *patch_scroll_container = memnew(ScrollContainer);
+	patch_scroll_container->set_name(TTRC("Patching"));
+	patch_scroll_container->set_horizontal_scroll_mode(ScrollContainer::SCROLL_MODE_DISABLED);
+	sections->add_child(patch_scroll_container);
+
 	VBoxContainer *patch_vb = memnew(VBoxContainer);
-	sections->add_child(patch_vb);
-	patch_vb->set_name(TTRC("Patching"));
+	patch_vb->set_h_size_flags(Control::SIZE_EXPAND_FILL);
+	patch_vb->set_v_size_flags(Control::SIZE_EXPAND_FILL);
+	patch_scroll_container->add_child(patch_vb);
 
 	patch_delta_encoding = memnew(CheckButton);
 	patch_delta_encoding->connect(SceneStringName(toggled), callable_mp(this, &ProjectExportDialog::_patch_delta_encoding_changed));

@@ -1,3 +1,5 @@
+#!/usr/bin/env sh
+
 set -uo pipefail
 shopt -s globstar
 
@@ -12,13 +14,8 @@ echo -e ".gitignore validation..."
 	# if it doesn't, print it.)
 
 # ignorecase for the sake of Windows users.
-# Use find with xargs to avoid "Argument list too long" errors with large repos.
 
-output=$(find . -type f \
-    -not -path './.git/*' \
-    -not -path './.github/*' \
-    -print0 | \
-    xargs -0 git -c core.ignorecase=true check-ignore --verbose 2>/dev/null | \
+output=$(git -c core.ignorecase=true check-ignore --verbose --no-index **/* | \
     awk -F ':' '{ if ($3 !~ /^!/) print $0 }')
 
 # Then we take this result and return success if it's empty.

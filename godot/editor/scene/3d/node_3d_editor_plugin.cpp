@@ -673,12 +673,12 @@ Transform3D Node3DEditorViewport::to_camera_transform(const Cursor &p_cursor) co
 }
 
 int Node3DEditorViewport::get_selected_count() const {
-	const HashMap<Node *, Object *> &selection = editor_selection->get_selection();
+	const HashMap<ObjectID, Object *> &selection = editor_selection->get_selection();
 
 	int count = 0;
 
-	for (const KeyValue<Node *, Object *> &E : selection) {
-		Node3D *sp = Object::cast_to<Node3D>(E.key);
+	for (const KeyValue<ObjectID, Object *> &E : selection) {
+		Node3D *sp = ObjectDB::get_instance<Node3D>(E.key);
 		if (!sp) {
 			continue;
 		}
@@ -1810,8 +1810,18 @@ void Node3DEditorViewport::input(const Ref<InputEvent> &p_event) {
 }
 
 void Node3DEditorViewport::_sinput(const Ref<InputEvent> &p_event) {
+	const Ref<InputEventKey> k = p_event;
+
+	if (k.is_valid() && k->is_pressed() && EDITOR_GET("editors/3d/navigation/emulate_numpad")) {
+		const Key code = k->get_physical_keycode();
+		if (code >= Key::KEY_0 && code <= Key::KEY_9) {
+			k->set_keycode(code - Key::KEY_0 + Key::KP_0);
+		}
+	}
+
 	if (previewing || get_viewport()->gui_get_drag_data()) {
-		return; //do NONE
+		// Disable all input actions when previewing a camera or during drag-and-drop.
+		return;
 	}
 
 	if (_redirect_freelook_input(p_event, this)) {
@@ -2463,8 +2473,6 @@ void Node3DEditorViewport::_sinput(const Ref<InputEvent> &p_event) {
 			}
 		}
 	}
-
-	Ref<InputEventKey> k = p_event;
 
 	if (k.is_valid()) {
 		if (!k->is_pressed()) {
@@ -3341,13 +3349,13 @@ void Node3DEditorViewport::_notification(int p_what) {
 				_update_camera(delta);
 			}
 
-			const HashMap<Node *, Object *> &selection = editor_selection->get_selection();
+			const HashMap<ObjectID, Object *> &selection = editor_selection->get_selection();
 
 			bool changed = false;
 			bool exist = false;
 
-			for (const KeyValue<Node *, Object *> &E : selection) {
-				Node3D *sp = Object::cast_to<Node3D>(E.key);
+			for (const KeyValue<ObjectID, Object *> &E : selection) {
+				Node3D *sp = ObjectDB::get_instance<Node3D>(E.key);
 				if (!sp) {
 					continue;
 				}
@@ -3429,18 +3437,18 @@ void Node3DEditorViewport::_notification(int p_what) {
 			if (show_info) {
 				const String viewport_size = vformat(U"%d × %d", viewport->get_size().x * viewport->get_scaling_3d_scale(), viewport->get_size().y * viewport->get_scaling_3d_scale());
 				String text;
-				text += vformat(TTR("X: %s\n"), rtos(current_camera->get_position().x).pad_decimals(1));
-				text += vformat(TTR("Y: %s\n"), rtos(current_camera->get_position().y).pad_decimals(1));
-				text += vformat(TTR("Z: %s\n"), rtos(current_camera->get_position().z).pad_decimals(1));
+				text += vformat(TTR("X: %s"), rtos(current_camera->get_position().x).pad_decimals(1)) + "\n";
+				text += vformat(TTR("Y: %s"), rtos(current_camera->get_position().y).pad_decimals(1)) + "\n";
+				text += vformat(TTR("Z: %s"), rtos(current_camera->get_position().z).pad_decimals(1)) + "\n";
 				text += "\n";
 				text += vformat(
-						TTR("Size: %s (%.1fMP)\n"),
+						TTR("Size: %s (%.1fMP)") + "\n",
 						viewport_size,
 						viewport->get_size().x * viewport->get_size().y * Math::pow(viewport->get_scaling_3d_scale(), 2) * 0.000001);
 
 				text += "\n";
-				text += vformat(TTR("Objects: %d\n"), viewport->get_render_info(Viewport::RENDER_INFO_TYPE_VISIBLE, Viewport::RENDER_INFO_OBJECTS_IN_FRAME));
-				text += vformat(TTR("Primitives: %d\n"), viewport->get_render_info(Viewport::RENDER_INFO_TYPE_VISIBLE, Viewport::RENDER_INFO_PRIMITIVES_IN_FRAME));
+				text += vformat(TTR("Objects: %d"), viewport->get_render_info(Viewport::RENDER_INFO_TYPE_VISIBLE, Viewport::RENDER_INFO_OBJECTS_IN_FRAME)) + "\n";
+				text += vformat(TTR("Primitives: %d"), viewport->get_render_info(Viewport::RENDER_INFO_TYPE_VISIBLE, Viewport::RENDER_INFO_PRIMITIVES_IN_FRAME)) + "\n";
 				text += vformat(TTR("Draw Calls: %d"), viewport->get_render_info(Viewport::RENDER_INFO_TYPE_VISIBLE, Viewport::RENDER_INFO_DRAW_CALLS_IN_FRAME));
 
 				info_label->set_text(text);
@@ -6148,7 +6156,7 @@ Node3DEditorViewport::Node3DEditorViewport(Node3DEditor *p_spatial_editor, int p
 	_add_advanced_debug_draw_mode_item(display_submenu, TTRC("SDFGI Cascades"), VIEW_DISPLAY_DEBUG_SDFGI, SupportedRenderingMethods::FORWARD_PLUS,
 			TTRC("Requires SDFGI to be enabled in Environment to have a visible effect."));
 	_add_advanced_debug_draw_mode_item(display_submenu, TTRC("SDFGI Probes"), VIEW_DISPLAY_DEBUG_SDFGI_PROBES, SupportedRenderingMethods::FORWARD_PLUS,
-			TTRC("Requires SDFGI to be enabled in Environment to have a visible effect."));
+			TTRC("Left-click a SDFGI probe to display its occlusion information (white = not occluded, red = fully occluded).\nRequires SDFGI to be enabled in Environment to have a visible effect."));
 	display_submenu->add_separator();
 	_add_advanced_debug_draw_mode_item(display_submenu, TTRC("Scene Luminance"), VIEW_DISPLAY_DEBUG_SCENE_LUMINANCE, SupportedRenderingMethods::FORWARD_PLUS_MOBILE,
 			TTRC("Displays the scene luminance computed from the 3D buffer. This is used for Auto Exposure calculation.\nRequires Auto Exposure to be enabled in CameraAttributes to have a visible effect."));
@@ -7364,11 +7372,11 @@ void Node3DEditor::_menu_gizmo_toggled(int p_option) {
 void Node3DEditor::_menu_item_pressed(int p_option) {
 	EditorUndoRedoManager *undo_redo = EditorUndoRedoManager::get_singleton();
 	switch (p_option) {
-		case MENU_TOOL_SELECT:
+		case MENU_TOOL_TRANSFORM:
 		case MENU_TOOL_MOVE:
 		case MENU_TOOL_ROTATE:
 		case MENU_TOOL_SCALE:
-		case MENU_TOOL_TRANSFORM:
+		case MENU_TOOL_SELECT:
 		case MENU_TOOL_LIST_SELECT: {
 			for (uint32_t i = 0; i < VIEWPORTS_COUNT; i++) {
 				if (viewports[i]->_edit.mode != Node3DEditorViewport::TRANSFORM_NONE) {
@@ -8489,10 +8497,10 @@ void Node3DEditor::update_grid() {
 void Node3DEditor::_selection_changed() {
 	_refresh_menu_icons();
 
-	const HashMap<Node *, Object *> &selection = editor_selection->get_selection();
+	const HashMap<ObjectID, Object *> &selection = editor_selection->get_selection();
 
-	for (const KeyValue<Node *, Object *> &E : selection) {
-		Node3D *sp = Object::cast_to<Node3D>(E.key);
+	for (const KeyValue<ObjectID, Object *> &E : selection) {
+		Node3D *sp = ObjectDB::get_instance<Node3D>(E.key);
 		if (!sp) {
 			continue;
 		}
@@ -8859,11 +8867,11 @@ void Node3DEditor::_add_environment_to_scene(bool p_already_added_sun) {
 }
 
 void Node3DEditor::_update_theme() {
-	tool_button[TOOL_MODE_SELECT]->set_button_icon(get_editor_theme_icon(SNAME("ToolSelect")));
+	tool_button[TOOL_MODE_TRANSFORM]->set_button_icon(get_editor_theme_icon(SNAME("ToolTransform")));
 	tool_button[TOOL_MODE_MOVE]->set_button_icon(get_editor_theme_icon(SNAME("ToolMove")));
 	tool_button[TOOL_MODE_ROTATE]->set_button_icon(get_editor_theme_icon(SNAME("ToolRotate")));
 	tool_button[TOOL_MODE_SCALE]->set_button_icon(get_editor_theme_icon(SNAME("ToolScale")));
-	tool_button[TOOL_MODE_TRANSFORM]->set_button_icon(get_editor_theme_icon(SNAME("ToolTransform")));
+	tool_button[TOOL_MODE_SELECT]->set_button_icon(get_editor_theme_icon(SNAME("ToolSelect")));
 	tool_button[TOOL_MODE_LIST_SELECT]->set_button_icon(get_editor_theme_icon(SNAME("ListSelect")));
 	tool_button[TOOL_LOCK_SELECTED]->set_button_icon(get_editor_theme_icon(SNAME("Lock")));
 	tool_button[TOOL_UNLOCK_SELECTED]->set_button_icon(get_editor_theme_icon(SNAME("Unlock")));
@@ -8888,9 +8896,9 @@ void Node3DEditor::_update_theme() {
 	sun_title->add_theme_font_override(SceneStringName(font), get_theme_font(SNAME("title_font"), SNAME("Window")));
 	environ_title->add_theme_font_override(SceneStringName(font), get_theme_font(SNAME("title_font"), SNAME("Window")));
 
-	sun_color->set_custom_minimum_size(Size2(0, get_theme_constant(SNAME("color_picker_button_height"), EditorStringName(Editor))));
-	environ_sky_color->set_custom_minimum_size(Size2(0, get_theme_constant(SNAME("color_picker_button_height"), EditorStringName(Editor))));
-	environ_ground_color->set_custom_minimum_size(Size2(0, get_theme_constant(SNAME("color_picker_button_height"), EditorStringName(Editor))));
+	sun_color->set_custom_minimum_size(Size2(0, get_theme_constant(SNAME("inspector_property_height"), EditorStringName(Editor))));
+	environ_sky_color->set_custom_minimum_size(Size2(0, get_theme_constant(SNAME("inspector_property_height"), EditorStringName(Editor))));
+	environ_ground_color->set_custom_minimum_size(Size2(0, get_theme_constant(SNAME("inspector_property_height"), EditorStringName(Editor))));
 
 	context_toolbar_panel->add_theme_style_override(SceneStringName(panel), get_theme_stylebox(SNAME("ContextualToolbar"), EditorStringName(EditorStyles)));
 }
@@ -8898,11 +8906,11 @@ void Node3DEditor::_update_theme() {
 void Node3DEditor::_notification(int p_what) {
 	switch (p_what) {
 		case NOTIFICATION_TRANSLATION_CHANGED: {
+			tool_button[TOOL_MODE_TRANSFORM]->set_tooltip_text(vformat(TTR("%s+Drag: Rotate selected node around pivot."), keycode_get_string((Key)KeyModifierMask::CMD_OR_CTRL)) + "\n" + TTR("Alt+RMB: Show list of all nodes at position clicked, including locked.") + "\n" + TTR("(Available in all modes.)"));
+			tool_button[TOOL_MODE_MOVE]->set_tooltip_text(vformat(TTR("%s+Drag: Use snap."), keycode_get_string((Key)KeyModifierMask::CMD_OR_CTRL)) + "\n" + TTR("Alt+RMB: Show list of all nodes at position clicked, including locked."));
+			tool_button[TOOL_MODE_ROTATE]->set_tooltip_text(vformat(TTR("%s+Drag: Use snap."), keycode_get_string((Key)KeyModifierMask::CMD_OR_CTRL)) + "\n" + TTR("Alt+RMB: Show list of all nodes at position clicked, including locked."));
+			tool_button[TOOL_MODE_SCALE]->set_tooltip_text(vformat(TTR("%s+Drag: Use snap."), keycode_get_string((Key)KeyModifierMask::CMD_OR_CTRL)) + "\n" + TTR("Alt+RMB: Show list of all nodes at position clicked, including locked."));
 			tool_button[TOOL_MODE_SELECT]->set_tooltip_text(TTR("Alt+RMB: Show list of all nodes at position clicked, including locked.") + "\n" + TTR("(Available in all modes.)"));
-			tool_button[TOOL_MODE_TRANSFORM]->set_tooltip_text(keycode_get_string((Key)KeyModifierMask::CMD_OR_CTRL) + TTR("Drag: Rotate selected node around pivot.") + "\n" + TTR("Alt+RMB: Show list of all nodes at position clicked, including locked.") + "\n" + TTR("(Available in all modes.)"));
-			tool_button[TOOL_MODE_MOVE]->set_tooltip_text(keycode_get_string((Key)KeyModifierMask::CMD_OR_CTRL) + TTR("Drag: Use snap.") + "\n" + TTR("Alt+RMB: Show list of all nodes at position clicked, including locked."));
-			tool_button[TOOL_MODE_ROTATE]->set_tooltip_text(keycode_get_string((Key)KeyModifierMask::CMD_OR_CTRL) + TTR("Drag: Use snap.") + "\n" + TTR("Alt+RMB: Show list of all nodes at position clicked, including locked."));
-			tool_button[TOOL_MODE_SCALE]->set_tooltip_text(keycode_get_string((Key)KeyModifierMask::CMD_OR_CTRL) + TTR("Drag: Use snap.") + "\n" + TTR("Alt+RMB: Show list of all nodes at position clicked, including locked."));
 			_update_gizmos_menu();
 		} break;
 
@@ -9702,7 +9710,7 @@ Node3DEditor::Node3DEditor() {
 
 	snap_enabled = false;
 	snap_key_enabled = false;
-	tool_mode = TOOL_MODE_SELECT;
+	tool_mode = TOOL_MODE_TRANSFORM;
 
 	MarginContainer *toolbar_margin = memnew(MarginContainer);
 	toolbar_margin->set_theme_type_variation("MainToolBarMargin");
@@ -9718,18 +9726,15 @@ Node3DEditor::Node3DEditor() {
 
 	String sct;
 
-	tool_button[TOOL_MODE_SELECT] = memnew(Button);
-	main_menu_hbox->add_child(tool_button[TOOL_MODE_SELECT]);
-	tool_button[TOOL_MODE_SELECT]->set_toggle_mode(true);
-	tool_button[TOOL_MODE_SELECT]->set_tooltip_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
-	tool_button[TOOL_MODE_SELECT]->set_theme_type_variation(SceneStringName(FlatButton));
-	tool_button[TOOL_MODE_SELECT]->set_pressed(true);
-	tool_button[TOOL_MODE_SELECT]->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_menu_item_pressed).bind(MENU_TOOL_SELECT));
-	tool_button[TOOL_MODE_SELECT]->set_shortcut(ED_SHORTCUT("spatial_editor/tool_select", TTRC("Select Mode"), Key::Q, true));
-	tool_button[TOOL_MODE_SELECT]->set_shortcut_context(this);
-	tool_button[TOOL_MODE_SELECT]->set_accessibility_name(TTRC("Select Mode"));
-
-	main_menu_hbox->add_child(memnew(VSeparator));
+	tool_button[TOOL_MODE_TRANSFORM] = memnew(Button);
+	main_menu_hbox->add_child(tool_button[TOOL_MODE_TRANSFORM]);
+	tool_button[TOOL_MODE_TRANSFORM]->set_toggle_mode(true);
+	tool_button[TOOL_MODE_TRANSFORM]->set_theme_type_variation(SceneStringName(FlatButton));
+	tool_button[TOOL_MODE_TRANSFORM]->set_pressed(true);
+	tool_button[TOOL_MODE_TRANSFORM]->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_menu_item_pressed).bind(MENU_TOOL_TRANSFORM));
+	tool_button[TOOL_MODE_TRANSFORM]->set_shortcut(ED_SHORTCUT("spatial_editor/tool_transform", TTRC("Transform Mode"), Key::Q, true));
+	tool_button[TOOL_MODE_TRANSFORM]->set_shortcut_context(this);
+	tool_button[TOOL_MODE_TRANSFORM]->set_accessibility_name(TTRC("Transform Mode"));
 
 	tool_button[TOOL_MODE_MOVE] = memnew(Button);
 	main_menu_hbox->add_child(tool_button[TOOL_MODE_MOVE]);
@@ -9762,14 +9767,15 @@ Node3DEditor::Node3DEditor() {
 	tool_button[TOOL_MODE_SCALE]->set_shortcut_context(this);
 	tool_button[TOOL_MODE_SCALE]->set_accessibility_name(TTRC("Scale Mode"));
 
-	tool_button[TOOL_MODE_TRANSFORM] = memnew(Button);
-	main_menu_hbox->add_child(tool_button[TOOL_MODE_TRANSFORM]);
-	tool_button[TOOL_MODE_TRANSFORM]->set_toggle_mode(true);
-	tool_button[TOOL_MODE_TRANSFORM]->set_theme_type_variation(SceneStringName(FlatButton));
-	tool_button[TOOL_MODE_TRANSFORM]->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_menu_item_pressed).bind(MENU_TOOL_TRANSFORM));
-	tool_button[TOOL_MODE_TRANSFORM]->set_shortcut(ED_SHORTCUT("spatial_editor/tool_transform", TTRC("Transform Mode"), Key::V, true));
-	tool_button[TOOL_MODE_TRANSFORM]->set_shortcut_context(this);
-	tool_button[TOOL_MODE_TRANSFORM]->set_accessibility_name(TTRC("Transform Mode"));
+	tool_button[TOOL_MODE_SELECT] = memnew(Button);
+	main_menu_hbox->add_child(tool_button[TOOL_MODE_SELECT]);
+	tool_button[TOOL_MODE_SELECT]->set_toggle_mode(true);
+	tool_button[TOOL_MODE_SELECT]->set_tooltip_auto_translate_mode(AUTO_TRANSLATE_MODE_DISABLED);
+	tool_button[TOOL_MODE_SELECT]->set_theme_type_variation(SceneStringName(FlatButton));
+	tool_button[TOOL_MODE_SELECT]->connect(SceneStringName(pressed), callable_mp(this, &Node3DEditor::_menu_item_pressed).bind(MENU_TOOL_SELECT));
+	tool_button[TOOL_MODE_SELECT]->set_shortcut(ED_SHORTCUT("spatial_editor/tool_select", TTRC("Select Mode"), Key::V, true));
+	tool_button[TOOL_MODE_SELECT]->set_shortcut_context(this);
+	tool_button[TOOL_MODE_SELECT]->set_accessibility_name(TTRC("Select Mode"));
 
 	main_menu_hbox->add_child(memnew(VSeparator));
 

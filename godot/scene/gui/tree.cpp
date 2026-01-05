@@ -2708,41 +2708,42 @@ int Tree::draw_item(const Point2i &p_pos, const Point2 &p_draw_ofs, const Size2 
 			}
 		}
 
-		// Draw the folding arrow.
-		if (!p_item->disable_folding && !hide_folding && p_item->first_child && p_item->get_visible_child_count() != 0) { // Has visible children, draw the guide box.
+		if (p_pos.y + label_h - theme_cache.offset.y >= 0) {
+			// Draw the folding arrow.
+			if (!p_item->disable_folding && !hide_folding && p_item->first_child && p_item->get_visible_child_count() != 0) { // Has visible children, draw the guide box.
+				Ref<Texture2D> arrow;
 
-			Ref<Texture2D> arrow;
-
-			if (p_item->collapsed) {
-				if (rtl) {
-					arrow = theme_cache.arrow_collapsed_mirrored;
+				if (p_item->collapsed) {
+					if (rtl) {
+						arrow = theme_cache.arrow_collapsed_mirrored;
+					} else {
+						arrow = theme_cache.arrow_collapsed;
+					}
 				} else {
-					arrow = theme_cache.arrow_collapsed;
+					arrow = theme_cache.arrow;
 				}
-			} else {
-				arrow = theme_cache.arrow;
-			}
 
-			Size2 arrow_full_size = arrow->get_size();
+				Size2 arrow_full_size = arrow->get_size();
 
-			Point2 apos = p_pos + Point2i(0, (label_h - arrow_full_size.height) / 2) - theme_cache.offset + p_draw_ofs;
-			apos.x += theme_cache.item_margin - arrow_full_size.width;
+				Point2 apos = p_pos + Point2i(0, (label_h - arrow_full_size.height) / 2) - theme_cache.offset + p_draw_ofs;
+				apos.x += theme_cache.item_margin - arrow_full_size.width;
 
-			Size2 arrow_draw_size = arrow_full_size;
-			int out_width = p_pos.x + theme_cache.item_margin - get_column_width(0);
-			if (out_width > 0) {
-				arrow_draw_size.width -= out_width;
-			}
-
-			if (arrow_draw_size.width > 0) {
-				apos = convert_rtl_position(apos, arrow_draw_size.width);
-				Point2 src_pos = Point2();
-				if (rtl) {
-					src_pos = Point2(arrow_full_size.width - arrow_draw_size.width, 0);
+				Size2 arrow_draw_size = arrow_full_size;
+				int out_width = p_pos.x + theme_cache.item_margin - get_column_width(0);
+				if (out_width > 0) {
+					arrow_draw_size.width -= out_width;
 				}
-				Rect2 arrow_rect = Rect2(apos, arrow_draw_size);
-				Rect2 arrow_src_rect = Rect2(src_pos, arrow_draw_size);
-				arrow->draw_rect_region(ci, arrow_rect, arrow_src_rect);
+
+				if (arrow_draw_size.width > 0) {
+					apos = convert_rtl_position(apos, arrow_draw_size.width);
+					Point2 src_pos = Point2();
+					if (rtl) {
+						src_pos = Point2(arrow_full_size.width - arrow_draw_size.width, 0);
+					}
+					Rect2 arrow_rect = Rect2(apos, arrow_draw_size);
+					Rect2 arrow_src_rect = Rect2(src_pos, arrow_draw_size);
+					arrow->draw_rect_region(ci, arrow_rect, arrow_src_rect);
+				}
 			}
 		}
 	}
@@ -4052,12 +4053,7 @@ void Tree::gui_input(const Ref<InputEvent> &p_event) {
 						int icon_size_x = 0;
 						Ref<Texture2D> icon = get_selected()->get_icon(selected_col);
 						if (icon.is_valid()) {
-							Rect2i icon_region = get_selected()->get_icon_region(selected_col);
-							if (icon_region == Rect2i()) {
-								icon_size_x = icon->get_width();
-							} else {
-								icon_size_x = icon_region.size.width;
-							}
+							icon_size_x = _get_cell_icon_size(get_selected()->cells[selected_col]).x;
 						}
 						// Icon is treated as if it is outside of the rect so that double clicking on it will emit the `item_icon_double_clicked` signal.
 						if (rtl) {
@@ -4164,7 +4160,7 @@ void Tree::gui_input(const Ref<InputEvent> &p_event) {
 					if (rtl) {
 						pressing_pos.x = get_size().width - pressing_pos.x;
 					}
-				} else if (mb->is_double_click()) {
+				} else if (mb->is_double_click() && get_item_at_position(mb->get_position()) != nullptr) {
 					emit_signal(SNAME("item_icon_double_clicked"));
 				}
 
@@ -4555,6 +4551,7 @@ void Tree::update_scrollbars() {
 		theme_cache.offset.y = v_scroll->get_value();
 	} else {
 		v_scroll->hide();
+		v_scroll->set_value(0);
 		theme_cache.offset.y = 0;
 	}
 
@@ -4565,6 +4562,7 @@ void Tree::update_scrollbars() {
 		theme_cache.offset.x = h_scroll->get_value();
 	} else {
 		h_scroll->hide();
+		h_scroll->set_value(0);
 		theme_cache.offset.x = 0;
 	}
 
@@ -5130,7 +5128,7 @@ void Tree::_notification(int p_what) {
 			if (scroll_hint_mode != SCROLL_HINT_MODE_DISABLED) {
 				Size2 size = get_size();
 				float v_scroll_value = v_scroll->get_value();
-				bool v_scroll_below_max = v_scroll_value < (get_internal_min_size().height - size.height - 1);
+				bool v_scroll_below_max = v_scroll_value < (get_internal_min_size().height - (content_rect.get_size().height - _get_title_button_height()) - 1);
 				if (v_scroll_value > 1 || v_scroll_below_max) {
 					int hint_height = theme_cache.scroll_hint->get_height();
 					if ((scroll_hint_mode == SCROLL_HINT_MODE_BOTH || scroll_hint_mode == SCROLL_HINT_MODE_TOP) && v_scroll_value > 1) {
@@ -6227,9 +6225,10 @@ void Tree::_find_button_at_pos(const Point2 &p_pos, TreeItem *&r_item, int &r_co
 	if (cache.rtl) {
 		pos.x = get_size().width - pos.x - 1;
 	}
-	pos -= theme_cache.panel_style->get_offset();
+	Point2 margin_offset = theme_cache.panel_style->get_offset();
+	pos -= margin_offset;
 	pos.y -= _get_title_button_height();
-	if (pos.y < 0) {
+	if (pos.y + margin_offset.y < 0) {
 		return;
 	}
 	pos += theme_cache.offset; // Scrolling.
@@ -6352,9 +6351,10 @@ int Tree::get_column_at_position(const Point2 &p_pos) const {
 	if (is_layout_rtl()) {
 		pos.x = get_size().width - pos.x - 1;
 	}
-	pos -= theme_cache.panel_style->get_offset();
+	Point2 margin_offset = theme_cache.panel_style->get_offset();
+	pos -= margin_offset;
 	pos.y -= _get_title_button_height();
-	if (pos.y < 0) {
+	if (pos.y + margin_offset.y < 0) {
 		return -1;
 	}
 
@@ -6383,9 +6383,10 @@ int Tree::get_drop_section_at_position(const Point2 &p_pos) const {
 	if (is_layout_rtl()) {
 		pos.x = get_size().width - pos.x - 1;
 	}
-	pos -= theme_cache.panel_style->get_offset();
+	Point2 margin_offset = theme_cache.panel_style->get_offset();
+	pos -= margin_offset;
 	pos.y -= _get_title_button_height();
-	if (pos.y < 0) {
+	if (pos.y + margin_offset.y < 0) {
 		return -100;
 	}
 
@@ -6432,9 +6433,10 @@ TreeItem *Tree::get_item_at_position(const Point2 &p_pos) const {
 	if (is_layout_rtl()) {
 		pos.x = get_size().width - pos.x - 1;
 	}
-	pos -= theme_cache.panel_style->get_offset();
+	Point2 margin_offset = theme_cache.panel_style->get_offset();
+	pos -= margin_offset;
 	pos.y -= _get_title_button_height();
-	if (pos.y < 0) {
+	if (pos.y + margin_offset.y < 0) {
 		return nullptr;
 	}
 
@@ -6882,6 +6884,7 @@ Tree::Tree() {
 	popup_editor->add_child(popup_editor_vb);
 
 	line_editor = memnew(LineEdit);
+	line_editor->set_theme_type_variation("TreeLineEdit");
 	line_editor->set_v_size_flags(SIZE_EXPAND_FILL);
 	line_editor->hide();
 	popup_editor_vb->add_child(line_editor);

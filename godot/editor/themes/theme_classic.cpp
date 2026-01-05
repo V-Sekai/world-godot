@@ -225,7 +225,6 @@ void ThemeClassic::populate_shared_styles(const Ref<EditorTheme> &p_theme, Edito
 
 		p_theme->set_constant("thumb_size", EditorStringName(Editor), p_config.thumb_size);
 		p_theme->set_constant("class_icon_size", EditorStringName(Editor), p_config.class_icon_size);
-		p_theme->set_constant("color_picker_button_height", EditorStringName(Editor), p_config.color_picker_button_height);
 		p_theme->set_constant("gizmo_handle_scale", EditorStringName(Editor), p_config.gizmo_handle_scale);
 
 		p_theme->set_constant("base_margin", EditorStringName(Editor), p_config.base_margin);
@@ -718,6 +717,25 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 			p_theme->set_stylebox("title_button_pressed", "Tree", style_tree_title);
 		}
 
+		// ProjectList.
+		{
+			Ref<StyleBoxFlat> style_project_list_hover = p_config.base_style->duplicate();
+			style_project_list_hover->set_bg_color(p_config.highlight_color * Color(1, 1, 1, 0.4));
+			style_project_list_hover->set_border_width_all(0);
+
+			Ref<StyleBoxFlat> style_project_list_hover_pressed = p_config.base_style->duplicate();
+			style_project_list_hover_pressed->set_bg_color(p_config.highlight_color * Color(1, 1, 1, 1.2));
+			style_project_list_hover_pressed->set_border_width_all(0);
+
+			p_theme->set_stylebox("hovered", "ProjectList", style_project_list_hover);
+			p_theme->set_stylebox("hover_pressed", "ProjectList", style_project_list_hover_pressed);
+			p_theme->set_stylebox("selected", "ProjectList", style_tree_selected);
+			p_theme->set_stylebox("focus", "ProjectList", p_config.button_style_focus);
+
+			p_theme->set_color(SceneStringName(font_color), "ProjectList", p_config.font_color);
+			p_theme->set_color("guide_color", "ProjectList", guide_color);
+		}
+
 		// ItemList.
 		{
 			Ref<StyleBoxFlat> style_itemlist_bg = p_config.base_style->duplicate();
@@ -1039,13 +1057,20 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 		p_theme->set_constant("buttons_min_height", "AcceptDialog", p_config.dialogs_buttons_min_size.y * EDSCALE);
 
 		// FileDialog.
-		p_theme->set_icon("folder", "FileDialog", p_theme->get_icon(SNAME("Folder"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("parent_folder", "FileDialog", p_theme->get_icon(SNAME("ArrowUp"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("back_folder", "FileDialog", p_theme->get_icon(SNAME("Back"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("forward_folder", "FileDialog", p_theme->get_icon(SNAME("Forward"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("reload", "FileDialog", p_theme->get_icon(SNAME("Reload"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("toggle_hidden", "FileDialog", p_theme->get_icon(SNAME("GuiVisibilityVisible"), EditorStringName(EditorIcons)));
-		p_theme->set_icon("create_folder", "FileDialog", p_theme->get_icon(SNAME("FolderCreate"), EditorStringName(EditorIcons)));
+		p_theme->set_icon("folder", "FileDialog", p_theme->get_icon("Folder", EditorStringName(EditorIcons)));
+		p_theme->set_icon("parent_folder", "FileDialog", p_theme->get_icon("ArrowUp", EditorStringName(EditorIcons)));
+		p_theme->set_icon("back_folder", "FileDialog", p_theme->get_icon("Back", EditorStringName(EditorIcons)));
+		p_theme->set_icon("forward_folder", "FileDialog", p_theme->get_icon("Forward", EditorStringName(EditorIcons)));
+		p_theme->set_icon("reload", "FileDialog", p_theme->get_icon("Reload", EditorStringName(EditorIcons)));
+		p_theme->set_icon("toggle_hidden", "FileDialog", p_theme->get_icon("GuiVisibilityVisible", EditorStringName(EditorIcons)));
+		p_theme->set_icon("toggle_filename_filter", "FileDialog", p_theme->get_icon("FilenameFilter", EditorStringName(EditorIcons)));
+		p_theme->set_icon("thumbnail_mode", "FileDialog", p_theme->get_icon("FileThumbnail", EditorStringName(EditorIcons)));
+		p_theme->set_icon("list_mode", "FileDialog", p_theme->get_icon("FileList", EditorStringName(EditorIcons)));
+		p_theme->set_icon("sort", "FileDialog", p_theme->get_icon("Sort", EditorStringName(EditorIcons)));
+		p_theme->set_icon("favorite", "FileDialog", p_theme->get_icon("Favorites", EditorStringName(EditorIcons)));
+		p_theme->set_icon("favorite_up", "FileDialog", p_theme->get_icon("MoveUp", EditorStringName(EditorIcons)));
+		p_theme->set_icon("favorite_down", "FileDialog", p_theme->get_icon("MoveDown", EditorStringName(EditorIcons)));
+		p_theme->set_icon("create_folder", "FileDialog", p_theme->get_icon("FolderCreate", EditorStringName(EditorIcons)));
 		// Use a different color for folder icons to make them easier to distinguish from files.
 		// On a light theme, the icon will be dark, so we need to lighten it before blending it with the accent color.
 		p_theme->set_color("folder_icon_color", "FileDialog", (p_config.dark_icon_and_font ? Color(1, 1, 1) : Color(4.25, 4.25, 4.25)).lerp(p_config.accent_color, 0.7));
@@ -1108,7 +1133,8 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 			p_theme->set_icon("submenu", "PopupMenu", p_theme->get_icon(SNAME("ArrowRight"), EditorStringName(EditorIcons)));
 			p_theme->set_icon("submenu_mirrored", "PopupMenu", p_theme->get_icon(SNAME("ArrowLeft"), EditorStringName(EditorIcons)));
 
-			p_theme->set_constant("v_separation", "PopupMenu", p_config.forced_even_separation * EDSCALE);
+			int v_sep = (p_config.enable_touch_optimizations ? 12 : p_config.forced_even_separation) * EDSCALE;
+			p_theme->set_constant("v_separation", "PopupMenu", v_sep);
 			p_theme->set_constant("outline_size", "PopupMenu", 0);
 			p_theme->set_constant("item_start_padding", "PopupMenu", p_config.separation_margin);
 			p_theme->set_constant("item_end_padding", "PopupMenu", p_config.separation_margin);
@@ -1404,6 +1430,8 @@ void ThemeClassic::populate_standard_styles(const Ref<EditorTheme> &p_theme, Edi
 			p_theme->set_stylebox("slot", "GraphNode", gn_slot_style);
 			p_theme->set_stylebox("slot_selected", "GraphNode", p_config.button_style_focus);
 
+			p_theme->set_stylebox("separator", "GraphNode", p_theme->get_stylebox("separator", "HSeparator"));
+
 			p_theme->set_color("resizer_color", "GraphNode", gn_decoration_color);
 
 			p_theme->set_constant("port_h_offset", "GraphNode", 1);
@@ -1588,6 +1616,7 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 		p_theme->set_icon("scroll_hint_vertical", "ScrollContainer", empty_texture);
 		p_theme->set_icon("scroll_hint_horizontal", "ScrollContainer", empty_texture);
 		p_theme->set_icon("scroll_hint", "Tree", empty_texture);
+		p_theme->set_icon("scroll_hint", "ItemList", empty_texture);
 
 		// This stylebox is used in 3d and 2d viewports (no borders).
 		Ref<StyleBoxFlat> style_content_panel_vp = p_config.content_panel_style->duplicate();
@@ -1674,7 +1703,11 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 		p_theme->set_color("icon_hover_color", "RunBarButtonMovieMakerDisabled", Color(1, 1, 1, 0.9));
 		p_theme->set_color("icon_hover_pressed_color", "RunBarButtonMovieMakerDisabled", Color(1, 1, 1, 0.84));
 
+		Ref<StyleBoxFlat> movie_maker_button_enabled_hover = menu_transparent_style->duplicate();
+		movie_maker_button_enabled_hover->set_bg_color(p_config.accent_color.lightened(0.2));
+
 		p_theme->set_type_variation("RunBarButtonMovieMakerEnabled", "RunBarButton");
+		p_theme->set_stylebox("hover_pressed", "RunBarButtonMovieMakerEnabled", movie_maker_button_enabled_hover);
 		p_theme->set_color("icon_normal_color", "RunBarButtonMovieMakerEnabled", Color(0, 0, 0, 0.7));
 		p_theme->set_color("icon_pressed_color", "RunBarButtonMovieMakerEnabled", Color(0, 0, 0, 0.84));
 		p_theme->set_color("icon_hover_color", "RunBarButtonMovieMakerEnabled", Color(0, 0, 0, 0.9));
@@ -1978,6 +2011,26 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 			p_theme->set_stylebox(SceneStringName(panel), "TabContainerOdd", style_content_panel_odd);
 		}
 
+		// PanelContainerTabbarInner.
+		{
+			// Used by Modern theme.
+			p_theme->set_type_variation("PanelContainerTabbarInner", "PanelContainer");
+			p_theme->set_stylebox(SceneStringName(panel), "PanelContainerTabbarInner", EditorThemeManager::make_empty_stylebox(0, 0, 0, 0));
+		}
+
+		// TreeLineEdit.
+		{
+			Ref<StyleBoxFlat> tree_line_edit_style = p_theme->get_stylebox(CoreStringName(normal), SNAME("LineEdit"))->duplicate();
+			tree_line_edit_style->set_corner_radius_all(0);
+
+			Ref<StyleBoxFlat> tree_line_edit_style_focus = p_theme->get_stylebox("focus", SNAME("LineEdit"))->duplicate();
+			tree_line_edit_style_focus->set_corner_radius_all(0);
+
+			p_theme->set_type_variation("TreeLineEdit", "LineEdit");
+			p_theme->set_stylebox(CoreStringName(normal), "TreeLineEdit", tree_line_edit_style);
+			p_theme->set_stylebox("focus", "TreeLineEdit", tree_line_edit_style_focus);
+		}
+
 		// EditorValidationPanel.
 		p_theme->set_stylebox(SceneStringName(panel), "EditorValidationPanel", p_config.tree_panel_style);
 
@@ -1998,8 +2051,17 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 		editor_inspector_panel->set_content_margin_all(0);
 		p_theme->set_stylebox(SceneStringName(panel), "EditorInspector", editor_inspector_panel);
 
-		// Vertical separation between inspector categories and sections.
-		p_theme->set_constant("v_separation", "EditorInspector", 0);
+		// Vertical separation between inspector areas.
+		p_theme->set_type_variation("EditorInspectorContainer", "VBoxContainer");
+		p_theme->set_constant("separation", "EditorInspectorContainer", 0);
+
+		// Vertical separation between inspector sections.
+		p_theme->set_type_variation("EditorSectionContainer", "VBoxContainer");
+		p_theme->set_constant("separation", "EditorSectionContainer", 0);
+
+		// Vertical separation between inspector properties.
+		p_theme->set_type_variation("EditorPropertyContainer", "VBoxContainer");
+		p_theme->set_constant("separation", "EditorPropertyContainer", p_config.increased_margin * EDSCALE);
 
 		// EditorProperty.
 
@@ -2015,7 +2077,6 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 		p_theme->set_stylebox("bg_selected", "EditorProperty", style_property_bg);
 		p_theme->set_stylebox("child_bg", "EditorProperty", style_property_child_bg);
 		p_theme->set_constant("font_offset", "EditorProperty", 8 * EDSCALE);
-		p_theme->set_constant("v_separation", "EditorProperty", p_config.increased_margin * EDSCALE);
 
 		const Color property_color = p_config.font_color.lerp(Color(0.5, 0.5, 0.5), 0.5);
 		const Color readonly_color = property_color.lerp(p_config.dark_icon_and_font ? Color(0, 0, 0) : Color(1, 1, 1), 0.25);
@@ -2031,6 +2092,13 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 		property_group_note_color.a = 0.1;
 		style_property_group_note->set_bg_color(property_group_note_color);
 		p_theme->set_stylebox("bg_group_note", "EditorProperty", style_property_group_note);
+
+		// Make the height for properties uniform.
+		Ref<StyleBoxFlat> inspector_button_style = p_theme->get_stylebox(CoreStringName(normal), SNAME("Button"));
+		Ref<Font> font = p_theme->get_font(SceneStringName(font), SNAME("LineEdit"));
+		int font_size = p_theme->get_font_size(SceneStringName(font_size), SNAME("LineEdit"));
+		p_config.inspector_property_height = inspector_button_style->get_minimum_size().height + font->get_height(font_size);
+		p_theme->set_constant("inspector_property_height", EditorStringName(Editor), p_config.inspector_property_height);
 
 		// EditorInspectorSection.
 
@@ -2067,6 +2135,9 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 		category_bg->set_border_color(prop_category_color);
 		category_bg->set_content_margin_all(0);
 		p_theme->set_stylebox("bg", "EditorInspectorCategory", category_bg);
+
+		// EditorInspectorArray.
+		p_theme->set_color("bg", "EditorInspectorArray", p_config.dark_color_1);
 
 		p_theme->set_constant("inspector_margin", EditorStringName(Editor), 12 * EDSCALE);
 
@@ -2293,6 +2364,7 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 	// Asset Library.
 	p_theme->set_stylebox("bg", "AssetLib", p_config.base_empty_style);
 	p_theme->set_stylebox(SceneStringName(panel), "AssetLib", p_config.content_panel_style);
+	p_theme->set_stylebox("downloads", "AssetLib", p_theme->get_stylebox(SceneStringName(panel), SNAME("Tree")));
 	p_theme->set_color("status_color", "AssetLib", Color(0.5, 0.5, 0.5)); // FIXME: Use a defined color instead.
 	p_theme->set_icon("dismiss", "AssetLib", p_theme->get_icon(SNAME("Close"), EditorStringName(EditorIcons)));
 
@@ -2392,8 +2464,8 @@ void ThemeClassic::populate_editor_styles(const Ref<EditorTheme> &p_theme, Edito
 			p_theme->set_color("playback_color", "GraphStateMachine", p_config.font_color);
 			p_theme->set_color("playback_background_color", "GraphStateMachine", p_config.font_color * Color(1, 1, 1, 0.3));
 		}
-
-		// TileSet editor.
-		p_theme->set_stylebox("expand_panel", "TileSetEditor", p_config.tree_panel_style);
 	}
+
+	// TileSet editor.
+	p_theme->set_stylebox("expand_panel", "TileSetEditor", p_config.tree_panel_style);
 }
