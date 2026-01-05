@@ -195,7 +195,7 @@ jobs:
               fi
               ;;  
             windows)  
-              PLATFORM_ARGS="fetch-llvm-mingw"  
+              PLATFORM_ARGS="fetch-llvm-mingw setup-d3d12"  
               ;;  
             macos)  
               PLATFORM_ARGS="build-osxcross fetch-vulkan-sdk"  
