@@ -61,6 +61,13 @@ fetch-llvm-mingw:
         rm -rf llvm-mingw.tar.xz
     fi
 
+setup-d3d12:
+    #!/usr/bin/env bash
+    cd $WORLD_PWD/godot
+    if [ ! -d "bin/build_deps/mesa" ] || [ ! -d "bin/build_deps/agility_sdk" ]; then
+        python3 misc/scripts/install_d3d12_sdk_windows.py --mingw_prefix=${MINGW_PREFIX}
+    fi
+
 fetch-openjdk:
     #!/usr/bin/env bash
     if [ ! -d "${JAVA_HOME}" ]; then
@@ -163,7 +170,9 @@ build-platform-target platform target arch="auto" precision="double" osx_bundle=
     #!/usr/bin/env bash
     set -o xtrace
     cd $WORLD_PWD
-    source "$EMSDK_ROOT/emsdk_env.sh"
+    if [[ "{{platform}}" == "web" && -d "$EMSDK_ROOT" ]]; then
+        source "$EMSDK_ROOT/emsdk_env.sh"
+    fi
     HOST_ARCH=$( uname -m )
     echo "HOST ARCHITECTURE: ${HOST_ARCH}"
     if [[ "{{arch}}" == "arm64" && ${HOST_ARCH} == 'x86_64' ]]; then
@@ -219,6 +228,13 @@ build-platform-target platform target arch="auto" precision="double" osx_bundle=
                     #debug_symbols=yes    # Editor build runs out of space in Github Runner
             ;;
         linuxbsd)
+            DEBUG_SYMBOLS=""
+            if [[ "$(just is-github-actions)" == "true" && "{{target}}" == "editor" ]]; then
+                # Disable debug symbols for editor builds in CI to save disk space
+                DEBUG_SYMBOLS="debug_symbols=no"
+            else
+                DEBUG_SYMBOLS="debug_symbols=yes separate_debug_symbols=yes"
+            fi
             scons platform=linuxbsd \
                     arch={{arch}} \
                     werror=no \
@@ -226,8 +242,7 @@ build-platform-target platform target arch="auto" precision="double" osx_bundle=
                     precision={{precision}} \
                     target={{target}} \
                     test=yes \
-                    debug_symbols=yes \
-                    separate_debug_symbols=yes \
+                    $DEBUG_SYMBOLS \
                     {{extra_options}}
             ;;
         web)
