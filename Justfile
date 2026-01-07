@@ -18,6 +18,7 @@ export ANDROID_NDK_VERSION := "23.2.8568313"
 export arm64toolchain := "https://github.com/godotengine/buildroot/releases/download/godot-2023.08.x-4/aarch64-godot-linux-gnu_sdk-buildroot.tar.bz2"
 export cmdlinetools := "commandlinetools-linux-11076708_latest.zip"
 
+export CUSTOM_SUFFIX := "vsekai"
 export ARM64_ROOT := WORLD_PWD + "/aarch64-godot-linux-gnu_sdk-buildroot"
 export ANDROID_SDK_ROOT := WORLD_PWD + "/android_sdk"
 export ANDROID_HOME := ANDROID_SDK_ROOT
@@ -200,6 +201,7 @@ build-platform-target platform target arch="auto" precision="double" osx_bundle=
                     generate_bundle={{osx_bundle}} \
                     debug_symbols=yes \
                     separate_debug_symbols=yes \
+                    extra_suffix=$CUSTOM_SUFFIX \
                     {{extra_options}}
             ;;
         windows)
@@ -214,6 +216,7 @@ build-platform-target platform target arch="auto" precision="double" osx_bundle=
                 use_mingw=yes \
                 debug_symbols=yes \
                 separate_debug_symbols=yes \
+                extra_suffix=$CUSTOM_SUFFIX \
                 {{extra_options}}
             ;;
         android)
@@ -224,6 +227,7 @@ build-platform-target platform target arch="auto" precision="double" osx_bundle=
                     precision={{precision}} \
                     target={{target}} \
                     test=yes \
+                    extra_suffix=$CUSTOM_SUFFIX \
                     {{extra_options}} \
                     #debug_symbols=yes    # Editor build runs out of space in Github Runner
             ;;
@@ -243,6 +247,7 @@ build-platform-target platform target arch="auto" precision="double" osx_bundle=
                     target={{target}} \
                     test=yes \
                     $DEBUG_SYMBOLS \
+                    extra_suffix=$CUSTOM_SUFFIX \
                     {{extra_options}}
             ;;
         web)
@@ -257,6 +262,7 @@ build-platform-target platform target arch="auto" precision="double" osx_bundle=
                     dlink_enabled=yes \
                     debug_symbols=no \
                     disable_exceptions=yes \
+                    extra_suffix=$CUSTOM_SUFFIX \
                     {{extra_options}}
             ;;
         ios)
@@ -278,6 +284,7 @@ build-platform-target platform target arch="auto" precision="double" osx_bundle=
                     generate_bundle={{osx_bundle}} \
                     debug_symbols=yes \
                     separate_debug_symbols=yes \
+                    extra_suffix=$CUSTOM_SUFFIX \
                     {{extra_options}}
             ;;
         *)
