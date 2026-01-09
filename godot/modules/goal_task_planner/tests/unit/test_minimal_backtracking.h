@@ -1,5 +1,5 @@
 /**************************************************************************/
-/*  minimal_task_domain.h                                                 */
+/*  test_minimal_backtracking.h                                           */
 /**************************************************************************/
 /*                         This file is part of:                          */
 /*                             GODOT ENGINE                               */
@@ -31,75 +31,61 @@
 #pragma once
 
 #include "../../src/domain.h"
+#include "../../src/plan.h"
+#include "../../src/planner_result.h"
+#include "../domains/minimal_backtracking_domain.h"
 #include "core/variant/callable.h"
-#include "core/variant/dictionary.h"
-#include "core/variant/typed_array.h"
+#include "tests/test_macros.h"
 
-// Minimal domain with a simple action and task
-namespace MinimalTaskDomain {
+namespace TestMinimalBacktracking {
 
-// Minimal action: Increment a counter
-Dictionary action_increment(Dictionary p_state, int p_amount) {
-	Dictionary new_state = p_state.duplicate(true);
+TEST_CASE("[Modules][Planner][MinimalBacktracking] Task with backtracking - first method fails, second succeeds") {
+	// Minimal backtracking test: Task has two methods
+	// First method returns Variant() (fails), second method returns action (succeeds)
+	// This verifies backtracking works correctly
 
-	// Get current value
-	int current_value = 0;
-	if (new_state.has("value")) {
-		Dictionary value_dict = new_state["value"];
-		if (value_dict.has("value")) {
-			current_value = value_dict["value"];
-		}
-	} else {
-		Dictionary value_dict;
-		value_dict["value"] = 0;
-		new_state["value"] = value_dict;
+	Ref<PlannerDomain> domain = MinimalBacktrackingDomain::create_minimal_backtracking_domain();
+	Ref<PlannerPlan> plan = memnew(PlannerPlan);
+	plan->reset();
+	plan->set_current_domain(domain);
+	plan->set_max_depth(10);
+	plan->set_verbose(0);
+
+	// Create initial state with value = 0
+	Dictionary init_state;
+	Dictionary value_dict;
+	value_dict["value"] = 0;
+	init_state["value"] = value_dict;
+	Dictionary clean_init_state = init_state.duplicate(true);
+
+	// Create todo list with increment task
+	Array todo_list;
+	todo_list.push_back("increment");
+
+	// Plan should succeed after backtracking from first method to second
+	Ref<PlannerResult> result = plan->find_plan(clean_init_state, todo_list);
+
+	CHECK(result.is_valid());
+	CHECK(result->get_success()); // Should succeed after backtracking
+
+	// Extract plan and verify it contains the increment action
+	Array plan_result = result->extract_plan();
+	CHECK(plan_result.size() > 0); // Should have at least one action
+
+	// Verify the action is correct
+	if (plan_result.size() > 0) {
+		Array first_action = plan_result[0];
+		CHECK(first_action.size() == 2);
+		CHECK(first_action[0] == "action_increment");
+		CHECK(int(first_action[1]) == 1); // increment amount
 	}
 
-	// Increment
-	Dictionary value_dict = new_state["value"];
-	value_dict["value"] = current_value + p_amount;
-	new_state["value"] = value_dict;
-
-	return new_state;
+	// Verify final state
+	Dictionary final_state = result->get_final_state();
+	CHECK(final_state.has("value"));
+	Dictionary final_value_dict = final_state["value"];
+	CHECK(final_value_dict.has("value"));
+	CHECK(int(final_value_dict["value"]) == 1); // Value should be incremented to 1
 }
 
-// Minimal task method: Returns the increment action
-Variant task_increment(Dictionary p_state) {
-	Array result;
-	Array action;
-	action.push_back("action_increment");
-	action.push_back(1); // increment by 1
-	result.push_back(action);
-	return result; // Array indicates success
-}
-
-// Callable wrapper for static methods
-class MinimalTaskDomainCallable {
-public:
-	static Dictionary action_increment(Dictionary p_state, int p_amount) {
-		return MinimalTaskDomain::action_increment(p_state, p_amount);
-	}
-
-	static Variant task_increment(Dictionary p_state) {
-		return MinimalTaskDomain::task_increment(p_state);
-	}
-};
-
-// Helper: Create minimal domain
-Ref<PlannerDomain> create_minimal_domain() {
-	Ref<PlannerDomain> domain = memnew(PlannerDomain);
-
-	// Add action
-	TypedArray<Callable> actions;
-	actions.push_back(callable_mp_static(&MinimalTaskDomainCallable::action_increment));
-	domain->add_actions(actions);
-
-	// Add task method
-	TypedArray<Callable> task_methods;
-	task_methods.push_back(callable_mp_static(&MinimalTaskDomainCallable::task_increment));
-	domain->add_task_methods("increment", task_methods);
-
-	return domain;
-}
-
-} // namespace MinimalTaskDomain
+} // namespace TestMinimalBacktracking

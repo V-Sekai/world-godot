@@ -30,20 +30,19 @@
 
 #pragma once
 
-// SPDX-FileCopyrightText: 2025-present K. S. Ernest (iFire) Lee
-// SPDX-License-Identifier: MIT
+// SPDX-FileCopyrightText: 2021 University of Maryland
+// SPDX-License-Identifier: BSD-3-Clause-Clear
+// Author: Dana Nau <nau@umd.edu>, July 7, 2021
 
 #include "core/io/resource.h"
-#include "core/variant/dictionary.h"
+#include "core/templates/hash_map.h"
+
 #include "planner_persona.h"
 
-// Belief Manager for the Belief-Based Ego Architecture
-// Handles belief formation, updating, and confidence management across personas
 class PlannerBeliefManager : public Resource {
 	GDCLASS(PlannerBeliefManager, Resource);
 
-private:
-	Dictionary persona_registry; // persona_id -> Ref<PlannerPersona>
+	HashMap<String, Ref<PlannerPersona>> personas;
 
 protected:
 	static void _bind_methods();
@@ -52,25 +51,9 @@ public:
 	PlannerBeliefManager();
 	~PlannerBeliefManager();
 
-	// Persona management
-	void register_persona(Ref<PlannerPersona> p_persona);
-	void unregister_persona(const String &p_persona_id);
-	Ref<PlannerPersona> get_persona(const String &p_persona_id) const;
+	Ref<PlannerPersona> get_persona(const String &p_persona_id);
 	bool has_persona(const String &p_persona_id) const;
-	TypedArray<String> get_all_persona_ids() const;
-
-	// Belief retrieval
-	Dictionary get_beliefs_about(Ref<PlannerPersona> p_persona, const String &p_target_persona_id) const;
-
-	// Information asymmetry enforcement
-	Dictionary get_planner_state(const String &p_target_persona_id, const String &p_requesting_persona_id) const;
-
-	// Observation processing
+	void register_persona(const Ref<PlannerPersona> &p_persona);
 	void process_observation_for_persona(const String &p_persona_id, const Dictionary &p_observation);
-
-	// Communication processing
-	void process_communication_for_persona(const String &p_persona_id, const Dictionary &p_communication);
-
-	// Clear all (for testing)
-	void clear_all();
+	Dictionary get_planner_state(const String &p_target_persona_id, const String &p_requester_persona_id);
 };

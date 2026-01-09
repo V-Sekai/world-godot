@@ -33,6 +33,7 @@
 
 #include "planner_persona.h"
 
+#include "core/os/os.h"
 #include "core/string/print_string.h"
 #include "core/string/ustring.h"
 #include "core/variant/dictionary.h"
@@ -85,7 +86,7 @@ void PlannerPersona::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_belief_timestamp_for", "target_persona_id", "belief_key"), &PlannerPersona::get_belief_timestamp_for);
 	ClassDB::bind_method(D_METHOD("update_belief_confidence", "target_persona_id", "belief_key", "confidence"), &PlannerPersona::update_belief_confidence);
 
-	ClassDB::bind_static_method("PlannerPersona", D_METHOD("get_planner_state", "target_persona_id", "requesting_persona_id"), &PlannerPersona::get_planner_state);
+	ClassDB::bind_method(D_METHOD("get_planner_state", "target_persona_id", "requesting_persona_id"), &PlannerPersona::get_planner_state);
 
 	ClassDB::bind_method(D_METHOD("process_observation", "observation"), &PlannerPersona::process_observation);
 	ClassDB::bind_method(D_METHOD("process_communication", "communication"), &PlannerPersona::process_communication);
@@ -104,9 +105,7 @@ PlannerPersona::PlannerPersona() {
 	identity_type = PlannerPersonaIdentity::IDENTITY_BASIC;
 	active = true;
 	metadata = Dictionary();
-	beliefs_about_others = Dictionary();
-	belief_confidence = Dictionary();
-	belief_timestamps = Dictionary();
+	belief_state = Ref<PlannerState>(memnew(PlannerState));
 	capabilities = TypedArray<String>();
 }
 
@@ -210,82 +209,64 @@ void PlannerPersona::enable_ai_capabilities() {
 }
 
 Dictionary PlannerPersona::get_beliefs_about(const String &p_target_persona_id) const {
-	if (beliefs_about_others.has(p_target_persona_id)) {
-		return beliefs_about_others[p_target_persona_id];
-	}
-	return Dictionary();
+	return belief_state->get_beliefs_about(persona_id, p_target_persona_id);
 }
 
 void PlannerPersona::set_belief_about(const String &p_target_persona_id, const String &p_belief_key, const Variant &p_belief_value, double p_confidence, int64_t p_timestamp) {
-	if (!beliefs_about_others.has(p_target_persona_id)) {
-		beliefs_about_others[p_target_persona_id] = Dictionary();
-		belief_confidence[p_target_persona_id] = Dictionary();
-		belief_timestamps[p_target_persona_id] = Dictionary();
-	}
-
-	Dictionary target_beliefs = beliefs_about_others[p_target_persona_id];
-	target_beliefs[p_belief_key] = p_belief_value;
-	beliefs_about_others[p_target_persona_id] = target_beliefs;
-
-	Dictionary target_confidence = belief_confidence[p_target_persona_id];
-	target_confidence[p_belief_key] = p_confidence;
-	belief_confidence[p_target_persona_id] = target_confidence;
-
-	// Store timestamp (use provided timestamp or current time if 0)
-	int64_t timestamp = p_timestamp;
-	if (timestamp == 0) {
-		timestamp = PlannerTimeRange::now_microseconds();
-	}
-	Dictionary target_timestamps = belief_timestamps[p_target_persona_id];
-	target_timestamps[p_belief_key] = timestamp;
-	belief_timestamps[p_target_persona_id] = target_timestamps;
+	Dictionary belief_metadata;
+	belief_metadata["confidence"] = p_confidence;
+	belief_metadata["type"] = "belief";
+	belief_metadata["source"] = persona_id;
+	belief_metadata["timestamp"] = p_timestamp == 0 ? OS::get_singleton()->get_ticks_msec() : p_timestamp;
+	belief_metadata["accessibility"] = "private";
+	belief_state->set_belief_about(persona_id, p_target_persona_id, p_belief_key, p_belief_value, belief_metadata);
 }
 
 double PlannerPersona::get_belief_confidence_for(const String &p_target_persona_id, const String &p_belief_key) const {
-	if (belief_confidence.has(p_target_persona_id)) {
-		Dictionary target_confidence = belief_confidence[p_target_persona_id];
-		if (target_confidence.has(p_belief_key)) {
-			return target_confidence[p_belief_key];
-		}
-	}
-	return 0.0;
+	return belief_state->get_belief_confidence(persona_id, p_target_persona_id, p_belief_key);
 }
 
 int64_t PlannerPersona::get_belief_timestamp_for(const String &p_target_persona_id, const String &p_belief_key) const {
-	if (belief_timestamps.has(p_target_persona_id)) {
-		Dictionary target_timestamps = belief_timestamps[p_target_persona_id];
-		if (target_timestamps.has(p_belief_key)) {
-			return target_timestamps[p_belief_key];
-		}
-	}
-	return 0;
+	return belief_state->get_belief_timestamp(persona_id, p_target_persona_id, p_belief_key);
 }
 
 void PlannerPersona::update_belief_confidence(const String &p_target_persona_id, const String &p_belief_key, double p_confidence) {
-	if (belief_confidence.has(p_target_persona_id)) {
-		Dictionary target_confidence = belief_confidence[p_target_persona_id];
-		target_confidence[p_belief_key] = p_confidence;
-		belief_confidence[p_target_persona_id] = target_confidence;
-	}
+	belief_state->update_belief_confidence(persona_id, p_target_persona_id, p_belief_key, p_confidence);
 }
 
-Dictionary PlannerPersona::get_planner_state(const String &p_target_persona_id, const String &p_requesting_persona_id) {
-	// Information asymmetry: Personas cannot directly access each other's internal states
-	Dictionary result;
-	result["error"] = "hidden";
-	result["message"] = "Persona internal states are hidden. Use observation and communication to form beliefs.";
-	return result;
+Dictionary PlannerPersona::get_planner_state(const String &p_target_persona_id, const String &p_requesting_persona_id) const {
+	// Information asymmetry: Only allow access if requesting persona is the target
+	if (p_requesting_persona_id != p_target_persona_id || p_target_persona_id != persona_id) {
+		Dictionary error_dict;
+		error_dict["error"] = "hidden";
+		return error_dict;
+	}
+
+	// Return triples as Array of Dictionaries
+	Array result;
+	for (const auto &triple : belief_state->get_triples()) {
+		Dictionary triple_dict;
+		triple_dict["subject"] = triple.subject;
+		triple_dict["predicate"] = triple.predicate;
+		triple_dict["object"] = triple.object;
+		triple_dict["metadata"] = triple.metadata;
+		result.push_back(triple_dict);
+	}
+
+	Dictionary state_dict;
+	state_dict["triples"] = result;
+	return state_dict;
 }
 
 void PlannerPersona::process_observation(const Dictionary &p_observation) {
 	// Process an observation to update beliefs
-	// Expected format: {"entity": String, "action": String, "confidence": float, "time": int64_t, ...}
+	// Expected format: {"entity": String, "command": String, "confidence": float, "time": int64_t, ...}
 	if (!p_observation.has("entity")) {
 		return;
 	}
 
 	String entity_id = p_observation.get("entity", "");
-	String action = p_observation.get("action", "");
+	String command = p_observation.get("command", "");
 	double confidence = p_observation.get("confidence", 1.0);
 
 	if (entity_id.is_empty()) {
@@ -310,7 +291,7 @@ void PlannerPersona::process_observation(const Dictionary &p_observation) {
 	}
 
 	// Update belief about observed entity with temporal metadata
-	String belief_key = vformat("observed_%s", action);
+	String belief_key = vformat("observed_%s", command);
 	set_belief_about(entity_id, belief_key, p_observation, confidence, timestamp);
 
 	// Increase confidence with consistent observations
