@@ -6,7 +6,7 @@
 	<description>
 		JointLimitationKusudama3D represents a spherical constraint region using multiple sequence cones that are automatically connected by smooth tangent paths. The term "Kusudama" originates from Japanese papercraft models made by sewing or gluing pyramidal units through a common vertex, which this constraint visually resembles.
 		[b]How Kusudamas Work:[/b]
-		Each cone is defined by a center direction (Vector3) and a radius (half-angle in radians). The constraint allows bone orientations within any of these cones. Additionally, adjacent cones in the sequence are automatically connected by tangent paths, creating a smooth transition region between cones. The inside of tangent circles is forbidden, while the region outside both tangent circles (between the cones) forms the allowed path.
+		Each cone is defined by a center direction and a radius. The constraint allows bone orientations within any of these cones. Additionally, adjacent cones in the sequence are automatically connected by tangent paths, creating a smooth transition region between cones. The inside of tangent circles is forbidden, while the region outside both tangent circles (between the cones) forms the allowed path.
 		[b]Important:[/b] Cones form a linear sequence, not a closed loop. The last cone in the array does not automatically connect back to the first cone. To create a closed constraint region, you must explicitly add a final cone that connects back to the first, or arrange your cones so the last one naturally connects to the first.
 		[b]Constraint Solving Process:[/b]
 		If there are no cones ([code]cone_count[/code] is 0), the constraint is effectively disabled and the bone direction is returned unchanged. Otherwise:
@@ -15,7 +15,7 @@
 		3. If the bone is outside all allowed regions, it is constrained to the nearest boundary point.
 		[b]Note:[/b] Kusudamas constrain the swing (direction) of the bone.
 		[b]Tangent Cone Calculation:[/b]
-		The tangent cones connecting adjacent sequence cones are automatically calculated. The tangent cone radius is determined by the formula: [code](π - (θa + θb)) / 2[/code], where θa and θb are the apex angles of the two sequence cones being connected. This ensures smooth transitions between cones while maintaining the constraint boundaries.
+		The tangent cones connecting adjacent sequence cones are automatically calculated. The tangent cone radius is determined by the formula: [code](π - (θa + θb)) / 2[/code], where [code]θa[/code] and [code]θb[/code] are the apex angles of the two sequence cones being connected. This ensures smooth transitions between cones while maintaining the constraint boundaries.
 	</description>
 	<tutorials>
 	</tutorials>
@@ -37,7 +37,7 @@
 			<return type="float" />
 			<param index="0" name="index" type="int" />
 			<description>
-				Returns the radius (half-angle in radians) of the cone at the specified index. This determines how wide the cone opens.
+				Returns the radius of the cone at the specified index. This determines how wide the cone opens.
 			</description>
 		</method>
 		<method name="set_cone_center">
@@ -52,7 +52,7 @@
 			<return type="void" />
 			<param index="0" name="count" type="int" />
 			<description>
-				Sets the number of cones. If count is 0, all cones are cleared. If increasing the count, new cones are added with default values (center at +Y axis, radius of 0.785398 radians, approximately 45 degrees). If decreasing, excess cones are removed. Tangent paths between adjacent cones are automatically recalculated.
+				Sets the number of cones. If the count is [code]0[/code], all cones are cleared. If increasing the count, new cones are added with default values (center at the +Y axis, radius of [code]0.785398[/code] radians, approximately [code]45[/code] degrees). If decreasing, excess cones are removed. Tangent paths between adjacent cones are automatically recalculated.
 			</description>
 		</method>
 		<method name="set_cone_radius">
@@ -60,8 +60,13 @@
 			<param index="0" name="index" type="int" />
 			<param index="1" name="radius" type="float" />
 			<description>
-				Sets the radius (half-angle in radians) of the cone at the specified index. Larger values create wider cones, allowing more freedom in that direction. Tangent paths between adjacent cones are automatically recalculated when a cone radius is changed.
+				Sets the radius of the cone at the specified index. Larger values create wider cones, allowing more freedom in that direction. Tangent paths between adjacent cones are automatically recalculated when a cone radius is changed.
 			</description>
 		</method>
 	</methods>
+	<members>
+		<member name="cones" type="PackedVector4Array" setter="set_cones" getter="get_cones" default="PackedVector4Array()">
+			The array of cones that define this kusudama constraint. Each cone is stored as a Vector4 where the XYZ components represent the normalized center direction vector and the W component represents the cone radius in radians. The cones form a linear sequence where adjacent cones are automatically connected by smooth tangent paths. When this property is modified, tangent paths between adjacent cones are automatically recalculated.
+		</member>
+	</members>
 </class>

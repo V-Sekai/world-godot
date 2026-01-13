@@ -30,17 +30,14 @@
 
 #pragma once
 
+#include "core/math/math_defs.h"
 #include "scene/resources/3d/joint_limitation_3d.h"
 
 class JointLimitationKusudama3D : public JointLimitation3D {
 	GDCLASS(JointLimitationKusudama3D, JointLimitation3D);
 
-	// Cones data: Storage format uses 3 consecutive Vector4s per cone pair [cone1, tan2, tan1]
-	// Group i is stored at indices [i*3+0, i*3+1, i*3+2]
-	// Note: tangents are swapped in storage (+1 stores tan2, +2 stores tan1) to match shader expectations
-	// cone2 of group i is the same as cone1 of group i+1 (or stored separately for the last group)
-	// Each Vector4 is (x, y, z, radius)
-	LocalVector<Vector4> cones;
+	// Cones data: each cone is stored as Vector4(center_x, center_y, center_z, radius)
+	Vector<Vector4> cones;
 
 #ifdef TOOLS_ENABLED
 	typedef Pair<Vector3, Vector3> Segment;
@@ -54,14 +51,27 @@ protected:
 
 	virtual Vector3 _solve(const Vector3 &p_direction) const override;
 
-	void _update_quad_tangents(int p_quad_index);
+private:
+	// Helper functions for geometric computations
+	bool is_point_in_cone(const Vector3 &p_point, const Vector3 &p_cone_center, real_t p_cone_radius) const;
+	bool is_point_in_tangent_path(const Vector3 &p_point, const Vector3 &p_center1, real_t p_radius1, const Vector3 &p_center2, real_t p_radius2) const;
+	Vector3 get_on_great_tangent_triangle(const Vector3 &p_point, const Vector3 &p_center1, real_t p_radius1, const Vector3 &p_center2, real_t p_radius2) const;
+	Vector3 ray_plane_intersection(const Vector3 &p_ray_start, const Vector3 &p_ray_end, const Vector3 &p_plane_a, const Vector3 &p_plane_b, const Vector3 &p_plane_c) const;
+	void extend_ray(Vector3 &r_start, Vector3 &r_end, real_t p_amount) const;
+	int ray_sphere_intersection_full(const Vector3 &p_ray_start, const Vector3 &p_ray_end, const Vector3 &p_sphere_center, real_t p_radius, Vector3 *r_intersection1, Vector3 *r_intersection2) const;
+	void compute_tangent_circles(const Vector3 &p_center1, real_t p_radius1, const Vector3 &p_center2, real_t p_radius2, Vector3 &r_tangent1, Vector3 &r_tangent2, real_t &r_tangent_radius) const;
 
 public:
+	void set_cones(const Vector<Vector4> &p_cones);
+	Vector<Vector4> get_cones() const;
+
 	void set_cone_count(int p_count);
 	int get_cone_count() const;
 
 	void set_cone_center(int p_index, const Vector3 &p_center);
 	Vector3 get_cone_center(int p_index) const;
+	void set_cone_center_quaternion(int p_index, const Quaternion &p_quaternion);
+	Quaternion get_cone_center_quaternion(int p_index) const;
 
 	void set_cone_radius(int p_index, real_t p_radius);
 	real_t get_cone_radius(int p_index) const;
