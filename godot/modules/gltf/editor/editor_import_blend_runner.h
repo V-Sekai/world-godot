@@ -59,8 +59,6 @@ public:
 	bool is_running() { return blender_pid != 0 && OS::get_singleton()->is_process_running(blender_pid); }
 	bool is_using_rpc() { return rpc_port != 0; }
 	Error do_import(const Dictionary &p_options);
-	Error do_import_usd(const Dictionary &p_options);
-	Error do_export_usd(const Dictionary &p_options);
 	HTTPClient::Status connect_blender_rpc(const Ref<HTTPClient> &p_client, int p_timeout_usecs);
 
 	EditorImportBlendRunner();
