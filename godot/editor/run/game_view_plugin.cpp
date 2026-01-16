@@ -574,10 +574,10 @@ void GameView::_update_debugger_buttons() {
 	if (empty) {
 		suspend_button->set_pressed(false);
 		camera_override_button->set_pressed(false);
+		_reset_time_scales();
 	}
-	next_frame_button->set_disabled(!suspend_button->is_pressed());
 
-	_reset_time_scales();
+	next_frame_button->set_disabled(!suspend_button->is_pressed());
 }
 
 void GameView::_handle_shortcut_requested(int p_embed_action) {
@@ -1163,7 +1163,7 @@ void GameView::_window_close_request() {
 	if (window_wrapper->get_window_enabled()) {
 		// Stop the embedded process timer before closing the window wrapper,
 		// so the signal to focus EDITOR_GAME isn't sent when the window is not enabled.
-		embedded_process->reset();
+		embedded_process->reset_timers();
 		window_wrapper->set_window_enabled(false);
 	}
 
@@ -1175,6 +1175,7 @@ void GameView::_window_close_request() {
 		if (paused || embedded_process->is_embedding_in_progress()) {
 			// Call deferred to prevent the _stop_pressed callback to be executed before the wrapper window
 			// actually closes.
+			embedded_process->reset();
 			callable_mp(EditorRunBar::get_singleton(), &EditorRunBar::stop_playing).call_deferred();
 		} else {
 			// Try to gracefully close the window. That way, the NOTIFICATION_WM_CLOSE_REQUEST
