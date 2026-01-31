@@ -31,7 +31,60 @@
 #include "joint_limitation_kusudama_3d.h"
 
 #include "core/math/math_funcs.h"
+#include "core/math/plane.h"
 #include "core/variant/variant.h"
+
+namespace {
+
+#ifdef TOOLS_ENABLED
+
+using SubdivideCallback = void (*)(const Vector3 &, const Vector3 &, const Vector3 &, int, void *);
+
+struct SubdivideSegmentContext {
+	LocalVector<Pair<Vector3, Vector3>> *ret;
+};
+
+struct SubdivideTriContext {
+	LocalVector<Vector3> *r_triangles;
+};
+
+static void subdivide_segment_implementation(const Vector3 &a, const Vector3 &b, const Vector3 &c, int depth, void *p_ctx) {
+	SubdivideSegmentContext *ctx = static_cast<SubdivideSegmentContext *>(p_ctx);
+	if (depth <= 0) {
+		ctx->ret->push_back(Pair<Vector3, Vector3>(a, b));
+		ctx->ret->push_back(Pair<Vector3, Vector3>(b, c));
+		ctx->ret->push_back(Pair<Vector3, Vector3>(c, a));
+		return;
+	}
+	Vector3 ab = a.lerp(b, (real_t)0.5).normalized();
+	Vector3 bc = b.lerp(c, (real_t)0.5).normalized();
+	Vector3 ca = c.lerp(a, (real_t)0.5).normalized();
+	subdivide_segment_implementation(a, ab, ca, depth - 1, p_ctx);
+	subdivide_segment_implementation(b, bc, ab, depth - 1, p_ctx);
+	subdivide_segment_implementation(c, ca, bc, depth - 1, p_ctx);
+	subdivide_segment_implementation(ab, bc, ca, depth - 1, p_ctx);
+}
+
+static void subdivide_tri_implementation(const Vector3 &a, const Vector3 &b, const Vector3 &c, int depth, void *p_ctx) {
+	SubdivideTriContext *ctx = static_cast<SubdivideTriContext *>(p_ctx);
+	if (depth <= 0) {
+		ctx->r_triangles->push_back(a);
+		ctx->r_triangles->push_back(b);
+		ctx->r_triangles->push_back(c);
+		return;
+	}
+	Vector3 ab = a.lerp(b, (real_t)0.5).normalized();
+	Vector3 bc = b.lerp(c, (real_t)0.5).normalized();
+	Vector3 ca = c.lerp(a, (real_t)0.5).normalized();
+	subdivide_tri_implementation(a, ab, ca, depth - 1, p_ctx);
+	subdivide_tri_implementation(b, bc, ab, depth - 1, p_ctx);
+	subdivide_tri_implementation(c, ca, bc, depth - 1, p_ctx);
+	subdivide_tri_implementation(ab, bc, ca, depth - 1, p_ctx);
+}
+
+#endif // TOOLS_ENABLED
+
+} // namespace
 
 void JointLimitationKusudama3D::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_cones", "cones"), &JointLimitationKusudama3D::set_cones);
@@ -81,10 +134,10 @@ void JointLimitationKusudama3D::set_cone_center(int p_index, const Vector3 &p_ce
 	ERR_FAIL_INDEX(p_index, cones.size());
 	// Normalize and store the center direction
 	Vector3 normalized_center = p_center;
-	if (normalized_center.length_squared() > CMP_EPSILON) {
+	if (!normalized_center.is_zero_approx()) {
 		normalized_center.normalize();
 	} else {
-		normalized_center = Vector3(0, 1, 0); // Default fallback
+		normalized_center = Vector3::UP; // Default fallback
 	}
 	Vector4 &cone = cones.write[p_index];
 	cone.x = normalized_center.x;
@@ -94,36 +147,10 @@ void JointLimitationKusudama3D::set_cone_center(int p_index, const Vector3 &p_ce
 }
 
 Vector3 JointLimitationKusudama3D::get_cone_center(int p_index) const {
-	ERR_FAIL_INDEX_V(p_index, cones.size(), Vector3(0, 1, 0));
+	ERR_FAIL_INDEX_V(p_index, cones.size(), Vector3::UP);
 	// Return the stored normalized center
 	const Vector4 &cone_data = cones[p_index];
 	return Vector3(cone_data.x, cone_data.y, cone_data.z);
-}
-
-void JointLimitationKusudama3D::set_cone_center_quaternion(int p_index, const Quaternion &p_quaternion) {
-	ERR_FAIL_INDEX(p_index, cones.size());
-	// Convert quaternion to direction vector by rotating the default direction (0, 1, 0)
-	Vector3 default_dir = Vector3(0, 1, 0);
-	Vector3 center = p_quaternion.normalized().xform(default_dir);
-	// Normalize and store
-	if (center.length_squared() > CMP_EPSILON) {
-		center.normalize();
-	} else {
-		center = Vector3(0, 1, 0); // Default fallback
-	}
-	Vector4 &cone = cones.write[p_index];
-	cone.x = center.x;
-	cone.y = center.y;
-	cone.z = center.z;
-	emit_changed();
-}
-
-Quaternion JointLimitationKusudama3D::get_cone_center_quaternion(int p_index) const {
-	ERR_FAIL_INDEX_V(p_index, cones.size(), Quaternion());
-	Vector3 center = get_cone_center(p_index); // This already normalizes
-	Vector3 default_dir = Vector3(0, 1, 0);
-	// Create quaternion representing rotation from default_dir to center
-	return Quaternion(default_dir, center);
 }
 
 void JointLimitationKusudama3D::set_cone_radius(int p_index, real_t p_radius) {
@@ -147,12 +174,7 @@ bool JointLimitationKusudama3D::_set(const StringName &p_name, const Variant &p_
 		int index = prop_name.get_slicec('/', 1).to_int();
 		String what = prop_name.get_slicec('/', 2);
 		if (what == "center") {
-			// Handle quaternion input from inspector
-			if (p_value.get_type() == Variant::QUATERNION) {
-				set_cone_center_quaternion(index, p_value);
-			} else {
-				set_cone_center(index, p_value);
-			}
+			set_cone_center(index, p_value);
 			return true;
 		}
 		if (what == "radius") {
@@ -173,8 +195,7 @@ bool JointLimitationKusudama3D::_get(const StringName &p_name, Variant &r_ret) c
 		int index = prop_name.get_slicec('/', 1).to_int();
 		String what = prop_name.get_slicec('/', 2);
 		if (what == "center") {
-			// Return as quaternion for inspector display with degrees
-			r_ret = get_cone_center_quaternion(index);
+			r_ret = get_cone_center(index);
 			return true;
 		}
 		if (what == "radius") {
@@ -189,8 +210,7 @@ void JointLimitationKusudama3D::_get_property_list(List<PropertyInfo> *p_list) c
 	p_list->push_back(PropertyInfo(Variant::INT, PNAME("cone_count"), PROPERTY_HINT_RANGE, "0,16384,1,or_greater", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_ARRAY, "Cones," + String(PNAME("cones")) + "/"));
 	for (int i = 0; i < get_cone_count(); i++) {
 		const String prefix = vformat("%s/%d/", PNAME("cones"), i);
-		// Use quaternion for inspector display with Euler angles in degrees
-		p_list->push_back(PropertyInfo(Variant::QUATERNION, prefix + PNAME("center"), PROPERTY_HINT_NONE, ""));
+		p_list->push_back(PropertyInfo(Variant::VECTOR3, prefix + PNAME("center"), PROPERTY_HINT_NONE, ""));
 		p_list->push_back(PropertyInfo(Variant::FLOAT, prefix + PNAME("radius"), PROPERTY_HINT_RANGE, "0,180,0.1,radians_as_degrees"));
 	}
 }
@@ -243,13 +263,13 @@ Vector3 JointLimitationKusudama3D::_solve(const Vector3 &p_direction) const {
 		Vector3 center = Vector3(cone_data.x, cone_data.y, cone_data.z);
 		real_t radius = cone_data.w;
 
-		// Find closest point on this cone's boundary
-		Vector3 projected = result - center * result.dot(center);
-		if (projected.length_squared() < CMP_EPSILON) {
+		// Find closest point on this cone's boundary (component of result perpendicular to center).
+		Vector3 projected = result - result.project(center);
+		if (projected.is_zero_approx()) {
 			// Point is along the control point axis
-			projected = center.cross(Vector3(0, 1, 0));
-			if (projected.length_squared() < CMP_EPSILON) {
-				projected = center.cross(Vector3(1, 0, 0));
+			projected = center.cross(Vector3::UP);
+			if (projected.is_zero_approx()) {
+				projected = center.cross(Vector3::RIGHT);
 			}
 			projected.normalize();
 		} else {
@@ -300,38 +320,64 @@ Vector3 JointLimitationKusudama3D::_solve(const Vector3 &p_direction) const {
 // Helper functions for kusudama solving
 
 #ifdef TOOLS_ENABLED
-void JointLimitationKusudama3D::draw_shape(Ref<SurfaceTool> &p_surface_tool, const Transform3D &p_transform, float p_bone_length, const Color &p_color, int p_bone_index) const {
+void JointLimitationKusudama3D::draw_shape(Ref<SurfaceTool> p_surface_tool, const Transform3D &p_transform, float p_bone_length, const Color &p_color, int p_bone_index, Ref<SurfaceTool> p_fill_surface_tool) const {
 	real_t sphere_r = p_bone_length * (real_t)0.25;
-	if (sphere_r <= CMP_EPSILON) {
+	if (Math::is_zero_approx(sphere_r)) {
 		return;
 	}
 
-	// Draw subdivided icosahedron sphere.
+	// Boundary loop only (edge as line).
 	LocalVector<Segment> icosahedron_lines = get_icosahedron_sphere(3);
 	LocalVector<Vector3> crossed_points;
 
-	// Only cull lines if we have cones to constrain
 	if (!cones.is_empty()) {
 		icosahedron_lines = cull_lines_by_boundary(icosahedron_lines, crossed_points);
 		crossed_points = sort_by_nearest_point(crossed_points);
 	}
 
+	// Draw only boundary loop as lines (use gizmo color from settings, e.g. ik_chain).
 	p_surface_tool->set_color(p_color);
-	for (const Segment &seg : icosahedron_lines) {
-		p_surface_tool->add_vertex(p_transform.xform(seg.first * sphere_r));
-		p_surface_tool->add_vertex(p_transform.xform(seg.second * sphere_r));
-	}
-	p_surface_tool->set_color(Color(1.0, 0.0, 0.0, 1.0));
 	if (!crossed_points.is_empty()) {
 		for (uint32_t i = 0; i < crossed_points.size(); i++) {
 			p_surface_tool->add_vertex(p_transform.xform(crossed_points[i] * sphere_r));
 			p_surface_tool->add_vertex(p_transform.xform(crossed_points[(i + 1) % crossed_points.size()] * sphere_r));
 		}
 	}
+
+	// Draw impossible region (outside allowed) as transparent triangle surface when fill SurfaceTool provided.
+	if (p_fill_surface_tool.is_valid() && !cones.is_empty()) {
+		LocalVector<Vector3> triangles;
+		get_icosahedron_triangles(3, triangles);
+		Color fill_color = p_color;
+		fill_color.a *= (real_t)0.4;
+
+		for (uint32_t i = 0; i < triangles.size(); i += 3) {
+			Vector3 a = triangles[i];
+			Vector3 b = triangles[i + 1];
+			Vector3 c = triangles[i + 2];
+			Vector3 centroid = (a + b + c) / (real_t)3.0;
+			centroid.normalize();
+			Vector3 solved = _solve(centroid);
+			if (solved.is_equal_approx(centroid)) {
+				continue; // Skip allowed region; add only impossible region.
+			}
+			Vector3 na = a.normalized();
+			Vector3 nb = b.normalized();
+			Vector3 nc = c.normalized();
+			p_fill_surface_tool->set_normal(p_transform.basis.xform(na));
+			p_fill_surface_tool->set_color(fill_color);
+			p_fill_surface_tool->add_vertex(p_transform.xform(a * sphere_r));
+			p_fill_surface_tool->set_normal(p_transform.basis.xform(nb));
+			p_fill_surface_tool->set_color(fill_color);
+			p_fill_surface_tool->add_vertex(p_transform.xform(b * sphere_r));
+			p_fill_surface_tool->set_normal(p_transform.basis.xform(nc));
+			p_fill_surface_tool->set_color(fill_color);
+			p_fill_surface_tool->add_vertex(p_transform.xform(c * sphere_r));
+		}
+	}
 }
 
 LocalVector<JointLimitationKusudama3D::Segment> JointLimitationKusudama3D::get_icosahedron_sphere(int p_subdiv) const {
-	// TODO: Define icosahedron statically in the header.
 	// Make subdivided icosahedron sphere.
 	// All points' length are 1.0 from 0.0.
 	LocalVector<Segment> ret;
@@ -385,35 +431,90 @@ LocalVector<JointLimitationKusudama3D::Segment> JointLimitationKusudama3D::get_i
 		{ 9, 8, 1 }
 	};
 
-	// Helper: subdivide a triangle and push its edges as line segments.
-	// NOTE: We intentionally allow duplicated edges; this is a wireframe gizmo.
-	auto subdivide = [&](const Vector3 &a, const Vector3 &b, const Vector3 &c, int depth, auto &&subdivide_ref) -> void {
-		if (depth <= 0) {
-			ret.push_back(Segment{ a, b });
-			ret.push_back(Segment{ b, c });
-			ret.push_back(Segment{ c, a });
-			return;
-		}
-		Vector3 ab = (a + b) * (real_t)0.5;
-		Vector3 bc = (b + c) * (real_t)0.5;
-		Vector3 ca = (c + a) * (real_t)0.5;
-		ab.normalize();
-		bc.normalize();
-		ca.normalize();
-		subdivide_ref(a, ab, ca, depth - 1, subdivide_ref);
-		subdivide_ref(b, bc, ab, depth - 1, subdivide_ref);
-		subdivide_ref(c, ca, bc, depth - 1, subdivide_ref);
-		subdivide_ref(ab, bc, ca, depth - 1, subdivide_ref);
-	};
-
+	// Subdivide a triangle and push its edges as line segments for boundary culling.
+	SubdivideSegmentContext seg_ctx = { &ret };
+	SubdivideCallback subdivide_callback = &subdivide_segment_implementation;
 	for (int f = 0; f < 20; f++) {
 		const Vector3 &a = v[faces[f][0]];
 		const Vector3 &b = v[faces[f][1]];
 		const Vector3 &c = v[faces[f][2]];
-		subdivide(a, b, c, p_subdiv, subdivide);
+		subdivide_callback(a, b, c, p_subdiv, &seg_ctx);
 	}
 
+	// Canonicalize and deduplicate so each edge appears once; avoids duplicate boundary intersections.
+	for (uint32_t i = 0; i < ret.size(); i++) {
+		if (ret[i].second < ret[i].first) {
+			SWAP(ret[i].first, ret[i].second);
+		}
+	}
+	ret.sort();
+	uint32_t write = 0;
+	for (uint32_t i = 0; i < ret.size(); i++) {
+		if (write == 0 || ret[write - 1] != ret[i]) {
+			ret[write++] = ret[i];
+		}
+	}
+	ret.resize(write);
+
 	return ret;
+}
+
+void JointLimitationKusudama3D::get_icosahedron_triangles(int p_subdiv, LocalVector<Vector3> &r_triangles) const {
+	r_triangles.clear();
+	if (p_subdiv < 0) {
+		p_subdiv = 0;
+	}
+
+	const real_t phi = ((real_t)1.0 + Math::sqrt((real_t)5.0)) * (real_t)0.5;
+	Vector3 v[12] = {
+		Vector3(-1, phi, 0),
+		Vector3(1, phi, 0),
+		Vector3(-1, -phi, 0),
+		Vector3(1, -phi, 0),
+		Vector3(0, -1, phi),
+		Vector3(0, 1, phi),
+		Vector3(0, -1, -phi),
+		Vector3(0, 1, -phi),
+		Vector3(phi, 0, -1),
+		Vector3(phi, 0, 1),
+		Vector3(-phi, 0, -1),
+		Vector3(-phi, 0, 1)
+	};
+	for (int i = 0; i < 12; i++) {
+		v[i].normalize();
+	}
+
+	static const int faces[20][3] = {
+		{ 0, 11, 5 },
+		{ 0, 5, 1 },
+		{ 0, 1, 7 },
+		{ 0, 7, 10 },
+		{ 0, 10, 11 },
+		{ 1, 5, 9 },
+		{ 5, 11, 4 },
+		{ 11, 10, 2 },
+		{ 10, 7, 6 },
+		{ 7, 1, 8 },
+		{ 3, 9, 4 },
+		{ 3, 4, 2 },
+		{ 3, 2, 6 },
+		{ 3, 6, 8 },
+		{ 3, 8, 9 },
+		{ 4, 9, 5 },
+		{ 2, 4, 11 },
+		{ 6, 2, 10 },
+		{ 8, 6, 7 },
+		{ 9, 8, 1 }
+	};
+
+	SubdivideTriContext tri_ctx = { &r_triangles };
+	SubdivideCallback subdivide_tri_callback = &subdivide_tri_implementation;
+	for (int f = 0; f < 20; f++) {
+		const Vector3 &a = v[faces[f][0]];
+		const Vector3 &b = v[faces[f][1]];
+		const Vector3 &c = v[faces[f][2]];
+		subdivide_tri_callback(a, b, c, p_subdiv, &tri_ctx);
+	}
 }
 
 LocalVector<JointLimitationKusudama3D::Segment> JointLimitationKusudama3D::cull_lines_by_boundary(const LocalVector<Segment> &p_segments, LocalVector<Vector3> &r_crossed_points) const {
@@ -452,11 +553,11 @@ bool JointLimitationKusudama3D::is_in_boundary(const Vector3 &p_point, Vector3 &
 
 LocalVector<Vector3> JointLimitationKusudama3D::sort_by_nearest_point(const LocalVector<Vector3> &p_points) const {
 	LocalVector<Vector3> ret;
-	LocalVector<Vector3> points = p_points;
-	if (points.size() > 0) {
+	LocalVector<Vector3> points(p_points);
+	if (!points.is_empty()) {
 		ret.push_back(points[0]);
 		points.remove_at(0);
-		while (points.size() > 0) {
+		while (!points.is_empty()) {
 			uint32_t current = ret.size() - 1;
 			int nearest_index = -1;
 			double nearest = INFINITY;
@@ -480,9 +581,10 @@ LocalVector<Vector3> JointLimitationKusudama3D::sort_by_nearest_point(const Loca
 
 // Helper function implementations
 bool JointLimitationKusudama3D::is_point_in_cone(const Vector3 &p_point, const Vector3 &p_cone_center, real_t p_cone_radius) const {
-	real_t cos_angle = p_point.dot(p_cone_center);
-	real_t cos_radius = Math::cos(p_cone_radius);
-	return cos_angle >= cos_radius - CMP_EPSILON;
+	if (p_point.is_zero_approx()) {
+		return false;
+	}
+	return p_point.normalized().angle_to(p_cone_center) <= p_cone_radius;
 }
 
 bool JointLimitationKusudama3D::is_point_in_tangent_path(const Vector3 &p_point, const Vector3 &p_center1, real_t p_radius1, const Vector3 &p_center2, real_t p_radius2) const {
@@ -532,7 +634,7 @@ Vector3 JointLimitationKusudama3D::get_on_great_tangent_triangle(const Vector3 &
 				// Project onto tangent circle, but move slightly outside to ensure it's in the allowed region
 				Vector3 plane_normal = tan1.cross(input);
 				if (plane_normal.is_zero_approx() || !plane_normal.is_finite()) {
-					plane_normal = Vector3(0, 1, 0);
+					plane_normal = Vector3::UP;
 				}
 				plane_normal.normalize();
 				// Use slightly larger angle to move point outside the tangent circle (into allowed region)
@@ -553,7 +655,7 @@ Vector3 JointLimitationKusudama3D::get_on_great_tangent_triangle(const Vector3 &
 				// Project onto tangent circle, but move slightly outside to ensure it's in the allowed region
 				Vector3 plane_normal = tan2.cross(input);
 				if (plane_normal.is_zero_approx() || !plane_normal.is_finite()) {
-					plane_normal = Vector3(0, 1, 0);
+					plane_normal = Vector3::UP;
 				}
 				plane_normal.normalize();
 				// Use slightly larger angle to move point outside the tangent circle (into allowed region)
@@ -569,39 +671,16 @@ Vector3 JointLimitationKusudama3D::get_on_great_tangent_triangle(const Vector3 &
 	return Vector3(NAN, NAN, NAN);
 }
 
-Vector3 JointLimitationKusudama3D::ray_plane_intersection(const Vector3 &p_ray_start, const Vector3 &p_ray_end, const Vector3 &p_plane_a, const Vector3 &p_plane_b, const Vector3 &p_plane_c) const {
-	Vector3 ray_dir = (p_ray_end - p_ray_start).normalized();
-	Vector3 plane_edge1 = p_plane_b - p_plane_a;
-	Vector3 plane_edge2 = p_plane_c - p_plane_a;
-	Vector3 plane_normal = plane_edge1.cross(plane_edge2).normalized();
-
-	Vector3 ray_to_plane = p_ray_start - p_plane_a;
-	real_t plane_distance = -plane_normal.dot(ray_to_plane);
-	real_t ray_dot_normal = plane_normal.dot(ray_dir);
-
-	if (Math::abs(ray_dot_normal) < CMP_EPSILON) {
-		return Vector3(NAN, NAN, NAN); // Ray is parallel to plane
-	}
-
-	real_t intersection_param = plane_distance / ray_dot_normal;
-	return p_ray_start + ray_dir * intersection_param;
-}
-
 void JointLimitationKusudama3D::extend_ray(Vector3 &r_start, Vector3 &r_end, real_t p_amount) const {
-	Vector3 mid_point = (r_start + r_end) * 0.5;
-	Vector3 start_heading = r_start - mid_point;
-	Vector3 end_heading = r_end - mid_point;
-	Vector3 start_extension = start_heading.normalized() * p_amount;
-	Vector3 end_extension = end_heading.normalized() * p_amount;
-	r_start = start_heading + start_extension + mid_point;
-	r_end = end_heading + end_extension + mid_point;
+	Vector3 mid_point = r_start.lerp(r_end, (real_t)0.5);
+	r_start += mid_point.direction_to(r_start) * p_amount;
+	r_end += mid_point.direction_to(r_end) * p_amount;
 }
 
 int JointLimitationKusudama3D::ray_sphere_intersection_full(const Vector3 &p_ray_start, const Vector3 &p_ray_end, const Vector3 &p_sphere_center, real_t p_radius, Vector3 *r_intersection1, Vector3 *r_intersection2) const {
 	Vector3 ray_start_rel = p_ray_start - p_sphere_center;
 	Vector3 ray_end_rel = p_ray_end - p_sphere_center;
-	Vector3 direction = ray_end_rel - ray_start_rel;
-	Vector3 ray_dir_normalized = direction.normalized();
+	Vector3 ray_dir_normalized = ray_start_rel.direction_to(ray_end_rel);
 	Vector3 ray_to_center = -ray_start_rel;
 	real_t ray_dot_center = ray_dir_normalized.dot(ray_to_center);
 	real_t radius_squared = p_radius * p_radius;
@@ -638,11 +717,11 @@ void JointLimitationKusudama3D::compute_tangent_circles(const Vector3 &p_center1
 	Vector3 arc_normal = center1.cross(center2);
 	real_t arc_normal_len = arc_normal.length();
 
-	if (arc_normal_len < CMP_EPSILON) {
+	if (Math::is_zero_approx(arc_normal_len)) {
 		// Cones are parallel or opposite - handle specially
 		arc_normal = center1.get_any_perpendicular();
 		if (arc_normal.is_zero_approx()) {
-			arc_normal = Vector3(0, 1, 0);
+			arc_normal = Vector3::UP;
 		}
 		arc_normal.normalize();
 
@@ -667,14 +746,14 @@ void JointLimitationKusudama3D::compute_tangent_circles(const Vector3 &p_center1
 	// A point on the plane running through the tangent contact points
 	Vector3 safe_arc_normal = arc_normal;
 	if (Math::is_zero_approx(safe_arc_normal.length_squared())) {
-		safe_arc_normal = Vector3(0, 1, 0);
+		safe_arc_normal = Vector3::UP;
 	}
 	Quaternion temp_var = Quaternion(safe_arc_normal.normalized(), boundary_plus_tangent_radius_a);
 	Vector3 plane_dir1_a = temp_var.xform(center1);
 	// Another point on the same plane
 	Vector3 safe_center1 = center1;
 	if (Math::is_zero_approx(safe_center1.length_squared())) {
-		safe_center1 = Vector3(0, 0, 1);
+		safe_center1 = Vector3::BACK;
 	}
 	Quaternion temp_var2 = Quaternion(safe_center1.normalized(), Math::PI / 2);
 	Vector3 plane_dir2_a = temp_var2.xform(plane_dir1_a);
@@ -686,7 +765,7 @@ void JointLimitationKusudama3D::compute_tangent_circles(const Vector3 &p_center1
 	// Another point on the same plane
 	Vector3 safe_center2 = center2;
 	if (Math::is_zero_approx(safe_center2.length_squared())) {
-		safe_center2 = Vector3(0, 0, 1);
+		safe_center2 = Vector3::BACK;
 	}
 	Quaternion temp_var4 = Quaternion(safe_center2.normalized(), Math::PI / 2);
 	Vector3 plane_dir2_b = temp_var4.xform(plane_dir1_b);
@@ -700,8 +779,15 @@ void JointLimitationKusudama3D::compute_tangent_circles(const Vector3 &p_center1
 	extend_ray(ray1_b_start, ray1_b_end, 99.0);
 	extend_ray(ray2_b_start, ray2_b_end, 99.0);
 
-	Vector3 intersection1 = ray_plane_intersection(ray1_b_start, ray1_b_end, scaled_axis_a, plane_dir1_a, plane_dir2_a);
-	Vector3 intersection2 = ray_plane_intersection(ray2_b_start, ray2_b_end, scaled_axis_a, plane_dir1_a, plane_dir2_a);
+	Plane plane_ta(scaled_axis_a, plane_dir1_a, plane_dir2_a);
+	Vector3 intersection1;
+	Vector3 intersection2;
+	if (!plane_ta.intersects_ray(ray1_b_start, ray1_b_start.direction_to(ray1_b_end), &intersection1)) {
+		intersection1 = Vector3(NAN, NAN, NAN);
+	}
+	if (!plane_ta.intersects_ray(ray2_b_start, ray2_b_start.direction_to(ray2_b_end), &intersection2)) {
+		intersection2 = Vector3(NAN, NAN, NAN);
+	}
 
 	Vector3 intersection_ray_start = intersection1;
 	Vector3 intersection_ray_end = intersection2;
@@ -709,8 +795,7 @@ void JointLimitationKusudama3D::compute_tangent_circles(const Vector3 &p_center1
 
 	Vector3 sphere_intersect1;
 	Vector3 sphere_intersect2;
-	Vector3 sphere_center(0, 0, 0);
-	ray_sphere_intersection_full(intersection_ray_start, intersection_ray_end, sphere_center, 1.0, &sphere_intersect1, &sphere_intersect2);
+	ray_sphere_intersection_full(intersection_ray_start, intersection_ray_end, Vector3(), 1.0, &sphere_intersect1, &sphere_intersect2);
 
 	r_tangent1 = sphere_intersect1.normalized();
 	r_tangent2 = sphere_intersect2.normalized();
@@ -719,7 +804,7 @@ void JointLimitationKusudama3D::compute_tangent_circles(const Vector3 &p_center1
 	if (!r_tangent1.is_finite() || Math::is_zero_approx(r_tangent1.length_squared())) {
 		r_tangent1 = center1.get_any_perpendicular();
 		if (Math::is_zero_approx(r_tangent1.length_squared())) {
-			r_tangent1 = Vector3(0, 1, 0);
+			r_tangent1 = Vector3::UP;
 		}
 		r_tangent1.normalize();
 	}
@@ -727,7 +812,7 @@ void JointLimitationKusudama3D::compute_tangent_circles(const Vector3 &p_center1
 		Vector3 orthogonal_base = r_tangent1.is_finite() ? r_tangent1 : center1;
 		r_tangent2 = orthogonal_base.get_any_perpendicular();
 		if (Math::is_zero_approx(r_tangent2.length_squared())) {
-			r_tangent2 = Vector3(1, 0, 0);
+			r_tangent2 = Vector3::RIGHT;
 		}
 		r_tangent2.normalize();
 	}

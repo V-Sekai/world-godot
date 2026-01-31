@@ -67,7 +67,7 @@ Vector3 JointLimitation3D::solve(const Vector3 &p_local_forward_vector, const Ve
 }
 
 #ifdef TOOLS_ENABLED
-void JointLimitation3D::draw_shape(Ref<SurfaceTool> &p_surface_tool, const Transform3D &p_transform, float p_bone_length, const Color &p_color, int p_bone_index) const {
+void JointLimitation3D::draw_shape(Ref<SurfaceTool> p_surface_tool, const Transform3D &p_transform, float p_bone_length, const Color &p_color, int p_bone_index, Ref<SurfaceTool> p_fill_surface_tool) const {
 	//
 }
 #endif // TOOLS_ENABLED

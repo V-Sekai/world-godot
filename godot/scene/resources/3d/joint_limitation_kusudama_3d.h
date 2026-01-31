@@ -52,11 +52,9 @@ protected:
 	virtual Vector3 _solve(const Vector3 &p_direction) const override;
 
 private:
-	// Helper functions for geometric computations
 	bool is_point_in_cone(const Vector3 &p_point, const Vector3 &p_cone_center, real_t p_cone_radius) const;
 	bool is_point_in_tangent_path(const Vector3 &p_point, const Vector3 &p_center1, real_t p_radius1, const Vector3 &p_center2, real_t p_radius2) const;
 	Vector3 get_on_great_tangent_triangle(const Vector3 &p_point, const Vector3 &p_center1, real_t p_radius1, const Vector3 &p_center2, real_t p_radius2) const;
-	Vector3 ray_plane_intersection(const Vector3 &p_ray_start, const Vector3 &p_ray_end, const Vector3 &p_plane_a, const Vector3 &p_plane_b, const Vector3 &p_plane_c) const;
 	void extend_ray(Vector3 &r_start, Vector3 &r_end, real_t p_amount) const;
 	int ray_sphere_intersection_full(const Vector3 &p_ray_start, const Vector3 &p_ray_end, const Vector3 &p_sphere_center, real_t p_radius, Vector3 *r_intersection1, Vector3 *r_intersection2) const;
 	void compute_tangent_circles(const Vector3 &p_center1, real_t p_radius1, const Vector3 &p_center2, real_t p_radius2, Vector3 &r_tangent1, Vector3 &r_tangent2, real_t &r_tangent_radius) const;
@@ -70,17 +68,16 @@ public:
 
 	void set_cone_center(int p_index, const Vector3 &p_center);
 	Vector3 get_cone_center(int p_index) const;
-	void set_cone_center_quaternion(int p_index, const Quaternion &p_quaternion);
-	Quaternion get_cone_center_quaternion(int p_index) const;
 
 	void set_cone_radius(int p_index, real_t p_radius);
 	real_t get_cone_radius(int p_index) const;
 
 #ifdef TOOLS_ENABLED
 	LocalVector<Segment> get_icosahedron_sphere(int p_subdiv) const;
+	void get_icosahedron_triangles(int p_subdiv, LocalVector<Vector3> &r_triangles) const;
 	LocalVector<Segment> cull_lines_by_boundary(const LocalVector<Segment> &p_segments, LocalVector<Vector3> &r_crossed_points) const;
 	bool is_in_boundary(const Vector3 &p_point, Vector3 &r_solved) const;
 	LocalVector<Vector3> sort_by_nearest_point(const LocalVector<Vector3> &p_points) const;
-	virtual void draw_shape(Ref<SurfaceTool> &p_surface_tool, const Transform3D &p_transform, float p_bone_length, const Color &p_color, int p_bone_index = -1) const override;
+	virtual void draw_shape(Ref<SurfaceTool> p_surface_tool, const Transform3D &p_transform, float p_bone_length, const Color &p_color, int p_bone_index = -1, Ref<SurfaceTool> p_fill_surface_tool = Ref<SurfaceTool>()) const override;
 #endif // TOOLS_ENABLED
 };
