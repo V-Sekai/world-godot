@@ -580,7 +580,7 @@ Files extracted from upstream source:
 ## libpng
 
 - Upstream: http://libpng.org/pub/png/libpng.html
-- Version: 1.6.53 (4e3f57d50f552841550a36eabbb3fbcecacb7750, 2025)
+- Version: 1.6.54 (02f2b4f4699f0ef9111a6534f093b53732df4452, 2026)
 - License: libpng/zlib
 
 Files extracted from upstream source:
@@ -912,7 +912,7 @@ Files extracted from upstream source:
 ## re-spirv
 
 - Upstream: https://github.com/renderbag/re-spirv
-- Version: git (5af3b606e6aaf11bae8dc7b5cd236c943e24865e, 2025)
+- Version: git (c1853b0221cd43866b792406f55c4ab10a0b4503, 2026)
 - License: MIT
 
 Files extracted from upstream source:

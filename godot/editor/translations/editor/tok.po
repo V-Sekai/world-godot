@@ -7,12 +7,13 @@
 # Julia Allen <juliaallen0626@gmail.com>, 2024.
 # Bee Crankson <ProfB.crankson@gmail.com>, 2025.
 # "A Thousand Ships (she/her)" <over999ships@gmail.com>, 2025.
+# jan Ipen <minebloxdash@gmail.com>, 2026.
 msgid ""
 msgstr ""
 "Project-Id-Version: Godot Engine editor interface\n"
 "Report-Msgid-Bugs-To: https://github.com/godotengine/godot\n"
-"PO-Revision-Date: 2025-10-13 10:09+0000\n"
-"Last-Translator: \"A Thousand Ships (she/her)\" <over999ships@gmail.com>\n"
+"PO-Revision-Date: 2026-01-29 23:26+0000\n"
+"Last-Translator: jan Ipen <minebloxdash@gmail.com>\n"
 "Language-Team: Toki Pona <https://hosted.weblate.org/projects/godot-engine/"
 "godot/tok/>\n"
 "Language: tok\n"
@@ -20,7 +21,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8-bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.14-dev\n"
+"X-Generator: Weblate 5.16-dev\n"
 
 msgid "Help"
 msgstr "pona"
@@ -1270,6 +1271,9 @@ msgstr "ma pali 2D"
 
 msgid "3D Scene"
 msgstr "ma pali 3D"
+
+msgid "User Interface"
+msgstr "ma pali jan"
 
 msgid "Other Node"
 msgstr "ijo pali ante"
@@ -2587,6 +2591,9 @@ msgstr "o ante e pali"
 
 msgid "Edit in recovery mode"
 msgstr "o ante lon nasin alasa"
+
+msgid "Remove Missing"
+msgstr "o weka e pali weka"
 
 msgid "Edit normally"
 msgstr "o ante lon meso"

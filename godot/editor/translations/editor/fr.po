@@ -209,13 +209,16 @@
 # MERCRED <augustinseroul@gmail.com>, 2026.
 # Posemartonis <weblate.drainage895@passmail.net>, 2026.
 # Axel Rousseau <axel584@gmail.com>, 2026.
+# Matthieu Rua <mattrua@hotmail.com>, 2026.
+# honoré pellissier <ultrapodkin2@gmail.com>, 2026.
+# LUCASTUCIOUS <peterlucas2804@gmail.com>, 2026.
 msgid ""
 msgstr ""
 "Project-Id-Version: Godot Engine editor interface\n"
 "Report-Msgid-Bugs-To: https://github.com/godotengine/godot\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-01-18 16:02+0000\n"
-"Last-Translator: Posemartonis <weblate.drainage895@passmail.net>\n"
+"PO-Revision-Date: 2026-01-29 00:10+0000\n"
+"Last-Translator: LUCASTUCIOUS <peterlucas2804@gmail.com>\n"
 "Language-Team: French <https://hosted.weblate.org/projects/godot-engine/godot/"
 "fr/>\n"
 "Language: fr\n"
@@ -223,7 +226,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 5.15.2\n"
+"X-Generator: Weblate 5.16-dev\n"
 
 msgid "OK"
 msgstr "OK"
@@ -2980,6 +2983,9 @@ msgstr "Rentrer"
 msgid "Step Over"
 msgstr "Sortir"
 
+msgid "Step Out"
+msgstr "Sortir"
+
 msgid "Break"
 msgstr "Mettre en pause"
 
@@ -5036,6 +5042,9 @@ msgstr "Créer un nouveau %s"
 msgid "Output"
 msgstr "Sortie"
 
+msgid "Toggle Output Dock"
+msgstr "Basculer le dock de Sortie"
+
 msgid "Filter Messages"
 msgstr "Filtrer les messages"
 
@@ -5370,6 +5379,9 @@ msgstr ""
 
 msgid "Save Scene As..."
 msgstr "Enregistrer la scène sous…"
+
+msgid "Save new main scene..."
+msgstr "Enregistrer la nouvelle scène principale sous…"
 
 msgid "Can't undo while mouse buttons are pressed."
 msgstr "Impossible d’annuler lorsque les boutons de la souris sont pressés."
@@ -5954,6 +5966,22 @@ msgstr "Ouvrir l’éditeur précédent"
 
 msgid "Project"
 msgstr "Projet"
+
+msgid ""
+"Choose a renderer.\n"
+"\n"
+"Notes:\n"
+"- On mobile platforms, the Mobile renderer is used if Forward+ is selected "
+"here.\n"
+"- On the web platform, the Compatibility renderer is always used."
+msgstr ""
+"Choisissez une méthode de rendu.\n"
+"\n"
+"Remarques :\n"
+"- Sur les plateformes mobiles, la méthode de rendu « Mobile » est utilisée si "
+"« Forward+ » est sélectionné.\n"
+"- Sur plateforme web, la méthode de rendu « Compatibilité » est toujours "
+"utilisée."
 
 msgid "Renderer"
 msgstr "Moteur de rendu"
@@ -6670,6 +6698,12 @@ msgid "All presets must have an export path defined for Export All to work."
 msgstr ""
 "Tous les préréglages doivent avoir un chemin d’exportation défini pour "
 "pouvoir tous les exporter."
+
+msgid "Hide encryption key"
+msgstr "Cacher les clés de chiffrement"
+
+msgid "Show encryption key"
+msgstr "Montrer les clés de chiffrement"
 
 msgid "Delete preset '%s'?"
 msgstr "Supprimer le préréglage « %s » ?"
@@ -9907,6 +9941,12 @@ msgstr "Pixels de bordure"
 msgid "Mask Mode"
 msgstr "Mode masque"
 
+msgid "Generate"
+msgstr "Générer"
+
+msgid "Texture"
+msgstr "Texture"
+
 msgid "Centered"
 msgstr "Centré"
 
@@ -10086,6 +10126,9 @@ msgstr "Peindre les poids de l'os"
 
 msgid "Polygon"
 msgstr "Polygone"
+
+msgid "Toggle Polygon Dock"
+msgstr "Activer/Désactiver le panneau inférieur du polygone"
 
 msgid "Points"
 msgstr "Points"
@@ -11437,6 +11480,12 @@ msgstr "N’a pas pu créer une forme de collision simplifiée."
 
 msgid "Couldn't create any collision shapes."
 msgstr "Impossible de créer des formes de collision."
+
+msgid "Couldn't create a capsule shape."
+msgstr "Impossible de créer une forme de capsule."
+
+msgid "Couldn't create a cylinder shape."
+msgstr "Impossible de créer une forme de cylindre."
 
 msgid "Couldn't create a sphere shape."
 msgstr "Impossible de créer une forme de sphère."

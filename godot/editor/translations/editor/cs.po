@@ -59,13 +59,14 @@
 # GrenewerearE <grenewereare@seznam.cz>, 2025.
 # "A Thousand Ships (she/her)" <over999ships@gmail.com>, 2025.
 # Frostcorn <houskam@gasos-ro.cz>, 2026.
+# Marek Poustka <noskrat@gmail.com>, 2026.
 msgid ""
 msgstr ""
 "Project-Id-Version: Godot Engine editor interface\n"
 "Report-Msgid-Bugs-To: https://github.com/godotengine/godot\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-01-05 13:01+0000\n"
-"Last-Translator: Frostcorn <houskam@gasos-ro.cz>\n"
+"PO-Revision-Date: 2026-01-30 13:14+0000\n"
+"Last-Translator: Marek Poustka <noskrat@gmail.com>\n"
 "Language-Team: Czech <https://hosted.weblate.org/projects/godot-engine/godot/"
 "cs/>\n"
 "Language: cs\n"
@@ -73,22 +74,157 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=((n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2);\n"
-"X-Generator: Weblate 5.15.1\n"
+"X-Generator: Weblate 5.16-dev\n"
 
 msgid "OK"
 msgstr "OK"
 
+msgid "Failed"
+msgstr "Selhání"
+
+msgid "Unavailable"
+msgstr "Nedostupné"
+
+msgid "Unconfigured"
+msgstr "Nenakonfigurováno"
+
+msgid "Unauthorized"
+msgstr "Neautorizované"
+
+msgid "Parameter out of range"
+msgstr "Parametr mime rozsah"
+
+msgid "Out of memory"
+msgstr "Nedostatek paměti"
+
+msgid "File not found"
+msgstr "Soubor nenalezen"
+
+msgid "File: Bad drive"
+msgstr "Soubor: Špatný disk"
+
+msgid "File: Bad path"
+msgstr "Soubor: Špatná cesta"
+
+msgid "File: Permission denied"
+msgstr "Soubor: Přístup odmítnut"
+
+msgid "File already in use"
+msgstr "Soubor je již používán"
+
+msgid "Can't open file"
+msgstr "Nelze otevřít soubor"
+
+msgid "Can't write file"
+msgstr "Nelze zapsat do souboru"
+
+msgid "Can't read file"
+msgstr "Nelze číst ze souboru"
+
+msgid "File unrecognized"
+msgstr "Soubor nerozpoznán"
+
+msgid "File corrupt"
+msgstr "Soubor poškozen"
+
+msgid "Missing dependencies for file"
+msgstr "Chybí závislosti na soubor"
+
+msgid "End of file"
+msgstr "Konec souboru"
+
+msgid "Can't open"
+msgstr "Nelze otevřít"
+
+msgid "Can't create"
+msgstr "Nelze vytvořit"
+
+msgid "Query failed"
+msgstr "Dotaz selhal"
+
+msgid "Already in use"
+msgstr "Již používáno"
+
 msgid "Locked"
 msgstr "Zamčeno"
+
+msgid "Timeout"
+msgstr "Čas vypršel"
+
+msgid "Can't connect"
+msgstr "Nelze se připojit"
+
+msgid "Can't resolve"
+msgstr "Nelze vyřešit"
+
+msgid "Can't acquire resource"
+msgstr "Nelze získat zdroj"
+
+msgid "Can't fork"
+msgstr "Nelze rozdělit"
+
+msgid "Invalid data"
+msgstr "Neplatná data"
+
+msgid "Invalid parameter"
+msgstr "Neplatný parametr"
+
+msgid "Already exists"
+msgstr "Již existuje"
+
+msgid "Does not exist"
+msgstr "Neexistuje"
+
+msgid "Can't read database"
+msgstr "Nelze číst z databáze"
+
+msgid "Can't write database"
+msgstr "Nelze zapsat do databáze"
+
+msgid "Compilation failed"
+msgstr "Kompilace selhala"
+
+msgid "Method not found"
+msgstr "Metoda nenalezena"
+
+msgid "Link failed"
+msgstr "Odkaz selhal"
+
+msgid "Script failed"
+msgstr "Skript selhal"
+
+msgid "Cyclic link detected"
+msgstr "Zjištěn cyklický odkaz"
+
+msgid "Invalid declaration"
+msgstr "Neplatná deklarace"
+
+msgid "Duplicate symbol"
+msgstr "Duplikovat symbol"
+
+msgid "Parse error"
+msgstr "Chyba parsování"
+
+msgid "Busy"
+msgstr "Zaneprázdněn"
+
+msgid "Skip"
+msgstr "Přeskočit"
 
 msgid "Help"
 msgstr "Nápověda"
 
+msgid "Bug"
+msgstr "Chyba"
+
+msgid "Printer on fire"
+msgstr "Tiskárna v plamenech"
+
 msgid "unset"
-msgstr "Nenastaveno"
+msgstr "nenastaveno"
 
 msgid "Physical"
-msgstr "Fyzická klávesa"
+msgstr "Fyzický"
 
 msgid "Left Mouse Button"
 msgstr "Levé tlačítko myši"
@@ -139,10 +275,10 @@ msgid "Right Stick Y-Axis, Joystick 1 Y-Axis"
 msgstr "Osa Y pravé páčky, osa Y joysticku 1"
 
 msgid "Joystick 2 X-Axis, Left Trigger, Sony L2, Xbox LT"
-msgstr "Osa X joysticku 2, levá spoušť, Sony L2, Xbox LT"
+msgstr "Osa X joysticku 2, Levý Trigger, Sony L2, Xbox LT"
 
 msgid "Joystick 2 Y-Axis, Right Trigger, Sony R2, Xbox RT"
-msgstr "Osa Y joysticku 2, pravá spoušť, Sony R2, Xbox RT"
+msgstr "Osa Y joysticku 2, Pravá Trigger, Sony R2, Xbox RT"
 
 msgid "Joystick 3 X-Axis"
 msgstr "Osa X joysticku 3"
@@ -157,7 +293,7 @@ msgid "Joystick 4 Y-Axis"
 msgstr "Osa Y joysticku 4"
 
 msgid "Unknown Joypad Axis"
-msgstr "Neznámá osa joypadu"
+msgstr "Neznámá Osa Joypadu"
 
 msgid "Joypad Motion on Axis %d (%s) with Value %.2f"
 msgstr "Pohyb joypadu na ose %d (%s) s hodnotou %.2f"
@@ -208,7 +344,7 @@ msgid "D-pad Right"
 msgstr "Směrové tlačítko doprava"
 
 msgid "Xbox Share, PS5 Microphone, Nintendo Capture"
-msgstr "Xbox Sdílet, PS5 Mikrofon, Nintendo Capture"
+msgstr "Xbox Sdílet, PS5 Mikrofon, Nintendo Zachytit"
 
 msgid "Xbox Paddle 1"
 msgstr "Xbox pádlo 1"
@@ -226,7 +362,7 @@ msgid "PS4/5 Touchpad"
 msgstr "Dotykový panel PS4/5"
 
 msgid "Joypad Button %d"
-msgstr "Tlačítko joypadu %d"
+msgstr "Tlačítko Joypadu %d"
 
 msgid "Pressure:"
 msgstr "Tlak:"
@@ -238,7 +374,7 @@ msgid "touched"
 msgstr "dotknuto"
 
 msgid "released"
-msgstr "puštěno"
+msgstr "uvolněno"
 
 msgid "Screen %s at (%s) with %s touch points"
 msgstr "Obrazovka %s na (%s) s %s dotykovými body"
@@ -248,7 +384,7 @@ msgid ""
 msgstr "Obrazovka tažena %s dotykovými body na pozici (%s) s rychlostí (%s)"
 
 msgid "Magnify Gesture at (%s) with factor %s"
-msgstr "Gesto zvštření na (%s) s faktorem %s"
+msgstr "Gesto zvětšení na (%s) s faktorem %s"
 
 msgid "Pan Gesture at (%s) with delta (%s)"
 msgstr "Gesto posunu na (%s) s deltou (%s)"
@@ -273,6 +409,9 @@ msgstr "Vybrat"
 
 msgid "Cancel"
 msgstr "Zrušit"
+
+msgid "Close Dialog"
+msgstr "Zavřít Dialogové okno"
 
 msgid "Focus Next"
 msgstr "Zaměřit další"
@@ -323,7 +462,7 @@ msgid "Redo"
 msgstr "Znovu"
 
 msgid "Completion Query"
-msgstr "Doplňovací dotaz"
+msgstr "Dokončovací Dotaz"
 
 msgid "New Line"
 msgstr "Nový řádek"
@@ -344,10 +483,10 @@ msgid "Backspace"
 msgstr "Backspace"
 
 msgid "Backspace Word"
-msgstr "Backspace slova"
+msgstr "Backspace Slovo"
 
 msgid "Backspace all to Left"
-msgstr "Backspace vše vlevo"
+msgstr "Smazat vše nalevo"
 
 msgid "Delete"
 msgstr "Smazat"
@@ -356,7 +495,7 @@ msgid "Delete Word"
 msgstr "Smazat slovo"
 
 msgid "Delete all to Right"
-msgstr "Smazat vše vpravo"
+msgstr "Smazat vše napravo"
 
 msgid "Caret Left"
 msgstr "Kurzor doleva"
@@ -395,25 +534,25 @@ msgid "Caret Document End"
 msgstr "Kurzor na konec dokumentu"
 
 msgid "Caret Add Below"
-msgstr "Přidat kurzor níže"
+msgstr "Kurzor přidat nad"
 
 msgid "Caret Add Above"
-msgstr "Přidat kurzor výše"
+msgstr "Kurzor Přidat pod"
 
 msgid "Scroll Up"
-msgstr "Posun kolečkem myši nahoru"
+msgstr "Skrolovat nahoru"
 
 msgid "Scroll Down"
-msgstr "Posun kolečkem myši dolů"
+msgstr "Skrolovat dolu"
 
 msgid "Select All"
 msgstr "Vybrat vše"
 
 msgid "Select Word Under Caret"
-msgstr "Vybrat slovo pod kurzorem"
+msgstr "Vybrat slovo u kurzoru"
 
 msgid "Add Selection for Next Occurrence"
-msgstr "Přidat další výskyt do výběru"
+msgstr "Přidat výběr pro další výskyt"
 
 msgid "Skip Selection for Next Occurrence"
 msgstr "Přeskočit výběr pro další výskyt"
@@ -455,7 +594,10 @@ msgid "Swap Input Direction"
 msgstr "Obrátit směr vstupu"
 
 msgid "Start Unicode Character Input"
-msgstr "Zahájit vstup Unicode znaků"
+msgstr "Zahájit zadání Unicode znaků"
+
+msgid "ColorPicker: Delete Preset"
+msgstr "Výběr Barev: Smazat předvýběr"
 
 msgid "Accessibility: Keyboard Drag and Drop"
 msgstr "Přístupnost: Přetáhnout a pustit pomocí klávesnice"
@@ -473,13 +615,13 @@ msgid "Invalid index of type %s for base type %s"
 msgstr "Neplatný index typu %s pro základní typ %s"
 
 msgid "Invalid named index '%s' for base type %s"
-msgstr "Neplatný pojmenovaný index '%s' pro základní typ %s"
+msgstr "Neplatně pojmenovaný index '%s' pro základní typ %s"
 
 msgid "Invalid arguments to construct '%s'"
 msgstr "Neplatné argumenty pro vytvoření '%s'"
 
 msgid "On call to '%s':"
-msgstr "Při volání '%s':"
+msgstr "Při volání na '%s':"
 
 msgid "Built-in script"
 msgstr "Vestavěný skript"
@@ -515,25 +657,25 @@ msgid "Value:"
 msgstr "Hodnota:"
 
 msgid "Update Selected Key Handles"
-msgstr "Upravit vybrané úchyty klíčů"
+msgstr "Aktualizovat vybrané úchyty klíčů"
 
 msgid "Insert Key Here"
 msgstr "Vložit klíč zde"
 
 msgid "Duplicate Selected Key(s)"
-msgstr "Duplikovat vybrané klíče"
+msgstr "Duplikovat vybraný(é) klíč(e)"
 
 msgid "Cut Selected Key(s)"
-msgstr "Vyjmout vybrané klíče"
+msgstr "Vyjmout vybraný(é) klíč(e)"
 
 msgid "Copy Selected Key(s)"
-msgstr "Kopírovat vybrané klíče"
+msgstr "Kopírovat vybraný(é) klíč(e)"
 
 msgid "Paste Key(s)"
-msgstr "Vložit klíče"
+msgstr "Vložit klíč(e)"
 
 msgid "Delete Selected Key(s)"
-msgstr "Smazat vybrané klíče"
+msgstr "Smazat vybraný(é) klíč(e)"
 
 msgid "Make Handles Free"
 msgstr "Uvolnit úchyty"
@@ -548,7 +690,7 @@ msgid "Make Handles Mirrored"
 msgstr "Udělat úchyty zrcadlené"
 
 msgid "Make Handles Balanced (Auto Tangent)"
-msgstr "Udělat úchyty vyvážené (automatická tečna)"
+msgstr "Udělat úchyty vyvážené (Automatická Tečna)"
 
 msgid "Make Handles Mirrored (Auto Tangent)"
 msgstr "Udělat úchyty zrcadlené (automatická tečna)"
@@ -628,14 +770,29 @@ msgstr "Diskrétní"
 msgid "Capture"
 msgstr "Snímat"
 
+msgid ""
+"Select and move points.\n"
+"RMB: Create point at position clicked.\n"
+"Shift+LMB+Drag: Set the blending position within the space."
+msgstr ""
+"Vybrat a přesunout uzly.\n"
+"Pravé tl. myši: Přidat uzel na místo kliknutí.\n"
+"Shift+Levé tl. myši+Táhnutí: Nastaví polohu prolnutí v prostoru."
+
 msgid "Create points."
 msgstr "Vytvořit body."
+
+msgid "Set the blending position within the space."
+msgstr "Nastavit pozici prolínání v prostoru."
 
 msgid "Erase points."
 msgstr "Vymazat body."
 
 msgid "Enable snap and show grid."
 msgstr "Aktivovat přichytávání a zobrazit mřížku."
+
+msgid "Grid Step"
+msgstr "Krok mřížky"
 
 msgid "Sync:"
 msgstr "Synchronizace:"
@@ -646,8 +803,14 @@ msgstr "Prolínání:"
 msgid "Point"
 msgstr "Bod"
 
+msgid "Blend Value"
+msgstr "Hodnota prolnutí"
+
 msgid "Open Editor"
 msgstr "Otevřít editor"
+
+msgid "Min"
+msgstr "Min"
 
 msgid "Max"
 msgstr "Max"
@@ -1407,6 +1570,9 @@ msgstr "Úchyt do:"
 msgid "Out-Handle:"
 msgstr "Úchyt z:"
 
+msgid "Handle mode: %s"
+msgstr "Režim úchytu: %s"
+
 msgid "Stream:"
 msgstr "Stream:"
 
@@ -1909,6 +2075,9 @@ msgstr "Vybrat všechny/žádné"
 
 msgid "Copy Selection"
 msgstr "Kopírovat výběr"
+
+msgid "Imported Animation cannot be edited!"
+msgstr "Importovaná Animace nemůže být upravována!"
 
 msgid "Animation Change Keyframe Time"
 msgstr "Animace: Změnit čas klíčového snímku"
@@ -3449,6 +3618,18 @@ msgstr "Přejete si tyto soubory převést na %s? (Tuto operaci nelze vzít zpě
 msgid "Could not create folder: %s"
 msgstr "Nepodařilo se vytvořit složku: %s"
 
+msgid "Copy %d selected item to \"%s\"?"
+msgid_plural "Copy %d selected items to \"%s\"?"
+msgstr[0] "Kopírovat %d vybranou položku do \"%s\"?"
+msgstr[1] "Kopírovat %d vybrané položky do \"%s\"?"
+msgstr[2] "Kopírovat %d vybrané položky do \"%s\"?"
+
+msgid "Move %d selected item to \"%s\"?"
+msgid_plural "Move %d selected items to \"%s\"?"
+msgstr[0] "Přesunout %d vybranou položku do \"%s\"?"
+msgstr[1] "Přesunout %d vybrané položky do \"%s\"?"
+msgstr[2] "Přesunout %d vybrané položky do \"%s\"?"
+
 msgid "New Inherited Scene"
 msgstr "Nová zděděná scéna"
 
@@ -4161,6 +4342,15 @@ msgid "Filter by Group"
 msgstr "Filtrovat podle skupiny"
 
 msgid ""
+"Selects all Nodes belonging to the given group.\n"
+"If empty, selects any Node belonging to any group.\n"
+"Inserts \"group:\". You can also use the shorthand \"g:\"."
+msgstr ""
+"Vybere všechny uzly patřící do dané skupiny.\n"
+"Ponecháte-li prázdné, vybere jakýkoli uzel patřící do kterékoliv skupiny.\n"
+"Vložte \"skupinu:\". Můžete také použít zkratku \"g:\"."
+
+msgid ""
 "Cannot attach a script: there are no languages registered.\n"
 "This is probably because this editor was built with all language modules "
 "disabled."
@@ -4858,7 +5048,7 @@ msgid "Mobile"
 msgstr "Mobile"
 
 msgid "Compatibility"
-msgstr "Compatibility"
+msgstr "Kompatibilita"
 
 msgid "Open Recent"
 msgstr "Otevřít nedávné"
@@ -5927,6 +6117,16 @@ msgstr "Spravovat exportní šablony"
 msgid "Dependencies For:"
 msgstr "Závislosti na:"
 
+msgid ""
+"Scene \"%s\" is currently being edited. Changes will only take effect when "
+"reloaded."
+msgstr ""
+"Scéna \"%s\" je právě upravována. Změny se projeví až po opětovném načtení."
+
+msgid "Resource \"%s\" is in use. Changes will only take effect when reloaded."
+msgstr ""
+"Zdroj \"%s\" je právě používán. Změny se projeví až po opětovném načtení."
+
 msgid "Dependencies"
 msgstr "Závislosti"
 
@@ -6345,6 +6545,12 @@ msgstr "Mřížka"
 msgid "List view"
 msgstr "Seznam"
 
+msgid "Hold %s to round to integers."
+msgstr "Podržte %s pro zaokrouhlení na celá čísla."
+
+msgid "Hold Shift for more precise changes."
+msgstr "Pro přesnější změny podržte Shift."
+
 msgid "No notifications."
 msgstr "Žádná oznámení."
 
@@ -6369,6 +6575,9 @@ msgstr ""
 
 msgid "Make this panel floating in the screen %d."
 msgstr "Otevřít tento panel jako plovoucí dok na obrazovce %d."
+
+msgid "Right-click to open the screen selector."
+msgstr "Pravé tlačítko otevře výběr obrazovky."
 
 msgid "Select Screen"
 msgstr "Vybrat obrazovku"
@@ -6871,6 +7080,9 @@ msgid "Pinning a value forces it to be saved even if it's equal to the default."
 msgstr ""
 "Připnutí hodnoty vynutí její uložení, i když bude shodná s výchozí hodnotou."
 
+msgid "Delete Property"
+msgstr "Smazat vlastnost"
+
 msgid "Unfavorite All"
 msgstr "Odebrat vše z oblíbených"
 
@@ -7088,6 +7300,15 @@ msgstr "Přidat překlad"
 
 msgid "Lock/Unlock Component Ratio"
 msgstr "Uzamknout/Odemknout poměr komponent"
+
+msgid "This %s is used in %d place."
+msgid_plural "This %s is used in %d places."
+msgstr[0] "Toto %s je používáno na %d místě."
+msgstr[1] "Toto %s je používáno na %d místech."
+msgstr[2] "Toto %s je používáno na %d místech."
+
+msgid "Right-click to make them unique."
+msgstr "Klikněte pravým tlačítkem, aby se staly jedinečné."
 
 msgid ""
 "The selected resource (%s) does not match any type expected for this property "
@@ -7971,6 +8192,9 @@ msgstr ""
 msgid "Restart & Upgrade"
 msgstr "Restartovat a aktualizovat"
 
+msgid "Re-saving resource:"
+msgstr "Přeukládám zdroj:"
+
 msgid "Play a custom scene."
 msgstr "Přehrát vlastní scénu."
 
@@ -8102,6 +8326,15 @@ msgstr ""
 "Přidejte prosím spustitelný profil v nabídce Export nebo definujte existující "
 "profil jako spustitelný."
 
+msgid ""
+"Warning: The CPU architecture \"%s\" is not active in your export preset.\n"
+"\n"
+"Run \"Remote Deploy\" anyway?"
+msgstr ""
+"Varování: Architektura CPU \"%s\" není ve vašem exportu přednastavení.\n"
+"\n"
+"Přesto spustit \"Vzdálené nasazení\"?"
+
 msgid "Deploy to First Device in List"
 msgstr "Nasadit na první zařízení v seznamu"
 
@@ -8146,6 +8379,15 @@ msgstr ""
 "Vložení hry není dostupné pro správce oken: '%s'.\n"
 "Správce oken můžete změnit v Nastavení projektu (Zobrazení > Správce oken > "
 "Ovladač)."
+
+msgid ""
+"Consider overriding the window mode project setting with the editor feature "
+"tag to Windowed to use game embedding while leaving the exported project "
+"intact."
+msgstr ""
+"Zvažte přepsání nastavení režimu okna projektu pomocí štítku funkce editoru "
+"Windowed, abyste mohli používat vkládání her a zároveň ponechat exportovaný "
+"projekt beze změny."
 
 msgid "Game embedding not available in single window mode."
 msgstr "Vložení hry není dostupné v režimu jednoho okna."
@@ -9751,6 +9993,9 @@ msgstr "Zjednodušený konvexní tvar"
 msgid "Multiple Convex"
 msgstr "Více konvexních tvarů"
 
+msgid "Primitive"
+msgstr "Primitivy"
+
 msgid "Can't create a collision shape as sibling for the scene root."
 msgstr "Nelze vytvořit kolizní tvar jako sourozence kořenového uzlu scény."
 
@@ -9894,6 +10139,15 @@ msgstr ""
 "Vytvoří zjednodušený konvexní kolizní tvar.\n"
 "Je podobný jedinému koliznímu tvaru, ale v některých případech může vést k "
 "jednodušší geometrii na úkor přesnosti."
+
+msgid ""
+"Creates an bounding box collision shape.\n"
+"This will use the mesh's AABB if the shape is not a built-in BoxMesh.\n"
+"This is faster than the convex collision shape option for collision detection."
+msgstr ""
+"Vytvoří kolizní tvar ohraničujícího rámečku.\n"
+"Pokud tvar není vestavěný BoxMesh, použije se útvar AABB.\n"
+"Toto je rychlejší než možnost konvexního tvaru kolize pro detekci kolize."
 
 msgid "X-Axis"
 msgstr "Osa X"
@@ -10105,6 +10359,24 @@ msgid ""
 msgstr ""
 "Přetažením přepíšete materiál libovolného uzlu geometrie.\n"
 "Podržením %s při přetažení přepíšete konkrétní povrch."
+
+msgid "X: %s"
+msgstr "X: %s"
+
+msgid "Y: %s"
+msgstr "Y: %s"
+
+msgid "Z: %s"
+msgstr "Z: %s"
+
+msgid "Size: %s (%.1fMP)"
+msgstr "Velikost: %s (%.1fMP)"
+
+msgid "Objects: %d"
+msgstr "Objekty: %d"
+
+msgid "Primitives: %d"
+msgstr "Primitivy: %d"
 
 msgid "Draw Calls: %d"
 msgstr "Vykreslovací volání: %d"
@@ -16387,6 +16659,48 @@ msgstr "Vymaže interní vrcholy a polygony NavigationMesh."
 msgid "Toggles whether the noise preview is computed in 3D space."
 msgstr "Přepíná, zda se náhled šumu vypočítává ve 3D prostoru."
 
+msgid "A: %s"
+msgstr "A: %s"
+
+msgid "B: %s"
+msgstr "B: %s"
+
+msgid "Objects"
+msgstr "Objekty"
+
+msgid "A Objects"
+msgstr "A Objekty"
+
+msgid "B Objects"
+msgstr "B Objekty"
+
+msgid "Object's class"
+msgstr "Třída Objekty"
+
+msgid "Object"
+msgstr "Objekt"
+
+msgid "Object's name"
+msgstr "Jméno Objektu"
+
+msgid "Native References: %d"
+msgstr "Reference: %d"
+
+msgid "ObjectDB References: %d"
+msgstr "Reference ObjektDB: %d"
+
+msgid "Total References: %d"
+msgstr "Celkové reference: %d"
+
+msgid "ObjectDB Cycles: %d"
+msgstr "Cykly ObjektDB: %d"
+
+msgid "Duplicate?"
+msgstr "Duplikovat?"
+
+msgid "Total Objects:"
+msgstr "Celkové Objekty:"
+
 msgid "Rename Action"
 msgstr "Přejmenovat akci"
 
@@ -16823,6 +17137,9 @@ msgstr "Nepodařilo se ověřit podepsané apk."
 msgid "'apksigner' verification of APK failed."
 msgstr "Ověření APK pomocí 'apksigner' selhalo."
 
+msgid "Could not create temporary file!"
+msgstr "Nelze vytvořit dočasný soubor!"
+
 msgid "Exporting for Android"
 msgstr "Export pro systém Android"
 
@@ -16861,6 +17178,9 @@ msgstr ""
 
 msgid "Unable to overwrite res/*.xml files with project name."
 msgstr "Nepodařilo se přepsat soubory res/*.xml názvem projektu."
+
+msgid "Could not write PCK directory!"
+msgstr "Nelze zapsat PCK adresář!"
 
 msgid "Could not export project files to gradle project."
 msgstr "Nelze exportovat soubory projektu do projektu gradle."

@@ -52,13 +52,14 @@
 # ducdat0507 <ducdat0507@gmail.com>, 2025, 2026.
 # Orus Or <orus3732@gmail.com>, 2025.
 # Tâm Mai <tammai.it@gmail.com>, 2025.
+# Nguyen Ngoc Thai <thaidev247@gmail.com>, 2026.
 msgid ""
 msgstr ""
 "Project-Id-Version: Godot Engine editor interface\n"
 "Report-Msgid-Bugs-To: https://github.com/godotengine/godot\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-01-05 13:02+0000\n"
-"Last-Translator: ducdat0507 <ducdat0507@gmail.com>\n"
+"PO-Revision-Date: 2026-01-28 01:30+0000\n"
+"Last-Translator: Nguyen Ngoc Thai <thaidev247@gmail.com>\n"
 "Language-Team: Vietnamese <https://hosted.weblate.org/projects/godot-engine/"
 "godot/vi/>\n"
 "Language: vi\n"
@@ -66,10 +67,103 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.15.1\n"
+"X-Generator: Weblate 5.16-dev\n"
 
 msgid "OK"
 msgstr "OK"
+
+msgid "Failed"
+msgstr "Thất bại"
+
+msgid "Unavailable"
+msgstr "Không khả dụng"
+
+msgid "Unconfigured"
+msgstr "Chưa cấu hình"
+
+msgid "Unauthorized"
+msgstr "Không được phép"
+
+msgid "Parameter out of range"
+msgstr "Tham số ngoài phạm vi"
+
+msgid "Out of memory"
+msgstr "Tràn bộ nhớ"
+
+msgid "File not found"
+msgstr "Không tìm thấy tệp"
+
+msgid "File already in use"
+msgstr "Tệp đã được sử dụng"
+
+msgid "Can't open file"
+msgstr "Không thể mở tệp"
+
+msgid "Can't write file"
+msgstr "Không thể ghi tệp"
+
+msgid "Can't read file"
+msgstr "Không thể đọc tệp"
+
+msgid "File unrecognized"
+msgstr "Tệp không xác định"
+
+msgid "File corrupt"
+msgstr "Tệp bị lỗi"
+
+msgid "End of file"
+msgstr "Kết thúc tệp"
+
+msgid "Can't open"
+msgstr "Không thể mở"
+
+msgid "Can't create"
+msgstr "Không thể tạo"
+
+msgid "Query failed"
+msgstr "Yêu cầu thất bại"
+
+msgid "Already in use"
+msgstr "Đã được sử dụng"
+
+msgid "Locked"
+msgstr "Đã khoá"
+
+msgid "Timeout"
+msgstr "Quá giờ"
+
+msgid "Can't connect"
+msgstr "Không thể kết nối"
+
+msgid "Connection error"
+msgstr "Lỗi kết nối"
+
+msgid "Invalid data"
+msgstr "Dữ liệu không hợp lệ"
+
+msgid "Invalid parameter"
+msgstr "Tham số không hợp lệ"
+
+msgid "Already exists"
+msgstr "Đã tồn tại"
+
+msgid "Does not exist"
+msgstr "Không tồn tại"
+
+msgid "Can't read database"
+msgstr "Không thể đọc cơ sở dữ liệu"
+
+msgid "Can't write database"
+msgstr "Không thể ghi vào cơ sở dữ liệu"
+
+msgid "Compilation failed"
+msgstr "Biên dịch thất bại"
+
+msgid "Method not found"
+msgstr "Không tìm thấy phương thức"
+
+msgid "Link failed"
+msgstr "Liên kết thất bại"
 
 msgid "Help"
 msgstr "Trợ giúp"
@@ -1437,6 +1531,9 @@ msgstr "Trong-Handle:"
 
 msgid "Out-Handle:"
 msgstr "Ngoài-Handle:"
+
+msgid "Handle mode: %s"
+msgstr "Chế độ Tay cầm: %s"
 
 msgid "Stream:"
 msgstr "Chạy:"
@@ -3906,6 +4003,17 @@ msgstr "Quản lí bản mẫu xuất"
 msgid "Dependencies For:"
 msgstr "Phần phụ thuộc cho:"
 
+msgid ""
+"Scene \"%s\" is currently being edited. Changes will only take effect when "
+"reloaded."
+msgstr ""
+"Cảnh \"%s\" hiện đang được chỉnh sửa.\n"
+"Các thay đổi chỉ có hiệu lực khi tải lại."
+
+msgid "Resource \"%s\" is in use. Changes will only take effect when reloaded."
+msgstr ""
+"Tài nguyên \"%s\" đang được sử dụng. Thay đổi chỉ có hiệu lực khi tải lại."
+
 msgid "Dependencies"
 msgstr "Các phụ thuộc"
 
@@ -3973,6 +4081,9 @@ msgstr "Sở hữu"
 
 msgid "Resources Without Explicit Ownership:"
 msgstr "Tài nguyên không có quyền sở hữu rõ ràng:"
+
+msgid "Scanning file structure..."
+msgstr "Đang quét các tệp tin..."
 
 msgid "Initializing plugins..."
 msgstr "Đang khởi tạo plugin..."
@@ -4184,6 +4295,12 @@ msgstr "Không tìm thấy tài nguyên phụ."
 
 msgid "Open a list of sub-resources."
 msgstr "Mở danh sách các tài nguyên con."
+
+msgid "Hold %s to round to integers."
+msgstr "Giữ  %s để làm tròn về số nguyên."
+
+msgid "Hold Shift for more precise changes."
+msgstr "Giữ Shift để chỉnh sửa chính xác hơn."
 
 msgid "No notifications."
 msgstr "Không có thông báo."

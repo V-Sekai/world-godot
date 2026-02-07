@@ -86,7 +86,7 @@ msgstr ""
 "Project-Id-Version: Godot Engine editor interface\n"
 "Report-Msgid-Bugs-To: https://github.com/godotengine/godot\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-01-22 20:12+0000\n"
+"PO-Revision-Date: 2026-01-30 16:09+0000\n"
 "Last-Translator: Myeongjin <aranet100@gmail.com>\n"
 "Language-Team: Korean <https://hosted.weblate.org/projects/godot-engine/godot/"
 "ko/>\n"
@@ -110,13 +110,13 @@ msgid "Unconfigured"
 msgstr "구성되지 않음"
 
 msgid "Unauthorized"
-msgstr "인증되지 않음"
+msgstr "권한 없음"
 
 msgid "Parameter out of range"
 msgstr "매개변수 범위를 벗어남"
 
 msgid "Out of memory"
-msgstr "메모리 초과"
+msgstr "메모리 부족"
 
 msgid "File not found"
 msgstr "파일을 찾을 수 없음"
@@ -146,10 +146,10 @@ msgid "File unrecognized"
 msgstr "파일을 인식할 수 없음"
 
 msgid "File corrupt"
-msgstr "파일이 손상됨"
+msgstr "파일 손상"
 
 msgid "Missing dependencies for file"
-msgstr "파일에 종속성이 누락됨"
+msgstr "파일에 종속성 누락"
 
 msgid "End of file"
 msgstr "파일의 끝"
@@ -161,7 +161,7 @@ msgid "Can't create"
 msgstr "만들 수 없음"
 
 msgid "Query failed"
-msgstr "요청 실패"
+msgstr "쿼리 실패"
 
 msgid "Already in use"
 msgstr "이미 사용 중"
@@ -182,7 +182,7 @@ msgid "Connection error"
 msgstr "연결 오류"
 
 msgid "Can't acquire resource"
-msgstr "리소스를 획득할 수 없음"
+msgstr "리소스를 얻을 수 없음"
 
 msgid "Can't fork"
 msgstr "포크할 수 없음"
@@ -1024,7 +1024,7 @@ msgid "Library Name:"
 msgstr "라이브러리 이름:"
 
 msgid "Animation name can't be empty."
-msgstr "애니메이션 이름은 비워둘 수 없습니다."
+msgstr "애니메이션 이름은 비워 둘 수 없습니다."
 
 msgid "Animation name contains invalid characters: '/', ':', ',' or '['."
 msgstr "애니메이션 이름에 잘못된 문자가 있습니다: '/', ':', ',', '['."
@@ -3381,7 +3381,7 @@ msgstr ""
 "color]하여 우리를 도와주세요!"
 
 msgid "Top"
-msgstr "위쪽"
+msgstr "위"
 
 msgid "Class:"
 msgstr "클래스:"
@@ -4153,7 +4153,7 @@ msgid "Delete group \"%s\" and all its references?"
 msgstr "그룹 \"%s\"과(와) 모든 참조를 삭제하시겠습니까?"
 
 msgid "Group can't be empty."
-msgstr "그룹은 비워둘 수 없습니다."
+msgstr "그룹은 비워 둘 수 없습니다."
 
 msgid "Group already exists."
 msgstr "그룹이 이미 존재합니다."
@@ -6981,7 +6981,7 @@ msgid "Thank you for choosing Godot Engine!"
 msgstr "Godot 엔진을 선택해주셔서 고맙습니다!"
 
 msgid "Name cannot be empty."
-msgstr "이름은 비워둘 수 없습니다."
+msgstr "이름은 비워 둘 수 없습니다."
 
 msgid "File name can't end with /."
 msgstr "파일 이름은 /로 끝날 수 없습니다."
@@ -6990,7 +6990,7 @@ msgid "File name cannot be empty."
 msgstr "파일 이름은 비워 둘 수 없습니다."
 
 msgid "Folder name cannot be empty."
-msgstr "폴더 이름은 비워둘 수 없습니다."
+msgstr "폴더 이름은 비워 둘 수 없습니다."
 
 msgid "File name contains invalid characters."
 msgstr "파일 이름에 잘못된 문자가 포함되어 있습니다."
@@ -7653,7 +7653,7 @@ msgid "Add Metadata Property for \"%s\""
 msgstr "\"%s\"에 메타데이터 추가하기"
 
 msgid "Metadata name can't be empty."
-msgstr "메타데이터 이름은 비워둘 수 없습니다."
+msgstr "메타데이터 이름은 비워 둘 수 없습니다."
 
 msgid "Metadata name must be a valid identifier."
 msgstr "메타데이터 이름은 올바른 식별자여야 합니다."
@@ -8151,7 +8151,7 @@ msgid "Create New Plugin"
 msgstr "새 플러그인 만들기"
 
 msgid "Enabled"
-msgstr "활성화됨"
+msgstr "활성화"
 
 msgid "Version"
 msgstr "버전"
@@ -8796,7 +8796,7 @@ msgstr ""
 "니다."
 
 msgid "Tag name can't be empty."
-msgstr "태그 이름은 비워둘 수 없습니다."
+msgstr "태그 이름은 비워 둘 수 없습니다."
 
 msgid "Tag name can't begin or end with underscore."
 msgstr "태그 이름은 밑줄로 시작하거나 끝날 수 없습니다."
@@ -10689,7 +10689,7 @@ msgid ""
 "Would you like to automatically create tiles in the atlas?"
 msgstr ""
 "아틀라스의 텍스처가 수정되었습니다.\n"
-"아틀라스에서 자동으로 타일을 만드시길 원하십니까?"
+"아틀라스에서 자동으로 타일을 만들길 원하십니까?"
 
 msgid "Yes"
 msgstr "예"
@@ -13298,7 +13298,7 @@ msgid "Set Group Description"
 msgstr "그룹 설명 설정"
 
 msgid "Invalid group name. It cannot be empty."
-msgstr "그룹 이름은 비워둘 수 없습니다."
+msgstr "그룹 이름은 비워 둘 수 없습니다."
 
 msgid "A group with the name '%s' already exists."
 msgstr "이름 '%s'을(를) 가진 그룹이 이미 존재합니다."
@@ -15253,7 +15253,7 @@ msgid "Action %s"
 msgstr "액션 %s"
 
 msgid "Cannot Revert - Action is same as initial"
-msgstr "되돌릴 수 없습니다 - 액션이 초기와 같습니다"
+msgstr "되돌릴 수 없음 - 액션이 초기와 같습니다"
 
 msgid "Revert Action"
 msgstr "액션 되돌리기"
@@ -15265,7 +15265,7 @@ msgid "Remove Action"
 msgstr "액션 제거"
 
 msgid "Cannot Remove Action"
-msgstr "액션을 제거할 수 없습니다"
+msgstr "액션을 제거할 수 없음"
 
 msgid "Edit Event"
 msgstr "이벤트 편집"
@@ -15343,7 +15343,7 @@ msgid "Autoload Path"
 msgstr "오토로드 경로"
 
 msgid "Set path or press \"Add\" to create a script."
-msgstr "경로를 설정하거나 \"추가\"를 눌러 스크립트를 만드세요."
+msgstr "경로를 설정하거나 \"추가\"를 눌러 스크립트를 만듭니다."
 
 msgid "Select Autoload Path"
 msgstr "오토로드 경로 선택"
@@ -15623,10 +15623,10 @@ msgstr ""
 "%s."
 
 msgid "Filter Commands"
-msgstr "명령어 필터"
+msgstr "명령 필터"
 
 msgid "Filter by Name"
-msgstr "이름으로 필터링"
+msgstr "이름으로 필터"
 
 msgid "Action Event"
 msgstr "액션 이벤트"
@@ -15913,13 +15913,13 @@ msgid "Device"
 msgstr "기기"
 
 msgid "Listening for Input. Hold %s to release focus."
-msgstr "입력을 기다립니다. %s을(를) 눌러 포커스를 놓으세요."
+msgstr "입력을 받는 중입니다. %s을(를) 눌러 포커스를 놓으세요."
 
 msgid "Listening for Input"
-msgstr "입력 대기 중"
+msgstr "입력을 받는 중"
 
 msgid "Filter by Event"
-msgstr "이벤트로 필터링"
+msgstr "이벤트로 필터"
 
 msgid "No Event Configured"
 msgstr "구성된 이벤트 없음"
@@ -18364,7 +18364,7 @@ msgid "The MultiplayerSynchronizer needs a root path."
 msgstr "MultiplayerSynchronizer는 루트 경로가 있어야 합니다."
 
 msgid "Property/path must not be empty."
-msgstr "속성/경로는 비워둘 수 없습니다."
+msgstr "속성/경로는 비워 두면 안 됩니다."
 
 msgid "Invalid property path: '%s'"
 msgstr "잘못된 속성 경로: '%s'"
@@ -21062,10 +21062,10 @@ msgstr ""
 "초기 값인 `CURSOR_ARROW`로 두는 것이 좋습니다."
 
 msgid "Cell %d x %d: either text or alternative text must not be empty."
-msgstr "셀 %d x %d: 텍스트 또는 대체 텍스트는 비워 둘 수 없습니다."
+msgstr "셀 %d x %d: 텍스트 또는 대체 텍스트는 비워 두면 안 됩니다."
 
 msgid "Button %d in %d x %d: alternative text must not be empty."
-msgstr "버튼 %d (셀 %d x %d): 대체 텍스트는 비워 둘 수 없습니다."
+msgstr "버튼 %d (셀 %d x %d): 대체 텍스트는 비워 두면 안 됩니다."
 
 msgid ""
 "Ancestor \"%s\" clips its children, so this node will not be able to clip its "
